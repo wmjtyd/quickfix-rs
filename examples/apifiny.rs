@@ -97,5 +97,9 @@ fn generate_order_id(account_id: &str) -> anyhow::Result<String> {
 }
 
 fn main() {
-
+    let test = || {
+        println!("Hello, World!");
+        12
+    };
+    quickfix_rs::create_client(test);
 }

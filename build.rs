@@ -58,16 +58,24 @@ const SSL_SUPPORT_FILES: [&str; 7] = [
     "UtilitySSL.cpp"
 ];
 
+const RUST_BINDING_FILES: [&str; 1] = [
+    "Entrypoint.cpp"
+];
+
 fn main() {
     let cpp_lib_src = Path::new("vendor/quickfix-cpp/src/C++");
-    let srcjoin = |&d| cpp_lib_src.join(d);
+    let rust_lib_src = Path::new("vendor/quickfix-cpp/src/rust");
+    let cppsrcjoin = |&d| cpp_lib_src.join(d);
+    let rustsrcjoin = |&d| rust_lib_src.join(d);
 
     cxx_build::bridge("src/lib.rs")
         .include(Path::new("vendor/quickfix-cpp"))
         .include(Path::new("vendor/quickfix-cpp/src"))
+        .include(rust_lib_src)
         .include(cpp_lib_src)
-        .files(BASE_FILES.iter().map(srcjoin))
-        .files(SSL_SUPPORT_FILES.iter().map(srcjoin))
+        .files(BASE_FILES.iter().map(cppsrcjoin))
+        .files(SSL_SUPPORT_FILES.iter().map(cppsrcjoin))
+        .files(RUST_BINDING_FILES.iter().map(rustsrcjoin))
         .flag_if_supported("-std=c++14")
         // Make the compilation of quickfix quiet :)
         .flag_if_supported("-w")

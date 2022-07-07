@@ -7,11 +7,12 @@ mod ffi {
     }
 
     unsafe extern "C++" {
-        include!("Session.h");
+        include!("Entrypoint.h");
 
-        // type BlobstoreClient;
-
-        // fn new_blobstore_client() -> UniquePtr<BlobstoreClient>;
-        // fn put(&self, parts: &mut MultiBuf) -> u64;
+        fn create_client(test: fn() -> i32);
     }
+}
+
+pub fn create_client(test: fn() -> i32) {
+    unsafe { ffi::create_client(test); }
 }
