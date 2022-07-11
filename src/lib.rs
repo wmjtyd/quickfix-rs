@@ -1,40 +1,36 @@
 #[cxx::bridge]
 mod ffi {
-    #[namespace = "FIX"]
     unsafe extern "C++" {
-        include!("quickfix-rs/vendor/quickfix-cpp/include/quickfix/Values.h");
+        include!("quickfix-rs/cxx/include/tradeclient.h");
 
-        type SessionID;
-        type Message;
+        type TradeClient;
 
-        fn toStringFrozen(self: &SessionID) -> &CxxString;
-    }
-
-    unsafe extern "C++" {
-        include!("quickfix-rs/cxx/include/Application.h");
-
-        type Application;
-
-        fn new_application() -> UniquePtr<Application>;
-    }
-
-    extern "Rust" {
-        type ApplicationImpl;
-
-        fn new_application_impl() -> Box<ApplicationImpl>;
-        fn on_create(self: &ApplicationImpl, session_id: &SessionID);
+        fn create_client(filepath: &CxxString) -> UniquePtr<TradeClient>;
+        fn run(self: Pin<&mut TradeClient>) -> i32;
+        fn put_order(
+            self: Pin<&mut TradeClient>,
+            quote_id: &CxxString,
+            symbol: &CxxString,
+            currency: &CxxString,
+            side: i32,
+            quantity: i32,
+            price: i32,
+            time_in_force: i32,
+        );
     }
 }
 
-mod application;
-use application::{new_application_impl, ApplicationImpl};
-
 #[cfg(test)]
 mod tests {
+    use cxx::let_cxx_string;
+
     use super::ffi;
 
     #[test]
     fn test_nothing() {
-        let app = ffi::new_application();
+        let_cxx_string!(filepath = "fix42.xml");
+        let mut trade_client = ffi::create_client(&filepath);
+
+        trade_client.pin_mut().run();
     }
 }
