@@ -1,17 +1,40 @@
 #[cxx::bridge]
 mod ffi {
-    extern "Rust" {
-        // type MultiBuf;
+    #[namespace = "FIX"]
+    unsafe extern "C++" {
+        include!("quickfix-rs/vendor/quickfix-cpp/include/quickfix/Values.h");
 
-        // fn next_chunk(buf: &mut MultiBuf) -> &[u8];
+        type SessionID;
+        type Message;
+
+        fn toStringFrozen(self: &SessionID) -> &CxxString;
     }
 
     unsafe extern "C++" {
-        include!("Session.h");
+        include!("quickfix-rs/cxx/include/Application.h");
 
-        // type BlobstoreClient;
+        type Application;
 
-        // fn new_blobstore_client() -> UniquePtr<BlobstoreClient>;
-        // fn put(&self, parts: &mut MultiBuf) -> u64;
+        fn new_application() -> UniquePtr<Application>;
+    }
+
+    extern "Rust" {
+        type ApplicationImpl;
+
+        fn new_application_impl() -> Box<ApplicationImpl>;
+        fn on_create(self: &ApplicationImpl, session_id: &SessionID);
+    }
+}
+
+mod application;
+use application::{new_application_impl, ApplicationImpl};
+
+#[cfg(test)]
+mod tests {
+    use super::ffi;
+
+    #[test]
+    fn test_nothing() {
+        let app = ffi::new_application();
     }
 }
