@@ -23,16 +23,16 @@
 
 #include "include/Tradeclient.h"
 
-#include "quickfix/SessionSettings.h"
 #include "../vendor/quickfix-cpp/src/getopt-repl.h"
+#include "quickfix/SessionSettings.h"
 
 #include <fstream>
 #include <iostream>
 #include <string>
 
 TradeClient::TradeClient(const std::string &filepath)
-    : application(), settings(filepath),
-      store_factory(settings), log_factory(settings),
+    : application(), settings(filepath), store_factory(settings),
+      log_factory(settings),
       initiator(new FIX::SocketInitiator(application, store_factory, settings,
                                          log_factory)) {}
 
@@ -41,25 +41,25 @@ TradeClient::~TradeClient() {
   this->initiator = nullptr;
 }
 
-bool TradeClient::run() {
+auto TradeClient::start() const -> void {
   try {
     this->initiator->start();
-    this->application.run();
-    this->initiator->stop();
-
-    return false;
   } catch (std::exception &e) {
     std::cout << e.what() << std::endl;
-
-    return true;
   }
 }
 
-void TradeClient::put_order(const std::string &quoteid,
+auto TradeClient::stop() const -> void {
+    this->initiator->stop();
+}
+
+auto TradeClient::put_order(const std::string &quoteid,
                             const std::string &symbol,
-                            const std::string &currency, int side, int quantity,
-                            int price, int time_in_force) {
-  return;
+                            const std::string &currency, const int side,
+                            const int quantity, const int price,
+                            const int time_in_force) const -> void {
+  this->application.new_order_single(symbol, side, quantity, price,
+                                     time_in_force);
 }
 
 auto create_client(const std::string &filepath)

@@ -16,10 +16,13 @@ public:
   TradeClient(const std::string &filepath);
   ~TradeClient();
 
-  bool run();
-  void put_order(const std::string &quoteid, const std::string &symbol,
-                 const std::string &currency, int side, int quantity, int price,
-                 int time_in_force);
+  auto start() const -> void;
+  auto stop() const -> void;
+
+  auto put_order(const std::string &quoteid, const std::string &symbol,
+                 const std::string &currency, const int side,
+                 const int quantity, const int price,
+                 const int time_in_force) const -> void;
 
 private:
   Application application;
