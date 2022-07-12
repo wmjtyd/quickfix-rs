@@ -1,3 +1,5 @@
+use std::path::Path;
+
 const BASE_FILES: [&str; 45] = [
     "Acceptor.cpp",
     "DataDictionary.cpp",
@@ -57,17 +59,25 @@ const SSL_SUPPORT_FILES: [&str; 7] = [
 ];
 
 fn main() {
-    let cpp_lib_src = "vendor/quickfix-cpp/src/C++";
+    let cpp_root_path = Path::new("vendor/quickfix-cpp");
+    let cpp_header_path = cpp_root_path.join("include/");
+    let cpp_source_path = cpp_root_path.join("src/C++/");
 
     cxx_build::bridge("src/lib.rs")
-        .include(cpp_lib_src)
-        .file("cxx/tradeclient.cpp")
-        .file("cxx/application.cpp")
-        .files(BASE_FILES.iter().map(|x| format!("{}/{}", cpp_lib_src, x)))
-        .files(
-            SSL_SUPPORT_FILES
-                .iter()
-                .map(|x| format!("{}/{}", cpp_lib_src, x)),
-        )
+        .include(cpp_header_path)
+        .include(&cpp_source_path)
+        .include("cxx/")
+        .include(cpp_root_path.join("examples/tradeclient-apifiny/inc/"))
+        .file("cxx/Application.cpp")
+        .file("cxx/Tradeclient.cpp")
+        .files(BASE_FILES.iter().map(|x| cpp_source_path.join(x)))
+        .files(SSL_SUPPORT_FILES.iter().map(|x| cpp_source_path.join(x)))
         .compile("quickfix-cpp");
+
+    println!("cargo:rerun-if-changed=src/");
+    println!("cargo:rerun-if-changed=cxx/");
+    println!("cargo:rerun-if-changed=vendor/quickfix-cpp");
+
+    println!("cargo:rustc-link-lib=ssl");
+    println!("cargo:rustc-link-lib=crypto");
 }
