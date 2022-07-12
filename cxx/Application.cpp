@@ -163,7 +163,7 @@ std::string generate_order_id(std::string accountId) {
   // std::chrono::system_clock::now().time_since_epoch().count() /
   // std::chrono::micro << std::endl;
   auto currentTime =
-      std::chrono::system_clock::now().time_since_epoch().count() / 1000;
+      std::chrono::system_clock::now().time_since_epoch().count() / 1000000;
   std::random_device rd;
   auto r = rd();
   auto randomDigit = (r % 900) + 100;
@@ -269,10 +269,10 @@ void Application::onMessage(const FIX42::ExecutionReport &executionReport,
 void Application::onMessage(const FIX42::OrderCancelReject &,
                             const FIX::SessionID &) {}
 
-auto Application::new_order_single(const std::string &symbol, const int side,
+auto Application::new_order_single(const std::string &order_id,
+                                   const std::string &symbol, const int side,
                                    const int quantity, const int price,
                                    const int time_in_force) const -> void {
-  const auto order_id = generate_order_id(ACCOUNT_ID);
   FIX42::NewOrderSingle order(FIX::ClOrdID(order_id), FIX::HandlInst('1'),
                               FIX::Symbol(symbol), FIX::Side(side),
                               FIX::TransactTime(FIX::UTCTIMESTAMP()),
