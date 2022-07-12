@@ -49,16 +49,15 @@ auto TradeClient::start() const -> void {
   }
 }
 
-auto TradeClient::stop() const -> void {
-    this->initiator->stop();
-}
+auto TradeClient::stop() const -> void { this->initiator->stop(); }
 
-auto TradeClient::put_order(const std::string &quoteid,
+auto TradeClient::put_order(const std::string &order_id,
+                            const std::string &quoteid,
                             const std::string &symbol,
                             const std::string &currency, const int side,
                             const int quantity, const int price,
                             const int time_in_force) const -> void {
-  this->application.new_order_single(symbol, side, quantity, price,
+  this->application.new_order_single(order_id, symbol, side, quantity, price,
                                      time_in_force);
 }
 
