@@ -269,24 +269,27 @@ void Application::onMessage(const FIX42::ExecutionReport &executionReport,
 void Application::onMessage(const FIX42::OrderCancelReject &,
                             const FIX::SessionID &) {}
 
-void Application::run() {
-  while (true) {
-    try {
-      char action = queryAction();
-      if (action == '1')
-        NewOrderSingle();
-      //        else if ( action == '2' )
-      //            queryCancelOrder();
-      //        else if ( action == '3' )
-      //            queryReplaceOrder();
-      //        else if ( action == '4' )
-      //            queryMarketDataRequest();
-      //        else if ( action == '5' )
-      //            break;
-    } catch (std::exception &e) {
-      std::cout << "Message Not Sent: " << e.what();
-    }
-  }
+auto Application::new_order_single(const std::string &symbol, const int side,
+                                   const int quantity, const int price,
+                                   const int time_in_force) const -> void {
+  const auto order_id = generate_order_id(ACCOUNT_ID);
+  FIX42::NewOrderSingle order(FIX::ClOrdID(order_id), FIX::HandlInst('1'),
+                              FIX::Symbol(symbol), FIX::Side(side),
+                              FIX::TransactTime(FIX::UTCTIMESTAMP()),
+                              FIX::OrdType(FIX::OrdType_LIMIT));
+
+  order.set(FIX::OrderQty(quantity));
+  order.set(FIX::TimeInForce(time_in_force));
+  order.set(FIX::Price(price));
+  order.set(FIX::Account(ACCOUNT_ID));
+  order.set(FIX::Text("new Order"));
+
+  auto &header = order.getHeader();
+  header.setField(FIX::SenderCompID(ACCOUNT_ID));
+  header.setField(FIX::TargetCompID(TargetCompID));
+  header.setField(FIX::SecurityExchange(VENUE));
+
+  FIX::Session::sendToTarget(order);
 }
 
 void Application::NewOrderSingle() {

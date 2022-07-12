@@ -70,7 +70,9 @@
 
 class Application : public FIX::Application, public FIX::MessageCracker {
 public:
-  void run();
+  auto new_order_single(const std::string &symbol, const int side,
+                        const int quantity, const int price,
+                        const int time_in_force) const -> void;
 
 private:
   void onCreate(const FIX::SessionID &);

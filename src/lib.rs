@@ -6,9 +6,12 @@ pub mod ffi {
         type TradeClient;
 
         fn create_client(filepath: &CxxString) -> UniquePtr<TradeClient>;
-        fn run(self: Pin<&mut TradeClient>) -> bool;
+
+        fn start(&self);
+        fn stop(&self);
+
         fn put_order(
-            self: Pin<&mut TradeClient>,
+            self: &TradeClient,
             quote_id: &CxxString,
             symbol: &CxxString,
             currency: &CxxString,
