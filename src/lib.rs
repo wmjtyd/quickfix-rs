@@ -27,7 +27,7 @@ pub mod ffi {
     }
 
     unsafe extern "C++" {
-        include!("quickfix-rs/cxx/include/Tradeclient.h");
+        include!("quickfix-rs/bridge/include/Tradeclient.h");
 
         type TradeClient;
 
