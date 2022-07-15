@@ -26,6 +26,8 @@ pub mod ffi {
         type SessionID;
     }
 
+#[cxx::bridge]
+pub mod ffi {
     unsafe extern "C++" {
         include!("quickfix-rs/bridge/include/Tradeclient.h");
 
@@ -86,4 +88,15 @@ impl ApplicationContext {
     pub fn inbound(&self, message: ffi::QuickFixMessage, session_id: &ffi::SessionID) {
         self.0.send(message).unwrap();
     }
+}
+
+pub fn generate_order_id(account_id: &str) -> String {
+    let account_id = account_id.split('-').last().expect("Must have number part");
+    let timestamp = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .expect("Time went backwards")
+        .as_millis();
+    let random_number = random::<u16>() / 1000;
+
+    format!("{}{:.13}{:03}", account_id, timestamp, random_number)
 }
