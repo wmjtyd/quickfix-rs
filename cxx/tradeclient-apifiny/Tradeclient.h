@@ -1,20 +1,24 @@
 #ifndef TRADECLIENT_H
 #define TRADECLIENT_H
 
-#include "include/Application.h"
+#include "Application.h"
 
 #include "quickfix/FileStore.h"
 #include "quickfix/Log.h"
 #include "quickfix/SocketInitiator.h"
 #include "quickfix/config.h"
+//#include "rust/cxx.h"
 
 #include <iostream>
 #include <memory>
+#include "itradeclient.h"
+#include "common.h"
+struct ApplicationContext;
 
-class TradeClient {
+class TradeClientApifiny : public ITradeClient {
 public:
-  TradeClient(const std::string &filepath);
-  ~TradeClient();
+    TradeClientApifiny(const std::string &filepath, const FromAppCallback fromAppCallback);
+  ~TradeClientApifiny();
 
   auto start() const -> void;
   auto stop() const -> void;
@@ -33,6 +37,6 @@ private:
   FIX::Initiator *initiator;
 };
 
-auto create_client(const std::string &filepath) -> std::unique_ptr<TradeClient>;
+
 
 #endif
