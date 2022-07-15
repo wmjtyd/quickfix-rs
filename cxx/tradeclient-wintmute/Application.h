@@ -24,82 +24,110 @@
 
 #include "quickfix/Application.h"
 #include "quickfix/MessageCracker.h"
-#include "quickfix/Mutex.h"
 #include "quickfix/Values.h"
+#include "quickfix/Mutex.h"
 
-#include "quickfix/fix40/ExecutionReport.h"
 #include "quickfix/fix40/NewOrderSingle.h"
+#include "quickfix/fix40/ExecutionReport.h"
+#include "quickfix/fix40/OrderCancelRequest.h"
 #include "quickfix/fix40/OrderCancelReject.h"
 #include "quickfix/fix40/OrderCancelReplaceRequest.h"
-#include "quickfix/fix40/OrderCancelRequest.h"
 
-#include "quickfix/fix41/ExecutionReport.h"
 #include "quickfix/fix41/NewOrderSingle.h"
+#include "quickfix/fix41/ExecutionReport.h"
+#include "quickfix/fix41/OrderCancelRequest.h"
 #include "quickfix/fix41/OrderCancelReject.h"
 #include "quickfix/fix41/OrderCancelReplaceRequest.h"
-#include "quickfix/fix41/OrderCancelRequest.h"
 
-#include "quickfix/fix42/ExecutionReport.h"
 #include "quickfix/fix42/NewOrderSingle.h"
+#include "quickfix/fix42/ExecutionReport.h"
+#include "quickfix/fix42/OrderCancelRequest.h"
 #include "quickfix/fix42/OrderCancelReject.h"
 #include "quickfix/fix42/OrderCancelReplaceRequest.h"
-#include "quickfix/fix42/OrderCancelRequest.h"
 
-#include "quickfix/fix43/ExecutionReport.h"
-#include "quickfix/fix43/MarketDataRequest.h"
 #include "quickfix/fix43/NewOrderSingle.h"
+#include "quickfix/fix43/ExecutionReport.h"
+#include "quickfix/fix43/OrderCancelRequest.h"
 #include "quickfix/fix43/OrderCancelReject.h"
 #include "quickfix/fix43/OrderCancelReplaceRequest.h"
-#include "quickfix/fix43/OrderCancelRequest.h"
+#include "quickfix/fix43/MarketDataRequest.h"
 
-#include "quickfix/fix44/ExecutionReport.h"
-#include "quickfix/fix44/MarketDataRequest.h"
 #include "quickfix/fix44/NewOrderSingle.h"
+#include "quickfix/fix44/ExecutionReport.h"
+#include "quickfix/fix44/OrderCancelRequest.h"
 #include "quickfix/fix44/OrderCancelReject.h"
 #include "quickfix/fix44/OrderCancelReplaceRequest.h"
-#include "quickfix/fix44/OrderCancelRequest.h"
+#include "quickfix/fix44/MarketDataRequest.h"
+#include "quickfix/fix44/MarketDataSnapshotFullRefresh.h"
+#include "quickfix/fix44/PositionReport.h"
+#include "quickfix/fix44/QuoteRequest.h"
+#include "quickfix/fix44/Quote.h"
+#include "quickfix/fix44/RequestForPositions.h"
+#include "quickfix/fix44/SecurityListRequest.h"
+#include "quickfix/fix44/SecurityList.h"
+#include "quickfix/fix44/UserRequest.h"
+#include "quickfix/fix44/UserResponse.h"
+#include "quickfix/fix44/Logout.h"
 
-#include "quickfix/fix50/ExecutionReport.h"
-#include "quickfix/fix50/MarketDataRequest.h"
+
+
+
 #include "quickfix/fix50/NewOrderSingle.h"
+#include "quickfix/fix50/ExecutionReport.h"
+#include "quickfix/fix50/OrderCancelRequest.h"
 #include "quickfix/fix50/OrderCancelReject.h"
 #include "quickfix/fix50/OrderCancelReplaceRequest.h"
-#include "quickfix/fix50/OrderCancelRequest.h"
+#include "quickfix/fix50/MarketDataRequest.h"
+#include "quickfix/fix50/SecurityList.h"
 
 #include <queue>
 
-class Application : public FIX::Application, public FIX::MessageCracker {
+#include "snowflake.hpp"
+
+using snowflake_t = snowflake<1534832906275L,std::mutex>;
+
+class Application :
+      public FIX::Application,
+      public FIX::MessageCracker
+{
+private:
+    snowflake_t mUUID;
 public:
-  auto new_order_single(const std::string &order_id, const std::string &symbol,
-                        const int side, const int quantity, const int price,
-                        const int time_in_force) const -> void;
+  Application();
+  void run();
 
 private:
-  void onCreate(const FIX::SessionID &);
-  void onLogon(const FIX::SessionID &sessionID);
-  void onLogout(const FIX::SessionID &sessionID);
-  void toAdmin(FIX::Message &, const FIX::SessionID &);
-  void toApp(FIX::Message &, const FIX::SessionID &) EXCEPT(FIX::DoNotSend);
 
-  void fromAdmin(const FIX::Message &, const FIX::SessionID &)
-      EXCEPT(FIX::FieldNotFound, FIX::IncorrectDataFormat,
-             FIX::IncorrectTagValue, FIX::RejectLogon);
-
-  void fromApp(const FIX::Message &message, const FIX::SessionID &sessionID)
-      EXCEPT(FIX::FieldNotFound, FIX::IncorrectDataFormat,
-             FIX::IncorrectTagValue, FIX::UnsupportedMessageType);
+  void onCreate( const FIX::SessionID& );
+  void onLogon( const FIX::SessionID& sessionID );
+  void onLogout( const FIX::SessionID& sessionID );
+  void toAdmin( FIX::Message&, const FIX::SessionID& );
+  void toApp( FIX::Message&, const FIX::SessionID& )
+  EXCEPT( FIX::DoNotSend );
+  
+  void fromAdmin( const FIX::Message&, const FIX::SessionID& )
+  EXCEPT( FIX::FieldNotFound, FIX::IncorrectDataFormat, FIX::IncorrectTagValue, FIX::RejectLogon );
+  
+  void fromApp( const FIX::Message& message, const FIX::SessionID& sessionID )
+  EXCEPT( FIX::FieldNotFound, FIX::IncorrectDataFormat, FIX::IncorrectTagValue, FIX::UnsupportedMessageType );
 
   /*void onMessage( const FIX40::ExecutionReport&, const FIX::SessionID& );
   void onMessage( const FIX40::OrderCancelReject&, const FIX::SessionID& );
   void onMessage( const FIX41::ExecutionReport&, const FIX::SessionID& );
-  void onMessage( const FIX41::OrderCancelReject&, const FIX::SessionID& );*/
-  void onMessage(const FIX42::ExecutionReport &, const FIX::SessionID &);
-  void onMessage(const FIX42::OrderCancelReject &, const FIX::SessionID &);
-  /*void onMessage( const FIX43::ExecutionReport&, const FIX::SessionID& );
-  void onMessage( const FIX43::OrderCancelReject&, const FIX::SessionID& );
+  void onMessage( const FIX41::OrderCancelReject&, const FIX::SessionID& );
+  void onMessage( const FIX42::ExecutionReport&, const FIX::SessionID& );
+  void onMessage( const FIX42::OrderCancelReject&, const FIX::SessionID& );
+  void onMessage( const FIX43::ExecutionReport&, const FIX::SessionID& );
+  void onMessage( const FIX43::OrderCancelReject&, const FIX::SessionID& );*/
+  void onMessage( const FIX44::Quote&, const FIX::SessionID& );
   void onMessage( const FIX44::ExecutionReport&, const FIX::SessionID& );
   void onMessage( const FIX44::OrderCancelReject&, const FIX::SessionID& );
-  void onMessage( const FIX50::ExecutionReport&, const FIX::SessionID& );
+  void onMessage( const FIX44::MarketDataSnapshotFullRefresh&, const FIX::SessionID& );
+  void onMessage( const FIX44::PositionReport&, const FIX::SessionID& );
+  void onMessage(const FIX44::SecurityList &, const FIX::SessionID &);
+  void onMessage(const FIX44::UserResponse &, const FIX::SessionID &);
+
+    /*void onMessage( const FIX50::ExecutionReport&, const FIX::SessionID& );
   void onMessage( const FIX50::OrderCancelReject&, const FIX::SessionID& );*/
 
   void queryEnterOrder();
@@ -130,10 +158,12 @@ private:
   FIX44::MarketDataRequest queryMarketDataRequest44();
   FIX50::MarketDataRequest queryMarketDataRequest50();
 
-  void queryHeader(FIX::Header &header);
+  void queryHeader( FIX::Header& header );
   char queryAction();
   int queryVersion();
-  bool queryConfirm(const std::string &query);
+  bool queryConfirm( const std::string& query );
+
+  char queryTestAction();
 
   FIX::SenderCompID querySenderCompID();
   FIX::TargetCompID queryTargetCompID();
@@ -148,8 +178,29 @@ private:
   FIX::StopPx queryStopPx();
   FIX::TimeInForce queryTimeInForce();
 
-  void NewOrderSingle();
-  void CancelOrder(FIX::ClOrdID &aClOrdID);
+  void put_quote(FIX::Symbol, FIX::Currency currency, FIX::Side side, FIX::OrderQty quantity);
+
+  void put_order(FIX::QuoteID quoteid, FIX::Symbol symbol, FIX::Currency currency,
+      FIX::Side side, FIX::OrderQty quantity, FIX::Price price, FIX::TimeInForce time_in_force);
+
+  void put_subscribe(FIX::Symbol symbol, bool subscribe);
+
+  void put_position(FIX::Currency currency, bool zeroPositions, bool subscribe);
+
+  void put_security(FIX::Symbol symbol);
+
+  void put_change_password(FIX::Username change_username, FIX::Password old_password, FIX::Password new_password);
+
+  void triger_logon_out();
+
+
+
+  //
+  FIX44::NewOrderSingle NewOrderSingle44(FIX::QuoteID quoteid, FIX::Symbol symbol, FIX::Currency currency,
+      FIX::Side side, FIX::OrderQty quantity, FIX::Price price, FIX::TimeInForce time_in_force, FIX::OrdType ordType);
+
+
+    std::string generateID();
 };
 
 #endif

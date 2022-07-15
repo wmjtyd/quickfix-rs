@@ -65,17 +65,18 @@ fn main() {
 
     cxx_build::bridge("src/lib.rs")
         .include(cpp_header_path)
-        .include(&cpp_source_path)
+        .include(cpp_source_path)
         .include("cxx/")
+        .include("bridge/")
         .include(cpp_root_path.join("examples/tradeclient-apifiny/inc/"))
-        .file("cxx/Application.cpp")
-        .file("cxx/Tradeclient.cpp")
+        .file("bridge/TradeClient.cpp")
         .files(BASE_FILES.iter().map(|x| cpp_source_path.join(x)))
         .files(SSL_SUPPORT_FILES.iter().map(|x| cpp_source_path.join(x)))
         .compile("quickfix-cpp");
 
     println!("cargo:rerun-if-changed=src/");
     println!("cargo:rerun-if-changed=cxx/");
+    println!("cargo:rerun-if-changed=bridge/");
     println!("cargo:rerun-if-changed=vendor/quickfix-cpp");
 
     println!("cargo:rustc-link-lib=ssl");
