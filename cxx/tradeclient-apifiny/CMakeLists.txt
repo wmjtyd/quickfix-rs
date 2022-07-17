@@ -2,7 +2,7 @@ if (HAVE_SSL AND WIN32)
 set(applink_SOURCE ${OPENSSL_INCLUDE_DIR}/openssl/applink.c)
 endif()
 
-
+LINK_DIRECTORIES(${CMAKE_SOURCE_DIR}/vendor/quickfix-cpp/src/C++)
 link_libraries(libssl.a libcrypto.a)
 add_executable(tradeclient-apifiny Application.cpp tradeclient.cpp main.cpp ${applink_SOURCE})
 TARGET_LINK_LIBRARIES(tradeclient-apifiny dl pthread)
