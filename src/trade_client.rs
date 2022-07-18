@@ -45,6 +45,33 @@ impl TradeClient {
         self.inner.stop();
     }
 
+    pub fn put_order(
+        &self,
+        quote_id: &str,
+        symbol: &str,
+        currency: &str,
+        side: u32,
+        quantity: u32,
+        price: u32,
+        time_in_force: u32,
+    ) -> String {
+        let_cxx_string!(quote_id = quote_id);
+        let_cxx_string!(symbol = symbol);
+        let_cxx_string!(currency = currency);
+
+        let order_id = self.inner.put_order(
+            &quote_id,
+            &symbol,
+            &currency,
+            side,
+            quantity,
+            price,
+            time_in_force,
+        );
+
+        order_id.to_string()
+    }
+
     pub fn poll_response(&self) {
         for message in &self.rx {
             dbg!(message);

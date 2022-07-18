@@ -134,7 +134,7 @@ std::string generate_order_id(std::string accountId) {
   // std::chrono::system_clock::now().time_since_epoch().count() /
   // std::chrono::micro << std::endl;
   auto currentTime =
-      std::chrono::system_clock::now().time_since_epoch().count() / 1000;
+      std::chrono::system_clock::now().time_since_epoch().count() / 1000000;
   std::random_device rd;
   auto r = rd();
   auto randomDigit = (r % 900) + 100;
@@ -237,11 +237,13 @@ void Application::CancelOrder(FIX::ClOrdID &aClOrdID) {
   FIX::Session::sendToTarget(orderCancelRequest);
 }
 
-auto Application::new_order_single(const std::string &order_id,
-                                   const std::string &symbol,
+auto Application::new_order_single(const std::string &symbol,
                                    const uint32_t side, const uint32_t quantity,
                                    const uint32_t price,
-                                   const uint32_t time_in_force) const -> void {
+                                   const uint32_t time_in_force) const
+    -> std::unique_ptr<std::string> {
+  const auto order_id = generate_order_id(ACCOUNT_ID);
+
   FIX42::NewOrderSingle order(FIX::ClOrdID(order_id), FIX::HandlInst('1'),
                               FIX::Symbol(symbol), FIX::Side(side),
                               FIX::TransactTime(FIX::UTCTIMESTAMP()),
@@ -259,6 +261,8 @@ auto Application::new_order_single(const std::string &order_id,
   header.setField(FIX::SecurityExchange(VENUE));
 
   FIX::Session::sendToTarget(order);
+
+  return std::make_unique<std::string>(order_id);
 }
 
 auto Application::inbound(const FIX::Message &message,

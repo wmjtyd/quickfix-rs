@@ -26,11 +26,10 @@ public:
   auto start() const -> void;
   auto stop() const -> void;
 
-  auto put_order(const std::string &order_id, const std::string &quoteid,
-                 const std::string &symbol, const std::string &currency,
-                 const uint32_t side, const uint32_t quantity,
-                 const uint32_t price, const uint32_t time_in_force) const
-      -> void;
+  auto put_order(const std::string &quoteid, const std::string &symbol,
+                 const std::string &currency, const uint32_t side,
+                 const uint32_t quantity, const uint32_t price,
+                 const uint32_t time_in_force) const -> std::unique_ptr<std::string>;
 
 private:
   Application application;

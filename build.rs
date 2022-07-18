@@ -69,7 +69,6 @@ fn main() {
         .include(&cpp_header_path)
         .include(&cpp_source_path)
         .include("cxx/")
-        .include("cxx/tradeclient-apifiny")
         .include(cpp_root_path.join("examples/tradeclient-apifiny/inc/"))
         .files(
             APIFINY_FILES

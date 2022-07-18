@@ -44,7 +44,6 @@ pub mod ffi {
 
         fn put_order(
             self: &ITradeClient,
-            order_id: &CxxString,
             quote_id: &CxxString,
             symbol: &CxxString,
             currency: &CxxString,
@@ -52,7 +51,7 @@ pub mod ffi {
             quantity: u32,
             price: u32,
             time_in_force: u32,
-        );
+        ) -> UniquePtr<CxxString>;
     }
 
     extern "Rust" {
