@@ -1,23 +1,26 @@
-#ifndef TRADECLIENT_H
-#define TRADECLIENT_H
+#pragma once
 
 #include "Application.h"
+#include "ITradeclient.h"
 
 #include "quickfix/FileStore.h"
 #include "quickfix/Log.h"
 #include "quickfix/SocketInitiator.h"
 #include "quickfix/config.h"
-//#include "rust/cxx.h"
+#include "rust/cxx.h"
 
 #include <iostream>
 #include <memory>
-#include "itradeclient.h"
-#include "common.h"
-struct ApplicationContext;
+
+struct TradeClientContext;
 
 class TradeClientApifiny : public ITradeClient {
 public:
-    TradeClientApifiny(const std::string &filepath, const FromAppCallback fromAppCallback);
+  TradeClientApifiny(
+      const std::string &filepath, rust::Box<TradeClientContext> ctx,
+      rust::Fn<void(const QuickFixMessage, const FIX::SessionID &,
+                    const rust::Box<TradeClientContext> &)>
+          inbound_callback);
   ~TradeClientApifiny();
 
   auto start() const -> void;
@@ -25,8 +28,9 @@ public:
 
   auto put_order(const std::string &order_id, const std::string &quoteid,
                  const std::string &symbol, const std::string &currency,
-                 const int side, const int quantity, const int price,
-                 const int time_in_force) const -> void;
+                 const uint32_t side, const uint32_t quantity,
+                 const uint32_t price, const uint32_t time_in_force) const
+      -> void;
 
 private:
   Application application;
@@ -36,7 +40,3 @@ private:
   FIX::ScreenLogFactory log_factory;
   FIX::Initiator *initiator;
 };
-
-
-
-#endif

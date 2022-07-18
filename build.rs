@@ -1,6 +1,6 @@
 use std::path::Path;
 
-const BASE_FILES: [&str; 45] = [
+const QUICKFIX_BASE_FILES: [&str; 45] = [
     "Acceptor.cpp",
     "DataDictionary.cpp",
     "DataDictionaryProvider.cpp",
@@ -48,7 +48,7 @@ const BASE_FILES: [&str; 45] = [
     "Utility.cpp",
 ];
 
-const SSL_SUPPORT_FILES: [&str; 7] = [
+const QUICKFIX_SSL_SUPPORT_FILES: [&str; 7] = [
     "SSLSocketAcceptor.cpp",
     "SSLSocketConnection.cpp",
     "SSLSocketInitiator.cpp",
@@ -58,25 +58,34 @@ const SSL_SUPPORT_FILES: [&str; 7] = [
     "UtilitySSL.cpp",
 ];
 
+const APIFINY_FILES: [&str; 2] = ["Application.cpp", "Tradeclient.cpp"];
+
 fn main() {
-    let cpp_root_path = Path::new("vendor/quickfix-cpp");
+    let cpp_root_path = Path::new("vendor/quickfix-cpp/");
     let cpp_header_path = cpp_root_path.join("include/");
     let cpp_source_path = cpp_root_path.join("src/C++/");
 
     cxx_build::bridge("src/lib.rs")
-        .include(cpp_header_path)
-        .include(cpp_source_path)
+        .include(&cpp_header_path)
+        .include(&cpp_source_path)
         .include("cxx/")
-        .include("bridge/")
+        .include("cxx/tradeclient-apifiny")
         .include(cpp_root_path.join("examples/tradeclient-apifiny/inc/"))
-        .file("bridge/TradeClient.cpp")
-        .files(BASE_FILES.iter().map(|x| cpp_source_path.join(x)))
-        .files(SSL_SUPPORT_FILES.iter().map(|x| cpp_source_path.join(x)))
+        .files(
+            APIFINY_FILES
+                .iter()
+                .map(|x| Path::new("cxx/tradeclient-apifiny").join(x)),
+        )
+        .files(
+            QUICKFIX_BASE_FILES
+                .iter()
+                .chain(&QUICKFIX_SSL_SUPPORT_FILES)
+                .map(|x| cpp_source_path.join(x)),
+        )
         .compile("quickfix-cpp");
 
     println!("cargo:rerun-if-changed=src/");
     println!("cargo:rerun-if-changed=cxx/");
-    println!("cargo:rerun-if-changed=bridge/");
     println!("cargo:rerun-if-changed=vendor/quickfix-cpp");
 
     println!("cargo:rustc-link-lib=ssl");

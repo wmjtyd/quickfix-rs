@@ -1,9 +1,6 @@
-use rand::prelude::*;
+mod trade_client;
 
-use std::{
-    sync::mpsc,
-    time::{SystemTime, UNIX_EPOCH},
-};
+pub use trade_client::{TradeClient, TradeClientContext};
 
 #[cxx::bridge]
 pub mod ffi {
@@ -26,28 +23,27 @@ pub mod ffi {
         type SessionID;
     }
 
-#[cxx::bridge]
-pub mod ffi {
     unsafe extern "C++" {
-        include!("quickfix-rs/bridge/include/Tradeclient.h");
+        include!("quickfix-rs/cxx/ITradeclient.h");
 
-        type TradeClient;
+        type ITradeClient;
 
         fn create_client(
-            filepath: &CxxString,
-            app_ctx: Box<ApplicationContext>,
+            client_type: u32,
+            file_path: &CxxString,
+            ctx: Box<TradeClientContext>,
             inbound_callback: fn(
                 message: QuickFixMessage,
                 session_id: &SessionID,
-                app_ctx: &Box<ApplicationContext>,
+                ctx: &Box<TradeClientContext>,
             ),
-        ) -> UniquePtr<TradeClient>;
+        ) -> UniquePtr<ITradeClient>;
 
         fn start(&self);
         fn stop(&self);
 
         fn put_order(
-            self: &TradeClient,
+            self: &ITradeClient,
             order_id: &CxxString,
             quote_id: &CxxString,
             symbol: &CxxString,
@@ -60,43 +56,8 @@ pub mod ffi {
     }
 
     extern "Rust" {
-        type ApplicationContext;
+        type TradeClientContext;
 
         fn inbound(&self, message: QuickFixMessage, session_id: &SessionID);
     }
-}
-
-pub fn generate_order_id(account_id: &str) -> String {
-    let account_id = account_id.split('-').last().expect("Must have number part");
-    let timestamp = SystemTime::now()
-        .duration_since(UNIX_EPOCH)
-        .expect("Time went backwards")
-        .as_millis();
-    let random_number = random::<u16>() % 1000;
-
-    format!("{}{:.13}{:03}", account_id, timestamp, random_number)
-}
-
-pub struct ApplicationContext(mpsc::Sender<ffi::QuickFixMessage>);
-
-impl ApplicationContext {
-    pub fn new() -> (Self, mpsc::Receiver<ffi::QuickFixMessage>) {
-        let (tx, rx) = mpsc::channel();
-        (Self(tx), rx)
-    }
-
-    pub fn inbound(&self, message: ffi::QuickFixMessage, session_id: &ffi::SessionID) {
-        self.0.send(message).unwrap();
-    }
-}
-
-pub fn generate_order_id(account_id: &str) -> String {
-    let account_id = account_id.split('-').last().expect("Must have number part");
-    let timestamp = SystemTime::now()
-        .duration_since(UNIX_EPOCH)
-        .expect("Time went backwards")
-        .as_millis();
-    let random_number = random::<u16>() / 1000;
-
-    format!("{}{:.13}{:03}", account_id, timestamp, random_number)
 }
