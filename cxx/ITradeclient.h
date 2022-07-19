@@ -22,9 +22,9 @@ public:
   virtual auto stop() const -> void = 0;
 
   virtual auto put_order(const std::string &quoteid, const std::string &symbol,
-                         const std::string &currency, const uint32_t side,
+                         const std::string &currency, const char side,
                          const uint32_t quantity, const uint32_t price,
-                         const uint32_t time_in_force) const
+                         const char time_in_force) const
       -> std::unique_ptr<std::string> = 0;
 };
 

@@ -11,3 +11,4 @@ rand = "0.8"
 
 [build-dependencies]
 cxx-build = "1"
+bindgen = "0.60"

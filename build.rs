@@ -1,4 +1,7 @@
-use std::path::Path;
+use std::{
+    env,
+    path::{Path, PathBuf},
+};
 
 const QUICKFIX_BASE_FILES: [&str; 45] = [
     "Acceptor.cpp",
@@ -61,6 +64,19 @@ const QUICKFIX_SSL_SUPPORT_FILES: [&str; 7] = [
 const APIFINY_FILES: [&str; 2] = ["Application.cpp", "Tradeclient.cpp"];
 
 fn main() {
+    let bindings = bindgen::Builder::default()
+        .clang_args(["-x", "c++"])
+        .header("cxx/wrapper.h")
+        .parse_callbacks(Box::new(bindgen::CargoCallbacks))
+        .opaque_type("std::.*")
+        .allowlist_var("FIX.*")
+        .generate()
+        .expect("Unable to generate bindings");
+    let out_path = PathBuf::from(env::var("OUT_DIR").unwrap());
+    bindings
+        .write_to_file(out_path.join("bindings.rs"))
+        .expect("Couldn't write bindings!");
+
     let cpp_root_path = Path::new("vendor/quickfix-cpp/");
     let cpp_header_path = cpp_root_path.join("include/");
     let cpp_source_path = cpp_root_path.join("src/C++/");
@@ -85,7 +101,7 @@ fn main() {
 
     println!("cargo:rerun-if-changed=src/");
     println!("cargo:rerun-if-changed=cxx/");
-    println!("cargo:rerun-if-changed=vendor/quickfix-cpp");
+    println!("cargo:rerun-if-changed=vendor/quickfix-cpp/");
 
     println!("cargo:rustc-link-lib=ssl");
     println!("cargo:rustc-link-lib=crypto");

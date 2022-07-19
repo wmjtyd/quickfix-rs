@@ -39,10 +39,10 @@ auto TradeClientApifiny::stop() const -> void { this->initiator->stop(); }
 
 auto TradeClientApifiny::put_order(const std::string &quoteid,
                                    const std::string &symbol,
-                                   const std::string &currency,
-                                   const uint32_t side, const uint32_t quantity,
+                                   const std::string &currency, const char side,
+                                   const uint32_t quantity,
                                    const uint32_t price,
-                                   const uint32_t time_in_force) const
+                                   const char time_in_force) const
     -> std::unique_ptr<std::string> {
   return this->application.new_order_single(symbol, side, quantity, price,
                                             time_in_force);

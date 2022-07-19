@@ -1,4 +1,8 @@
-use std::{os::unix::prelude::OsStrExt, path::Path, sync::mpsc};
+use std::{
+    os::{raw::c_char, unix::prelude::OsStrExt},
+    path::Path,
+    sync::mpsc,
+};
 
 use cxx::{let_cxx_string, UniquePtr};
 
@@ -12,7 +16,7 @@ impl TradeClientContext {
         (Self(tx), rx)
     }
 
-    pub fn inbound(&self, message: ffi::QuickFixMessage, session_id: &ffi::SessionID) {
+    pub fn inbound(&self, message: ffi::QuickFixMessage, _session_id: &ffi::SessionID) {
         self.0.send(message).unwrap();
     }
 }
@@ -45,15 +49,16 @@ impl TradeClient {
         self.inner.stop();
     }
 
+    #[allow(clippy::too_many_arguments)]
     pub fn put_order(
         &self,
         quote_id: &str,
         symbol: &str,
         currency: &str,
-        side: u32,
+        side: c_char,
         quantity: u32,
         price: u32,
-        time_in_force: u32,
+        time_in_force: c_char,
     ) -> String {
         let_cxx_string!(quote_id = quote_id);
         let_cxx_string!(symbol = symbol);

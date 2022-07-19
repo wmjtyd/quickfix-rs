@@ -1,6 +1,10 @@
+#![allow(non_upper_case_globals, non_camel_case_types, non_snake_case)]
+
 mod trade_client;
 
 pub use trade_client::{TradeClient, TradeClientContext};
+
+include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
 
 #[cxx::bridge]
 pub mod ffi {
@@ -28,6 +32,7 @@ pub mod ffi {
 
         type ITradeClient;
 
+        #[allow(clippy::borrowed_box)]
         fn create_client(
             client_type: u32,
             file_path: &CxxString,
@@ -39,18 +44,19 @@ pub mod ffi {
             ),
         ) -> UniquePtr<ITradeClient>;
 
-        fn start(&self);
-        fn stop(&self);
+        fn start(self: &ITradeClient);
+        fn stop(self: &ITradeClient);
 
+        #[allow(clippy::too_many_arguments)]
         fn put_order(
             self: &ITradeClient,
             quote_id: &CxxString,
             symbol: &CxxString,
             currency: &CxxString,
-            side: u32,
+            side: c_char,
             quantity: u32,
             price: u32,
-            time_in_force: u32,
+            time_in_force: c_char,
         ) -> UniquePtr<CxxString>;
     }
 

@@ -238,9 +238,9 @@ void Application::CancelOrder(FIX::ClOrdID &aClOrdID) {
 }
 
 auto Application::new_order_single(const std::string &symbol,
-                                   const uint32_t side, const uint32_t quantity,
+                                   const char side, const uint32_t quantity,
                                    const uint32_t price,
-                                   const uint32_t time_in_force) const
+                                   const char time_in_force) const
     -> std::unique_ptr<std::string> {
   const auto order_id = generate_order_id(ACCOUNT_ID);
 
@@ -262,16 +262,15 @@ auto Application::new_order_single(const std::string &symbol,
 
   FIX::Session::sendToTarget(order);
 
-  return std::make_unique<std::string>(order_id);
+  return std::make_unique<std::string>(std::move(order_id));
 }
 
 auto Application::inbound(const FIX::Message &message,
                           const FixMessageType from,
                           const FIX::SessionID &session_id) -> void {
   const auto content = message.toString();
-  auto *content_ptr = new std::string(std::move(content));
   QuickFixMessage quick_fix_message{
-    content : std::unique_ptr<std::string>(content_ptr),
+    content : std::make_unique<std::string>(std::move(content)),
     from : from,
   };
 
