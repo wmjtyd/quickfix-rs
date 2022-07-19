@@ -58,8 +58,8 @@ pub mod ffi {
             self: &ITradeClient,
             symbol: &CxxString,
             side: c_char,
-            quantity: u32,
-            price: u32,
+            quantity: f64,
+            price: f64,
             time_in_force: c_char,
         ) -> UniquePtr<CxxString>;
         fn cancel_order(

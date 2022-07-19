@@ -19,7 +19,7 @@ public:
               rust::Fn<void(const QuickFixMessage,
                             const rust::Box<TradeClientContext> &)>);
   auto new_order_single(const std::string &symbol, const char side,
-                        const uint32_t quantity, const uint32_t price,
+                        const double quantity, const double price,
                         const char time_in_force) const
       -> std::unique_ptr<std::string>;
   auto cancel_order(const std::string &order_id, const std::string &symbol,

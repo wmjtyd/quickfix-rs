@@ -17,8 +17,13 @@ fn main() {
     thread::sleep(Duration::from_secs(3));
 
     let_cxx_string!(symbol = "BTCUSDT");
-    let order_id =
-        trade_client.put_order(&symbol, FIX_Side_BUY, 1, 1, FIX_TimeInForce_AT_THE_OPENING);
+    let order_id = trade_client.put_order(
+        &symbol,
+        FIX_Side_BUY,
+        0.0001,
+        100000.0,
+        FIX_TimeInForce_AT_THE_OPENING,
+    );
     dbg!(&order_id);
 
     loop {

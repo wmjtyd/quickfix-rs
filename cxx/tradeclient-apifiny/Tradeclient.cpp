@@ -38,8 +38,7 @@ auto TradeClientApifiny::start() const -> void {
 auto TradeClientApifiny::stop() const -> void { this->initiator->stop(); }
 
 auto TradeClientApifiny::put_order(const std::string &symbol, char side,
-                                   const uint32_t quantity,
-                                   const uint32_t price,
+                                   const double quantity, const double price,
                                    const char time_in_force) const
     -> std::unique_ptr<std::string> {
   return this->application.new_order_single(symbol, side, quantity, price,

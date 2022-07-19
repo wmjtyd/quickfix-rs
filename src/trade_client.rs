@@ -50,8 +50,8 @@ impl TradeClient {
         &self,
         symbol: &cxx::CxxString,
         side: c_char,
-        quantity: u32,
-        price: u32,
+        quantity: f64,
+        price: f64,
         time_in_force: c_char,
     ) -> cxx::UniquePtr<cxx::CxxString> {
         self.inner

@@ -12,7 +12,7 @@
 
 // config
 std::string SYMBOL = "BTCUSDT";
-std::string VENUE = "FTX"; // choose exchange you want to trade
+std::string VENUE = "BINANCE";
 std::string SenderCompID = ACCOUNT_ID;
 std::string TargetCompID = "APIFINY";
 
@@ -218,8 +218,7 @@ void Application::toApp(FIX::Message &message, const FIX::SessionID &sessionID)
 }
 
 auto Application::new_order_single(const std::string &symbol, const char side,
-                                   const uint32_t quantity,
-                                   const uint32_t price,
+                                   const double quantity, const double price,
                                    const char time_in_force) const
     -> std::unique_ptr<std::string> {
   const auto order_id = generate_order_id(ACCOUNT_ID);

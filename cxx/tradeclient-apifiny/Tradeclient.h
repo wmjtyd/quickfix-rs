@@ -26,8 +26,8 @@ public:
   auto start() const -> void override;
   auto stop() const -> void override;
 
-  auto put_order(const std::string &symbol, char side, const uint32_t quantity,
-                 const uint32_t price, const char time_in_force) const
+  auto put_order(const std::string &symbol, char side, const double quantity,
+                 const double price, const char time_in_force) const
       -> std::unique_ptr<std::string> override;
   auto cancel_order(const std::string &order_id, const std::string &symbol,
                     const char side, const FIX::SessionID &session_id) const
