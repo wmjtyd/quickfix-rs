@@ -119,28 +119,14 @@ std::string generate_order_id(std::string accountId) {
   std::vector<std::string> result;
   split(accountId, result, "-");
 
-  // orderId if requested, should be composed of: account number + random number
-  // + 13 digit timestamp+3 digit random number. Up to 64 digits.
-
-  // std::cout << "split:" << result[1] << std::endl
-  std::cout << "now:"
-            << std::chrono::system_clock::now().time_since_epoch().count() /
-                   1000
-            << std::endl;
-  // std::cout << "now:" <<
-  // std::chrono::system_clock::now().time_since_epoch().count() /
-  // std::chrono::micro << std::endl;
   auto currentTime =
       std::chrono::system_clock::now().time_since_epoch().count() / 1000000;
   std::random_device rd;
   auto r = rd();
   auto randomDigit = (r % 900) + 100;
-  std::cout << "countid:" << result[1] << std::endl;
-  std::cout << "currentTime:" << currentTime << std::endl;
-  std::cout << "randomDigit:" << randomDigit << std::endl;
   std::string orderId =
       result[1] + std::to_string(currentTime) + std::to_string(randomDigit);
-  std::cout << "orderId:" << orderId << std::endl;
+
   return orderId;
 }
 
@@ -179,11 +165,6 @@ void Application::toAdmin(FIX::Message &message,
     message.setField(FIX::RawData(signature));
     // std::cout << "signature:" << signature << std::endl;
   }
-
-  std::string m = message.toString();
-  replace_str(m, __SOH__, "|");
-  // std::cout << std::endl
-  //<< "toAdmin: " << m << std::endl;
 }
 
 void Application::fromAdmin(const FIX::Message &message,
@@ -201,21 +182,7 @@ void Application::fromApp(const FIX::Message &message,
 }
 
 void Application::toApp(FIX::Message &message, const FIX::SessionID &sessionID)
-    EXCEPT(FIX::DoNotSend) {
-  std::cout << std::endl << "toApp: " << sessionID << std::endl;
-  try {
-    FIX::PossDupFlag possDupFlag;
-    message.getHeader().getField(possDupFlag);
-    if (possDupFlag)
-      throw FIX::DoNotSend();
-  } catch (FIX::FieldNotFound &) {
-  }
-
-  std::string m = message.toString();
-  // replace_str(&m, __SOH__, "|");
-  replace_str(m, __SOH__, "|");
-  std::cout << std::endl << "OUT: " << m << std::endl;
-}
+    EXCEPT(FIX::DoNotSend) {}
 
 auto Application::new_order_single(const std::string &symbol, const char side,
                                    const double quantity, const double price,
