@@ -1,8 +1,6 @@
 #pragma once
 
 #include "quickfix/Application.h"
-#include "quickfix/MessageCracker.h"
-#include "quickfix/Mutex.h"
 #include "quickfix/Values.h"
 #include "quickfix/fix42/NewOrderSingle.h"
 #include "quickfix/fix42/OrderCancelRequest.h"
@@ -13,7 +11,7 @@ enum class FixMessageType : uint8_t;
 struct QuickFixMessage;
 struct TradeClientContext;
 
-class Application : public FIX::Application, public FIX::MessageCracker {
+class Application : public FIX::Application {
 public:
   Application(rust::Box<TradeClientContext> ctx,
               rust::Fn<void(const QuickFixMessage,

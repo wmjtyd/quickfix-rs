@@ -14,8 +14,6 @@ fn main() {
         Path::new("cxx/tradeclient-apifiny/tradeclient.cfg"),
     );
 
-    // 阻塞直到登陆
-    // 中途短线怎么办
     trade_client.start();
     thread::sleep(Duration::from_secs(3));
 

@@ -12,7 +12,7 @@ use fefix::{
     tagvalue::{Config, Decoder, FieldAccess},
     Dictionary,
 };
-use tracing::{debug, info, warn};
+use tracing::{debug, info, instrument, warn};
 
 use crate::ffi;
 
@@ -65,6 +65,7 @@ impl TradeClient {
         self.inner.stop();
     }
 
+    #[instrument(skip(self))]
     pub fn put_order(
         &self,
         symbol: &cxx::CxxString,
@@ -78,9 +79,11 @@ impl TradeClient {
             .put_order(symbol, side, quantity, price, time_in_force);
 
         let order_id = order_id.to_string_lossy().into_owned();
-        let _ = self.pending_requests.borrow_mut().insert(order_id);
+        let not_present = self.pending_requests.borrow_mut().insert(order_id);
+        debug!(not_present);
     }
 
+    #[instrument(skip(self, session_id))]
     pub fn cancel_order(
         &self,
         order_id: &cxx::CxxString,
@@ -91,7 +94,8 @@ impl TradeClient {
         self.inner.cancel_order(order_id, symbol, side, session_id);
 
         let order_id = order_id.to_string_lossy().into_owned();
-        let _ = self.pending_requests.borrow_mut().insert(order_id);
+        let not_present = self.pending_requests.borrow_mut().insert(order_id);
+        debug!(not_present);
     }
 
     pub fn poll_response(&mut self) {
@@ -112,12 +116,14 @@ impl TradeClient {
                     fix42::MsgType::ExecutionReport => {
                         let order_id = message.fv::<&str>(fix42::CL_ORD_ID).unwrap();
                         if !self.pending_requests.borrow_mut().remove(order_id) {
-                            warn!("order {} is not in pending requests", order_id);
+                            warn!("Order {} is not in pending requests", order_id);
                         }
 
                         let exec_type = message.fv(fix42::EXEC_TYPE).unwrap();
                         match exec_type {
                             fix42::ExecType::New => {
+                                info!("Order new placed {}", order_id);
+
                                 let_cxx_string!(order_id = order_id);
                                 let_cxx_string!(symbol = "BTCUSDT");
 
@@ -129,7 +135,7 @@ impl TradeClient {
                                 );
                             }
                             fix42::ExecType::Canceled => {
-                                info!("Order {} canceled", order_id);
+                                info!("Order canceled {}", order_id);
                             }
                             fix42::ExecType::Rejected => {
                                 let reason = message.fv::<&str>(fix42::TEXT).unwrap();
@@ -141,20 +147,20 @@ impl TradeClient {
                     fix42::MsgType::OrderCancelReject => {
                         let order_id = message.fv::<&str>(fix42::CL_ORD_ID).unwrap();
                         if !self.pending_requests.borrow_mut().remove(order_id) {
-                            warn!("order {} is not in pending requests", order_id);
+                            warn!("Order {} is not in pending requests", order_id);
                         }
 
                         let reason = message.fv::<&str>(fix42::TEXT).unwrap();
                         info!("Faild to cancel order {}: {}", order_id, reason);
                     }
                     fix42::MsgType::Heartbeat => {
-                        info!("Heartbeat");
+                        debug!("Heartbeat");
                     }
                     fix42::MsgType::Logon => {
-                        info!("Logon");
+                        debug!("Logon");
                     }
                     fix42::MsgType::Logout => {
-                        info!("Logout");
+                        debug!("Logout");
                     }
                     _ => todo!("{:?}", message_type),
                 }

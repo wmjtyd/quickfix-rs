@@ -136,17 +136,11 @@ Application::Application(
         inbound_callback)
     : ctx(std::move(ctx)), inbound_callback(inbound_callback) {}
 
-void Application::onCreate(const FIX::SessionID &sessionID) {
-  std::cout << std::endl << "onCreate - " << sessionID << std::endl;
-}
+void Application::onCreate(const FIX::SessionID &sessionID) {}
 
-void Application::onLogon(const FIX::SessionID &sessionID) {
-  std::cout << std::endl << "Logon - " << sessionID << std::endl;
-}
+void Application::onLogon(const FIX::SessionID &sessionID) {}
 
-void Application::onLogout(const FIX::SessionID &sessionID) {
-  std::cout << std::endl << "Logout - " << sessionID << std::endl;
-}
+void Application::onLogout(const FIX::SessionID &sessionID) {}
 
 void Application::toAdmin(FIX::Message &message,
                           const FIX::SessionID &sessionID) {
