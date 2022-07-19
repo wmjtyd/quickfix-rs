@@ -49,30 +49,19 @@ impl TradeClient {
         self.inner.stop();
     }
 
-    #[allow(clippy::too_many_arguments)]
     pub fn put_order(
         &self,
-        quote_id: &str,
         symbol: &str,
-        currency: &str,
         side: c_char,
         quantity: u32,
         price: u32,
         time_in_force: c_char,
     ) -> String {
-        let_cxx_string!(quote_id = quote_id);
         let_cxx_string!(symbol = symbol);
-        let_cxx_string!(currency = currency);
 
-        let order_id = self.inner.put_order(
-            &quote_id,
-            &symbol,
-            &currency,
-            side,
-            quantity,
-            price,
-            time_in_force,
-        );
+        let order_id = self
+            .inner
+            .put_order(&symbol, side, quantity, price, time_in_force);
 
         order_id.to_string()
     }

@@ -8,9 +8,7 @@ fn main() {
     trade_client.start();
     thread::sleep(Duration::from_secs(3));
     let order_id = trade_client.put_order(
-        "",
         "BTCUSDT",
-        "",
         FIX_Side_BUY,
         1,
         1,

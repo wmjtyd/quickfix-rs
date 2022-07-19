@@ -47,12 +47,9 @@ pub mod ffi {
         fn start(self: &ITradeClient);
         fn stop(self: &ITradeClient);
 
-        #[allow(clippy::too_many_arguments)]
         fn put_order(
             self: &ITradeClient,
-            quote_id: &CxxString,
             symbol: &CxxString,
-            currency: &CxxString,
             side: c_char,
             quantity: u32,
             price: u32,
