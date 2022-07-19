@@ -11,9 +11,6 @@
 #include <random>
 
 // config
-std::string ACCOUNT_ID = "STA-01251839";
-std::string SECRET_KEY_ID = "ad9dcd566588412f992d";
-std::string SECRET_KEY = "030EC328ABCF5C4E31B34DA197B71E2B";
 std::string SYMBOL = "BTCUSDT";
 std::string VENUE = "FTX"; // choose exchange you want to trade
 std::string SenderCompID = ACCOUNT_ID;
@@ -149,8 +146,7 @@ std::string generate_order_id(std::string accountId) {
 
 Application::Application(
     rust::Box<TradeClientContext> ctx,
-    rust::Fn<void(const QuickFixMessage, const FIX::SessionID &,
-                  const rust::Box<TradeClientContext> &)>
+    rust::Fn<void(const QuickFixMessage, const rust::Box<TradeClientContext> &)>
         inbound_callback)
     : ctx(std::move(ctx)), inbound_callback(inbound_callback) {}
 
@@ -194,14 +190,14 @@ void Application::fromAdmin(const FIX::Message &message,
                             const FIX::SessionID &sessionID)
     EXCEPT(FIX::FieldNotFound, FIX::IncorrectDataFormat, FIX::IncorrectTagValue,
            FIX::RejectLogon) {
-  this->inbound(message, FixMessageType::Admin, sessionID);
+  this->inbound(message, sessionID, FixMessageType::Admin);
 }
 
 void Application::fromApp(const FIX::Message &message,
                           const FIX::SessionID &sessionID)
     EXCEPT(FIX::FieldNotFound, FIX::IncorrectDataFormat, FIX::IncorrectTagValue,
            FIX::UnsupportedMessageType) {
-  this->inbound(message, FixMessageType::Admin, sessionID);
+  this->inbound(message, sessionID, FixMessageType::App);
 }
 
 void Application::toApp(FIX::Message &message, const FIX::SessionID &sessionID)
@@ -221,24 +217,8 @@ void Application::toApp(FIX::Message &message, const FIX::SessionID &sessionID)
   std::cout << std::endl << "OUT: " << m << std::endl;
 }
 
-void Application::CancelOrder(FIX::ClOrdID &aClOrdID) {
-  auto nowUtc =
-      std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-  std::cout << "order utc:" << nowUtc << std::endl;
-
-  //    11	ClOrdID	Only present on order acknowledgements, ExecType=New
-  //    (150=0) 1	    Account	account id 207	SecurityExchange
-  //    VENUE 58	Text	Free format text string
-
-  FIX42::OrderCancelRequest orderCancelRequest;
-  orderCancelRequest.set(aClOrdID);
-  orderCancelRequest.set(FIX::Account(ACCOUNT_ID));
-  orderCancelRequest.set(FIX::SecurityExchange(VENUE));
-  FIX::Session::sendToTarget(orderCancelRequest);
-}
-
-auto Application::new_order_single(const std::string &symbol,
-                                   const char side, const uint32_t quantity,
+auto Application::new_order_single(const std::string &symbol, const char side,
+                                   const uint32_t quantity,
                                    const uint32_t price,
                                    const char time_in_force) const
     -> std::unique_ptr<std::string> {
@@ -248,12 +228,11 @@ auto Application::new_order_single(const std::string &symbol,
                               FIX::Symbol(symbol), FIX::Side(side),
                               FIX::TransactTime(FIX::UTCTIMESTAMP()),
                               FIX::OrdType(FIX::OrdType_LIMIT));
-
   order.set(FIX::OrderQty(quantity));
   order.set(FIX::TimeInForce(time_in_force));
   order.set(FIX::Price(price));
   order.set(FIX::Account(ACCOUNT_ID));
-  order.set(FIX::Text("new Order"));
+  order.set(FIX::Text("New Order"));
 
   auto &header = order.getHeader();
   header.setField(FIX::SenderCompID(ACCOUNT_ID));
@@ -265,14 +244,28 @@ auto Application::new_order_single(const std::string &symbol,
   return std::make_unique<std::string>(std::move(order_id));
 }
 
+auto Application::cancel_order(const std::string &order_id,
+                               const std::string &symbol, const char side,
+                               const FIX::SessionID &session_id) const -> void {
+  FIX42::OrderCancelRequest orderCancelRequest(order_id, order_id, symbol, side,
+                                               FIX::UTCTIMESTAMP());
+  orderCancelRequest.set(FIX::ClOrdID(order_id));
+  orderCancelRequest.set(FIX::Account(ACCOUNT_ID));
+  orderCancelRequest.set(FIX::Text("Cancel Order"));
+  orderCancelRequest.set(FIX::SecurityExchange(VENUE));
+
+  FIX::Session::sendToTarget(orderCancelRequest, session_id);
+}
+
 auto Application::inbound(const FIX::Message &message,
-                          const FixMessageType from,
-                          const FIX::SessionID &session_id) -> void {
+                          const FIX::SessionID &session_id,
+                          const FixMessageType from) -> void {
   const auto content = message.toString();
   QuickFixMessage quick_fix_message{
     content : std::make_unique<std::string>(std::move(content)),
+    session_id : std::make_unique<FIX::SessionID>(std::move(session_id)),
     from : from,
   };
 
-  this->inbound_callback(std::move(quick_fix_message), session_id, this->ctx);
+  this->inbound_callback(std::move(quick_fix_message), this->ctx);
 }

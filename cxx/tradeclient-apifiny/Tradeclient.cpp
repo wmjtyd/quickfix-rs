@@ -1,5 +1,6 @@
 #include "Tradeclient.h"
 #include "Application.h"
+#include "quickfix-rs/src/lib.rs.h"
 
 #include "../../src/getopt-repl.h"
 #include "quickfix/FileStore.h"
@@ -14,8 +15,7 @@
 
 TradeClientApifiny::TradeClientApifiny(
     const std::string &filepath, rust::Box<TradeClientContext> ctx,
-    rust::Fn<void(const QuickFixMessage, const FIX::SessionID &,
-                  const rust::Box<TradeClientContext> &)>
+    rust::Fn<void(const QuickFixMessage, const rust::Box<TradeClientContext> &)>
         inbound_callback)
     : application(std::move(ctx), inbound_callback), settings(filepath),
       store_factory(settings), log_factory(settings),
@@ -46,15 +46,27 @@ auto TradeClientApifiny::put_order(const std::string &symbol, char side,
                                             time_in_force);
 }
 
-auto create_client(uint32_t type, const std::string &filepath,
-                   rust::Box<TradeClientContext> ctx,
-                   rust::Fn<void(const QuickFixMessage, const FIX::SessionID &,
-                                 const rust::Box<TradeClientContext> &)>
-                       inbound_callback) -> std::unique_ptr<ITradeClient> {
+auto TradeClientApifiny::cancel_order(const std::string &order_id,
+                                      const std::string &symbol,
+                                      const char side,
+                                      const FIX::SessionID &session_id) const
+    -> void {
+  this->application.cancel_order(order_id, symbol, side, session_id);
+}
+
+auto create_client(
+    const TradeClientType type, const std::string &filepath,
+    rust::Box<TradeClientContext> ctx,
+    rust::Fn<void(const QuickFixMessage, const rust::Box<TradeClientContext> &)>
+        inbound_callback) -> std::unique_ptr<ITradeClient> {
   ITradeClient *pitradeclient = nullptr;
-  if (TradeClient_Apifiny == type) {
+  switch (type) {
+  case TradeClientType::Apifiny:
     pitradeclient =
         new TradeClientApifiny(filepath, std::move(ctx), inbound_callback);
+    break;
+  case TradeClientType::Wintmute:
+    break;
   }
 
   return std::unique_ptr<ITradeClient>(pitradeclient);

@@ -2,29 +2,40 @@
 
 mod trade_client;
 
+use std::fmt;
+
 pub use trade_client::{TradeClient, TradeClientContext};
 
 include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
 
 #[cxx::bridge]
 pub mod ffi {
-    #[derive(Copy, Clone, Debug)]
+    #[derive(Copy, Clone, Debug, Eq, PartialEq, Hash)]
+    enum TradeClientType {
+        Apifiny = 1,
+        Wintmute,
+    }
+
+    #[derive(Copy, Clone, Debug, Eq, PartialEq, Hash)]
     enum FixMessageType {
         Admin,
         App,
     }
 
-    #[derive(Debug)]
     struct QuickFixMessage {
         content: UniquePtr<CxxString>,
+        session_id: UniquePtr<SessionID>,
         from: FixMessageType,
     }
 
     #[namespace = "FIX"]
     unsafe extern "C++" {
-        include!("quickfix-rs/vendor/quickfix-cpp/src/C++/Values.h");
+        include!("quickfix-rs/vendor/quickfix-cpp/src/C++/SessionID.h");
 
         type SessionID;
+
+        #[rust_name = "to_string_frozen"]
+        fn toStringFrozen(self: &SessionID) -> &CxxString;
     }
 
     unsafe extern "C++" {
@@ -34,14 +45,10 @@ pub mod ffi {
 
         #[allow(clippy::borrowed_box)]
         fn create_client(
-            client_type: u32,
+            client_type: TradeClientType,
             file_path: &CxxString,
             ctx: Box<TradeClientContext>,
-            inbound_callback: fn(
-                message: QuickFixMessage,
-                session_id: &SessionID,
-                ctx: &Box<TradeClientContext>,
-            ),
+            inbound_callback: fn(message: QuickFixMessage, ctx: &Box<TradeClientContext>),
         ) -> UniquePtr<ITradeClient>;
 
         fn start(self: &ITradeClient);
@@ -55,11 +62,28 @@ pub mod ffi {
             price: u32,
             time_in_force: c_char,
         ) -> UniquePtr<CxxString>;
+        fn cancel_order(
+            self: &ITradeClient,
+            order_id: &CxxString,
+            symbol: &CxxString,
+            side: c_char,
+            session_id: &SessionID,
+        );
     }
 
     extern "Rust" {
         type TradeClientContext;
 
-        fn inbound(&self, message: QuickFixMessage, session_id: &SessionID);
+        fn inbound(&self, message: QuickFixMessage);
+    }
+}
+
+impl fmt::Debug for ffi::QuickFixMessage {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("QuickFixMessage")
+            .field("content", &self.content)
+            .field("session_id", self.session_id.to_string_frozen())
+            .field("from", &self.from)
+            .finish()
     }
 }

@@ -16,7 +16,7 @@ impl TradeClientContext {
         (Self(tx), rx)
     }
 
-    pub fn inbound(&self, message: ffi::QuickFixMessage, _session_id: &ffi::SessionID) {
+    pub fn inbound(&self, message: ffi::QuickFixMessage) {
         self.0.send(message).unwrap();
     }
 }
@@ -27,16 +27,13 @@ pub struct TradeClient {
 }
 
 impl TradeClient {
-    pub fn new(client_type: u32, file_path: &Path) -> Self {
+    pub fn new(client_type: ffi::TradeClientType, file_path: &Path) -> Self {
         let_cxx_string!(file_path = file_path.as_os_str().as_bytes());
         let (ctx, rx) = TradeClientContext::new();
 
-        let inner = ffi::create_client(
-            client_type,
-            &file_path,
-            Box::new(ctx),
-            |message, session_id, ctx| ctx.inbound(message, session_id),
-        );
+        let inner = ffi::create_client(client_type, &file_path, Box::new(ctx), |message, ctx| {
+            ctx.inbound(message)
+        });
 
         Self { inner, rx }
     }
@@ -51,19 +48,28 @@ impl TradeClient {
 
     pub fn put_order(
         &self,
-        symbol: &str,
+        symbol: &cxx::CxxString,
         side: c_char,
         quantity: u32,
         price: u32,
         time_in_force: c_char,
-    ) -> String {
-        let_cxx_string!(symbol = symbol);
+    ) -> cxx::UniquePtr<cxx::CxxString> {
+        self.inner
+            .put_order(symbol, side, quantity, price, time_in_force)
+    }
 
-        let order_id = self
-            .inner
-            .put_order(&symbol, side, quantity, price, time_in_force);
+    pub fn cancel_order(
+        &self,
+        order_id: &cxx::CxxString,
+        symbol: &cxx::CxxString,
+        side: c_char,
+        session_id: &ffi::SessionID,
+    ) {
+        self.inner.cancel_order(order_id, symbol, side, session_id);
+    }
 
-        order_id.to_string()
+    pub fn recv(&self) -> ffi::QuickFixMessage {
+        self.rx.recv().unwrap()
     }
 
     pub fn poll_response(&self) {
