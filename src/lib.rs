@@ -89,6 +89,6 @@ impl fmt::Debug for ffi::QuickFixMessage {
 }
 
 unsafe impl Send for ffi::SessionID {}
+unsafe impl Sync for ffi::SessionID {}
 unsafe impl Send for ffi::ITradeClient {}
-// TODO: Is ITradeClient Sync?
 unsafe impl Sync for ffi::ITradeClient {}

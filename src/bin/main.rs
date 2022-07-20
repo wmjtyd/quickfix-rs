@@ -1,4 +1,4 @@
-use std::{path::Path, thread, time::Duration};
+use std::path::Path;
 
 use cxx::let_cxx_string;
 use fefix::{
@@ -6,13 +6,15 @@ use fefix::{
     tagvalue::{Config, Decoder, FieldAccess},
     Dictionary,
 };
+use tokio::{task, time};
 use tracing::info;
 
 use quickfix_rs::{
     ffi::TradeClientType, FIX_Side_BUY, FIX_Side_SELL, FIX_TimeInForce_AT_THE_OPENING, TradeClient,
 };
 
-fn main() {
+#[tokio::main]
+async fn main() {
     tracing_subscriber::fmt::init();
 
     let trade_client = TradeClient::new(
@@ -22,29 +24,32 @@ fn main() {
     trade_client.start();
 
     let trade_client_clone = trade_client.clone();
-    thread::spawn(move || {
-        thread::sleep(Duration::from_secs(3));
+    let _handle = task::spawn(async move {
+        time::sleep(time::Duration::from_secs(3)).await;
 
         let_cxx_string!(symbol = "BTCUSDT");
-        let (content, session_id) = trade_client_clone.put_order(
-            &symbol,
-            FIX_Side_BUY,
-            0.0001,
-            100000.0,
-            FIX_TimeInForce_AT_THE_OPENING,
-        );
+        let (content, session_id) = trade_client_clone
+            .put_order(
+                &symbol,
+                FIX_Side_BUY,
+                0.0001,
+                100000.0,
+                FIX_TimeInForce_AT_THE_OPENING,
+            )
+            .await;
 
         let fix_dictionary = Dictionary::fix42();
         let mut fix_decoder = Decoder::<Config>::new(fix_dictionary);
         let order_id = handle_message(&mut fix_decoder, content);
 
         let_cxx_string!(order_id = order_id);
-        let (content, _) =
-            trade_client_clone.cancel_order(&order_id, &symbol, FIX_Side_SELL, &session_id);
+        let (content, _) = trade_client_clone
+            .cancel_order(&order_id, &symbol, FIX_Side_SELL, &session_id)
+            .await;
         let _ = handle_message(&mut fix_decoder, content);
     });
 
-    trade_client.poll_response();
+    trade_client.poll_response().await;
 }
 
 fn handle_message(fix_decoder: &mut Decoder, content: cxx::UniquePtr<cxx::CxxString>) -> String {
