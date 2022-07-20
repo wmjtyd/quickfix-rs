@@ -161,6 +161,9 @@ void Application::toAdmin(FIX::Message &message,
   }
 }
 
+void Application::toApp(FIX::Message &message, const FIX::SessionID &sessionID)
+    EXCEPT(FIX::DoNotSend) {}
+
 void Application::fromAdmin(const FIX::Message &message,
                             const FIX::SessionID &sessionID)
     EXCEPT(FIX::FieldNotFound, FIX::IncorrectDataFormat, FIX::IncorrectTagValue,
@@ -174,9 +177,6 @@ void Application::fromApp(const FIX::Message &message,
            FIX::UnsupportedMessageType) {
   this->inbound(message, sessionID, FixMessageType::App);
 }
-
-void Application::toApp(FIX::Message &message, const FIX::SessionID &sessionID)
-    EXCEPT(FIX::DoNotSend) {}
 
 auto Application::new_order_single(const std::string &symbol, const char side,
                                    const double quantity, const double price,
