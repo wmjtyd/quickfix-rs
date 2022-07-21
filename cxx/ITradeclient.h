@@ -24,7 +24,6 @@ public:
                          const char time_in_force) const
       -> std::unique_ptr<std::string> = 0;
   virtual auto cancel_order(const std::string &order_id,
-                            const std::string &symbol, const char side,
                             const FIX::SessionID &session_id) const -> void = 0;
 };
 

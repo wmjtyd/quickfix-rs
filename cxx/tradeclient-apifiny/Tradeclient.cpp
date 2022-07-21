@@ -46,11 +46,9 @@ auto TradeClientApifiny::put_order(const std::string &symbol, char side,
 }
 
 auto TradeClientApifiny::cancel_order(const std::string &order_id,
-                                      const std::string &symbol,
-                                      const char side,
                                       const FIX::SessionID &session_id) const
     -> void {
-  this->application.cancel_order(order_id, symbol, side, session_id);
+  this->application.cancel_order(order_id, session_id);
 }
 
 auto create_client(

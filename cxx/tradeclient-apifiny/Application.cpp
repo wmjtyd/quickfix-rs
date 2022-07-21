@@ -205,10 +205,8 @@ auto Application::new_order_single(const std::string &symbol, const char side,
 }
 
 auto Application::cancel_order(const std::string &order_id,
-                               const std::string &symbol, const char side,
                                const FIX::SessionID &session_id) const -> void {
-  FIX42::OrderCancelRequest orderCancelRequest(order_id, order_id, symbol, side,
-                                               FIX::UTCTIMESTAMP());
+  FIX42::OrderCancelRequest orderCancelRequest;
   orderCancelRequest.set(FIX::ClOrdID(order_id));
   orderCancelRequest.set(FIX::Account(ACCOUNT_ID));
   orderCancelRequest.set(FIX::Text("Cancel Order"));

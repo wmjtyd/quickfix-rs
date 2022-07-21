@@ -31,7 +31,7 @@ async fn main() {
         let (content, session_id) = trade_client_clone
             .put_order(
                 &symbol,
-                FIX_Side_BUY,
+                FIX_Side_SELL,
                 0.0001,
                 100000.0,
                 FIX_TimeInForce_AT_THE_OPENING,
@@ -44,7 +44,7 @@ async fn main() {
 
         let_cxx_string!(order_id = order_id);
         let (content, _) = trade_client_clone
-            .cancel_order(&order_id, &symbol, FIX_Side_SELL, &session_id)
+            .cancel_order(&order_id, &session_id)
             .await;
         let _ = handle_message(&mut fix_decoder, content);
     });

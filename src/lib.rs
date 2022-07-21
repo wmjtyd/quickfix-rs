@@ -62,13 +62,7 @@ pub mod ffi {
             price: f64,
             time_in_force: c_char,
         ) -> UniquePtr<CxxString>;
-        fn cancel_order(
-            self: &ITradeClient,
-            order_id: &CxxString,
-            symbol: &CxxString,
-            side: c_char,
-            session_id: &SessionID,
-        );
+        fn cancel_order(self: &ITradeClient, order_id: &CxxString, session_id: &SessionID);
     }
 
     extern "Rust" {

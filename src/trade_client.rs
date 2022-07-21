@@ -69,16 +69,12 @@ impl TradeClient {
     pub async fn cancel_order(
         &self,
         order_id: &cxx::CxxString,
-        symbol: &cxx::CxxString,
-        side: c_char,
         session_id: &ffi::SessionID,
     ) -> (
         cxx::UniquePtr<cxx::CxxString>,
         cxx::UniquePtr<ffi::SessionID>,
     ) {
-        self.inner
-            .cancel_order(order_id, symbol, side, session_id)
-            .await
+        self.inner.cancel_order(order_id, session_id).await
     }
 
     pub async fn poll_response(&self) {
@@ -161,15 +157,12 @@ impl TradeClientInner {
     pub async fn cancel_order(
         &self,
         order_id: &cxx::CxxString,
-        symbol: &cxx::CxxString,
-        side: c_char,
         session_id: &ffi::SessionID,
     ) -> (
         cxx::UniquePtr<cxx::CxxString>,
         cxx::UniquePtr<ffi::SessionID>,
     ) {
-        self.cxx_inner
-            .cancel_order(order_id, symbol, side, session_id);
+        self.cxx_inner.cancel_order(order_id, session_id);
 
         let order_id = order_id.to_string_lossy().into_owned();
         let (tx, rx) = oneshot::channel();
