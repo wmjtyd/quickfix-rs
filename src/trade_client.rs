@@ -16,7 +16,7 @@ pub enum OrderMessage {
         quantity: f64,
         price: f64,
         time_in_force: c_char,
-        tx: oneshot::Sender<cxx::UniquePtr<cxx::CxxString>>,
+        tx: oneshot::Sender<String>,
     },
     CancelOrder {
         order_id: cxx::CxxString,
@@ -102,6 +102,7 @@ impl TradingClient {
                 } => {
                     let_cxx_string!(symbol = symbol);
                     let order_id = self.new_order(&symbol, side, quantity, price, time_in_force);
+                    let order_id = order_id.to_string_lossy().into_owned();
                     tx.send(order_id).unwrap();
                 }
                 OrderMessage::CancelOrder {
