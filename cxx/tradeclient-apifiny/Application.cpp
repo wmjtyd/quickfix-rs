@@ -131,8 +131,8 @@ std::string generate_order_id(std::string accountId) {
 }
 
 Application::Application(
-    rust::Box<TradeClientContext> ctx,
-    rust::Fn<void(const QuickFixMessage, const rust::Box<TradeClientContext> &)>
+    rust::Box<TradingClientContext> ctx,
+    rust::Fn<void(const QuickFixMessage, const rust::Box<TradingClientContext> &)>
         inbound_callback)
     : ctx(std::move(ctx)), inbound_callback(inbound_callback) {}
 

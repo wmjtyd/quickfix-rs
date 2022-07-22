@@ -4,14 +4,14 @@ mod trade_client;
 
 use std::fmt;
 
-pub use trade_client::{TradeClient, TradeClientContext};
+pub use trade_client::{OrderMessage, TradingClient, TradingClientContext};
 
 include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
 
 #[cxx::bridge]
 pub mod ffi {
     #[derive(Copy, Clone, Debug, Eq, PartialEq, Hash)]
-    enum TradeClientType {
+    enum TradingClientType {
         Apifiny = 1,
         Wintmute,
     }
@@ -45,10 +45,10 @@ pub mod ffi {
 
         #[allow(clippy::borrowed_box)]
         fn create_client(
-            client_type: TradeClientType,
+            client_type: TradingClientType,
             file_path: &CxxString,
-            ctx: Box<TradeClientContext>,
-            inbound_callback: fn(message: QuickFixMessage, ctx: &Box<TradeClientContext>),
+            ctx: Box<TradingClientContext>,
+            inbound_callback: fn(message: QuickFixMessage, ctx: &Box<TradingClientContext>),
         ) -> UniquePtr<ITradeClient>;
 
         fn start(self: &ITradeClient);
@@ -66,7 +66,7 @@ pub mod ffi {
     }
 
     extern "Rust" {
-        type TradeClientContext;
+        type TradingClientContext;
 
         fn inbound(&self, message: QuickFixMessage);
     }

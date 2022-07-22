@@ -12,14 +12,14 @@
 #include <iostream>
 #include <memory>
 
-struct TradeClientContext;
+struct TradingClientContext;
 
 class TradeClientApifiny : public ITradeClient {
 public:
   TradeClientApifiny(const std::string &filepath,
-                     rust::Box<TradeClientContext> ctx,
+                     rust::Box<TradingClientContext> ctx,
                      rust::Fn<void(const QuickFixMessage,
-                                   const rust::Box<TradeClientContext> &)>
+                                   const rust::Box<TradingClientContext> &)>
                          inbound_callback);
   ~TradeClientApifiny();
 

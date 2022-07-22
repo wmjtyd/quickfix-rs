@@ -1,27 +1,34 @@
 use std::{
-    collections::HashMap,
     os::{raw::c_char, unix::prelude::OsStrExt},
     path::Path,
-    sync::Arc,
 };
 
 use cxx::{let_cxx_string, UniquePtr};
-use fefix::{
-    definitions::fix42,
-    tagvalue::{Config, Decoder, FieldAccess},
-    Dictionary,
-};
 use tokio::sync::{mpsc, oneshot, Mutex};
-use tracing::{debug, error, instrument, warn};
+use tracing::{debug, instrument, warn};
 
 use crate::ffi;
 
-pub struct TradeClientContext(mpsc::UnboundedSender<ffi::QuickFixMessage>);
+pub enum OrderMessage {
+    NewOrder {
+        symbol: String,
+        side: c_char,
+        quantity: f64,
+        price: f64,
+        time_in_force: c_char,
+        tx: oneshot::Sender<cxx::UniquePtr<cxx::CxxString>>,
+    },
+    CancelOrder {
+        order_id: cxx::CxxString,
+        session_id: ffi::SessionID,
+    },
+}
 
-impl TradeClientContext {
-    pub fn new() -> (Self, mpsc::UnboundedReceiver<ffi::QuickFixMessage>) {
-        let (tx, rx) = mpsc::unbounded_channel();
-        (Self(tx), rx)
+pub struct TradingClientContext(mpsc::UnboundedSender<ffi::QuickFixMessage>);
+
+impl TradingClientContext {
+    pub fn new(order_report_tx: mpsc::UnboundedSender<ffi::QuickFixMessage>) -> Self {
+        Self(order_report_tx)
     }
 
     pub fn inbound(&self, message: ffi::QuickFixMessage) {
@@ -29,78 +36,20 @@ impl TradeClientContext {
     }
 }
 
-#[derive(Clone)]
-pub struct TradeClient {
-    inner: Arc<TradeClientInner>,
-}
-
-impl TradeClient {
-    pub fn new(client_type: ffi::TradeClientType, file_path: &Path) -> Self {
-        let inner = TradeClientInner::new(client_type, file_path);
-        Self {
-            inner: Arc::new(inner),
-        }
-    }
-
-    pub fn start(&self) {
-        self.inner.start();
-    }
-
-    pub fn stop(&self) {
-        self.inner.stop();
-    }
-
-    pub async fn put_order(
-        &self,
-        symbol: &cxx::CxxString,
-        side: c_char,
-        quantity: f64,
-        price: f64,
-        time_in_force: c_char,
-    ) -> (
-        cxx::UniquePtr<cxx::CxxString>,
-        cxx::UniquePtr<ffi::SessionID>,
-    ) {
-        self.inner
-            .put_order(symbol, side, quantity, price, time_in_force)
-            .await
-    }
-
-    pub async fn cancel_order(
-        &self,
-        order_id: &cxx::CxxString,
-        session_id: &ffi::SessionID,
-    ) -> (
-        cxx::UniquePtr<cxx::CxxString>,
-        cxx::UniquePtr<ffi::SessionID>,
-    ) {
-        self.inner.cancel_order(order_id, session_id).await
-    }
-
-    pub async fn poll_response(&self) {
-        self.inner.poll_response().await;
-    }
-}
-
-struct TradeClientInner {
+pub struct TradingClient {
     cxx_inner: UniquePtr<ffi::ITradeClient>,
-    pending_requests: Mutex<
-        HashMap<
-            String,
-            oneshot::Sender<(
-                cxx::UniquePtr<cxx::CxxString>,
-                cxx::UniquePtr<ffi::SessionID>,
-            )>,
-        >,
-    >,
-
-    rx: Mutex<mpsc::UnboundedReceiver<ffi::QuickFixMessage>>,
+    order_rx: Mutex<mpsc::UnboundedReceiver<OrderMessage>>,
 }
 
-impl TradeClientInner {
-    pub fn new(client_type: ffi::TradeClientType, file_path: &Path) -> Self {
+impl TradingClient {
+    pub fn new(
+        client_type: ffi::TradingClientType,
+        file_path: &Path,
+        order_rx: mpsc::UnboundedReceiver<OrderMessage>,
+        order_report_tx: mpsc::UnboundedSender<ffi::QuickFixMessage>,
+    ) -> Self {
         let_cxx_string!(file_path = file_path.as_os_str().as_bytes());
-        let (ctx, rx) = TradeClientContext::new();
+        let ctx = TradingClientContext::new(order_report_tx);
         let cxx_inner =
             ffi::create_client(client_type, &file_path, Box::new(ctx), |message, ctx| {
                 ctx.inbound(message)
@@ -108,8 +57,7 @@ impl TradeClientInner {
 
         Self {
             cxx_inner,
-            pending_requests: Mutex::default(),
-            rx: Mutex::new(rx),
+            order_rx: Mutex::new(order_rx),
         }
     }
 
@@ -122,105 +70,52 @@ impl TradeClientInner {
     }
 
     #[instrument(skip(self))]
-    pub async fn put_order(
+    pub fn new_order(
         &self,
         symbol: &cxx::CxxString,
         side: c_char,
         quantity: f64,
         price: f64,
         time_in_force: c_char,
-    ) -> (
-        cxx::UniquePtr<cxx::CxxString>,
-        cxx::UniquePtr<ffi::SessionID>,
-    ) {
-        let order_id = self
-            .cxx_inner
-            .put_order(symbol, side, quantity, price, time_in_force);
-
-        let order_id = order_id.to_string_lossy().into_owned();
-        let (tx, rx) = oneshot::channel();
-
-        if self
-            .pending_requests
-            .lock()
-            .await
-            .insert(order_id, tx)
-            .is_some()
-        {
-            error!("Overwrite exists order id");
-        }
-
-        rx.await.unwrap()
+    ) -> cxx::UniquePtr<cxx::CxxString> {
+        self.cxx_inner
+            .put_order(symbol, side, quantity, price, time_in_force)
     }
 
     #[instrument(skip(self, session_id))]
-    pub async fn cancel_order(
-        &self,
-        order_id: &cxx::CxxString,
-        session_id: &ffi::SessionID,
-    ) -> (
-        cxx::UniquePtr<cxx::CxxString>,
-        cxx::UniquePtr<ffi::SessionID>,
-    ) {
+    pub fn cancel_order(&self, order_id: &cxx::CxxString, session_id: &ffi::SessionID) {
         self.cxx_inner.cancel_order(order_id, session_id);
-
-        let order_id = order_id.to_string_lossy().into_owned();
-        let (tx, rx) = oneshot::channel();
-
-        if self
-            .pending_requests
-            .lock()
-            .await
-            .insert(order_id, tx)
-            .is_some()
-        {
-            error!("Overwrite exists order id");
-        }
-
-        rx.await.unwrap()
     }
 
-    pub async fn poll_response(&self) {
-        let fix_dictionary = Dictionary::fix42();
-        let mut fix_decoder = Decoder::<Config>::new(fix_dictionary);
-
-        let mut rx = self.rx.lock().await;
-        while let Some(message) = rx.recv().await {
-            let ffi::QuickFixMessage {
-                content,
-                session_id,
-                from,
-            } = message;
-            debug!(session_id = %session_id.to_string_frozen(), from = ?from, %content);
-
-            let message = fix_decoder
-                .decode(content.as_bytes())
-                .expect("Invalid FIX message");
-
-            if let Ok(message_type) = message.fv(fix42::MSG_TYPE) {
-                match message_type {
-                    fix42::MsgType::ExecutionReport | fix42::MsgType::OrderCancelReject => {
-                        let order_id = message.fv::<&str>(fix42::CL_ORD_ID).unwrap();
-                        match self.pending_requests.lock().await.remove(order_id) {
-                            Some(tx) => {
-                                if tx.send((content, session_id)).is_err() {
-                                    error!("rx droppped");
-                                }
-                            }
-                            None => warn!("Order {} is not in pending requests", order_id),
-                        }
-                    }
-                    fix42::MsgType::Heartbeat => debug!("Heartbeat"),
-                    fix42::MsgType::Logon => debug!("Logon"),
-                    fix42::MsgType::Logout => debug!("Logout"),
-                    _ => todo!("{:?}", message_type),
+    #[instrument(skip(self))]
+    pub async fn poll_order(&self) {
+        let mut order_rx = self.order_rx.lock().await;
+        while let Some(order) = order_rx.recv().await {
+            match order {
+                OrderMessage::NewOrder {
+                    symbol,
+                    side,
+                    quantity,
+                    price,
+                    time_in_force,
+                    tx,
+                } => {
+                    let_cxx_string!(symbol = symbol);
+                    let order_id = self.new_order(&symbol, side, quantity, price, time_in_force);
+                    tx.send(order_id).unwrap();
+                }
+                OrderMessage::CancelOrder {
+                    order_id,
+                    session_id,
+                } => {
+                    self.cancel_order(&order_id, &session_id);
                 }
             }
         }
     }
 }
 
-impl Drop for TradeClientInner {
+impl Drop for TradingClient {
     fn drop(&mut self) {
         // TODO: Stop multiple times
         self.stop();

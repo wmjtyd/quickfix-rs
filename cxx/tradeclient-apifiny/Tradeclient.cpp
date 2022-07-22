@@ -14,8 +14,8 @@
 #include <string>
 
 TradeClientApifiny::TradeClientApifiny(
-    const std::string &filepath, rust::Box<TradeClientContext> ctx,
-    rust::Fn<void(const QuickFixMessage, const rust::Box<TradeClientContext> &)>
+    const std::string &filepath, rust::Box<TradingClientContext> ctx,
+    rust::Fn<void(const QuickFixMessage, const rust::Box<TradingClientContext> &)>
         inbound_callback)
     : application(std::move(ctx), inbound_callback), settings(filepath),
       store_factory(settings), log_factory(settings),
@@ -52,17 +52,17 @@ auto TradeClientApifiny::cancel_order(const std::string &order_id,
 }
 
 auto create_client(
-    const TradeClientType type, const std::string &filepath,
-    rust::Box<TradeClientContext> ctx,
-    rust::Fn<void(const QuickFixMessage, const rust::Box<TradeClientContext> &)>
+    const TradingClientType type, const std::string &filepath,
+    rust::Box<TradingClientContext> ctx,
+    rust::Fn<void(const QuickFixMessage, const rust::Box<TradingClientContext> &)>
         inbound_callback) -> std::unique_ptr<ITradeClient> {
   ITradeClient *pitradeclient = nullptr;
   switch (type) {
-  case TradeClientType::Apifiny:
+  case TradingClientType::Apifiny:
     pitradeclient =
         new TradeClientApifiny(filepath, std::move(ctx), inbound_callback);
     break;
-  case TradeClientType::Wintmute:
+  case TradingClientType::Wintmute:
     break;
   }
 

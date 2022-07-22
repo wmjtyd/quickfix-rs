@@ -6,10 +6,10 @@
 #include <memory>
 
 enum class FixMessageType : uint8_t;
-enum class TradeClientType : uint8_t;
+enum class TradingClientType : uint8_t;
 
 struct QuickFixMessage;
-struct TradeClientContext;
+struct TradingClientContext;
 
 class ITradeClient {
 public:
@@ -28,7 +28,7 @@ public:
 };
 
 auto create_client(
-    const TradeClientType type, const std::string &filepath,
-    rust::Box<TradeClientContext> ctx,
-    rust::Fn<void(const QuickFixMessage, const rust::Box<TradeClientContext> &)>
+    const TradingClientType type, const std::string &filepath,
+    rust::Box<TradingClientContext> ctx,
+    rust::Fn<void(const QuickFixMessage, const rust::Box<TradingClientContext> &)>
         inbound_callback) -> std::unique_ptr<ITradeClient>;

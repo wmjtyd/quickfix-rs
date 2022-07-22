@@ -9,13 +9,13 @@
 enum class FixMessageType : uint8_t;
 
 struct QuickFixMessage;
-struct TradeClientContext;
+struct TradingClientContext;
 
 class Application : public FIX::Application {
 public:
-  Application(rust::Box<TradeClientContext> ctx,
+  Application(rust::Box<TradingClientContext> ctx,
               rust::Fn<void(const QuickFixMessage,
-                            const rust::Box<TradeClientContext> &)>);
+                            const rust::Box<TradingClientContext> &)>);
   auto new_order_single(const std::string &symbol, const char side,
                         const double quantity, const double price,
                         const char time_in_force) const
@@ -41,7 +41,7 @@ private:
   auto inbound(const FIX::Message &message, const FIX::SessionID &session_id,
                const FixMessageType from) -> void;
 
-  rust::Box<TradeClientContext> ctx;
-  rust::Fn<void(const QuickFixMessage, const rust::Box<TradeClientContext> &)>
+  rust::Box<TradingClientContext> ctx;
+  rust::Fn<void(const QuickFixMessage, const rust::Box<TradingClientContext> &)>
       inbound_callback;
 };
