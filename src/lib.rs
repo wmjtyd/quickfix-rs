@@ -2,8 +2,6 @@
 
 mod trade_client;
 
-use std::fmt;
-
 pub use trade_client::{OrderMessage, TradingClient, TradingClientContext};
 
 include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
@@ -22,20 +20,10 @@ pub mod ffi {
         App,
     }
 
+    #[derive(Debug)]
     struct QuickFixMessage {
         content: UniquePtr<CxxString>,
-        session_id: UniquePtr<SessionID>,
         from: FixMessageType,
-    }
-
-    #[namespace = "FIX"]
-    unsafe extern "C++" {
-        include!("quickfix-rs/vendor/quickfix-cpp/src/C++/SessionID.h");
-
-        type SessionID;
-
-        #[rust_name = "to_string_frozen"]
-        fn toStringFrozen(self: &SessionID) -> &CxxString;
     }
 
     unsafe extern "C++" {
@@ -62,7 +50,7 @@ pub mod ffi {
             price: f64,
             time_in_force: c_char,
         ) -> UniquePtr<CxxString>;
-        fn cancel_order(self: &ITradeClient, order_id: &CxxString, session_id: &SessionID);
+        fn cancel_order(self: &ITradeClient, order_id: &CxxString);
     }
 
     extern "Rust" {
@@ -72,17 +60,5 @@ pub mod ffi {
     }
 }
 
-impl fmt::Debug for ffi::QuickFixMessage {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.debug_struct("QuickFixMessage")
-            .field("content", &self.content)
-            .field("session_id", self.session_id.to_string_frozen())
-            .field("from", &self.from)
-            .finish()
-    }
-}
-
-unsafe impl Send for ffi::SessionID {}
-unsafe impl Sync for ffi::SessionID {}
 unsafe impl Send for ffi::ITradeClient {}
 unsafe impl Sync for ffi::ITradeClient {}

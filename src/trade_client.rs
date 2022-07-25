@@ -4,11 +4,12 @@ use std::{
 };
 
 use cxx::{let_cxx_string, UniquePtr};
-use tokio::sync::{mpsc, oneshot, Mutex};
-use tracing::{debug, instrument, warn};
+use tokio::sync::{mpsc, Mutex};
+use tracing::{instrument, warn};
 
 use crate::ffi;
 
+#[derive(Clone, Debug)]
 pub enum OrderMessage {
     NewOrder {
         symbol: String,
@@ -16,11 +17,9 @@ pub enum OrderMessage {
         quantity: f64,
         price: f64,
         time_in_force: c_char,
-        tx: oneshot::Sender<String>,
     },
     CancelOrder {
-        order_id: cxx::CxxString,
-        session_id: ffi::SessionID,
+        order_id: String,
     },
 }
 
@@ -82,9 +81,9 @@ impl TradingClient {
             .put_order(symbol, side, quantity, price, time_in_force)
     }
 
-    #[instrument(skip(self, session_id))]
-    pub fn cancel_order(&self, order_id: &cxx::CxxString, session_id: &ffi::SessionID) {
-        self.cxx_inner.cancel_order(order_id, session_id);
+    #[instrument(skip(self))]
+    pub fn cancel_order(&self, order_id: &cxx::CxxString) {
+        self.cxx_inner.cancel_order(order_id);
     }
 
     #[instrument(skip(self))]
@@ -98,18 +97,15 @@ impl TradingClient {
                     quantity,
                     price,
                     time_in_force,
-                    tx,
                 } => {
                     let_cxx_string!(symbol = symbol);
-                    let order_id = self.new_order(&symbol, side, quantity, price, time_in_force);
-                    let order_id = order_id.to_string_lossy().into_owned();
-                    tx.send(order_id).unwrap();
+
+                    let _ = self.new_order(&symbol, side, quantity, price, time_in_force);
                 }
-                OrderMessage::CancelOrder {
-                    order_id,
-                    session_id,
-                } => {
-                    self.cancel_order(&order_id, &session_id);
+                OrderMessage::CancelOrder { order_id } => {
+                    let_cxx_string!(order_id = order_id);
+
+                    self.cancel_order(&order_id);
                 }
             }
         }

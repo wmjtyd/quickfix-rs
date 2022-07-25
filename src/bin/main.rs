@@ -1,9 +1,6 @@
 use std::path::Path;
 
-use tokio::{
-    sync::{mpsc, oneshot},
-    task, time,
-};
+use tokio::{sync::mpsc, task, time};
 use tracing::{error, info};
 
 use quickfix_rs::{
@@ -28,20 +25,16 @@ async fn main() {
     let _handle = task::spawn(async move {
         time::sleep(time::Duration::from_secs(3)).await;
 
-        let (tx, rx) = oneshot::channel();
         let new_order_message = OrderMessage::NewOrder {
             symbol: "BTCUSDT".to_owned(),
             side: FIX_Side_SELL,
             quantity: 0.00000001,
             price: 100000.0,
             time_in_force: FIX_TimeInForce_AT_THE_OPENING,
-            tx,
         };
         if order_tx.send(new_order_message).is_err() {
             error!("Order receiver closed");
         }
-        let order_id = rx.await.unwrap();
-        info!(?order_id);
 
         while let Some(order_report) = order_report_rx.recv().await {
             info!(?order_report);

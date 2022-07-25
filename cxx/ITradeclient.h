@@ -23,8 +23,7 @@ public:
                          const double quantity, const double price,
                          const char time_in_force) const
       -> std::unique_ptr<std::string> = 0;
-  virtual auto cancel_order(const std::string &order_id,
-                            const FIX::SessionID &session_id) const -> void = 0;
+  virtual auto cancel_order(const std::string &order_id) const -> void = 0;
 };
 
 auto create_client(

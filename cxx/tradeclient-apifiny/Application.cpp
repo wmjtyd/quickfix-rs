@@ -204,15 +204,18 @@ auto Application::new_order_single(const std::string &symbol, const char side,
   return std::make_unique<std::string>(std::move(order_id));
 }
 
-auto Application::cancel_order(const std::string &order_id,
-                               const FIX::SessionID &session_id) const -> void {
+auto Application::cancel_order(const std::string &order_id) const -> void {
   FIX42::OrderCancelRequest orderCancelRequest;
   orderCancelRequest.set(FIX::ClOrdID(order_id));
   orderCancelRequest.set(FIX::Account(ACCOUNT_ID));
   orderCancelRequest.set(FIX::Text("Cancel Order"));
   orderCancelRequest.set(FIX::SecurityExchange(VENUE));
 
-  FIX::Session::sendToTarget(orderCancelRequest, session_id);
+  auto &header = orderCancelRequest.getHeader();
+  header.setField(FIX::SenderCompID(ACCOUNT_ID));
+  header.setField(FIX::TargetCompID(TargetCompID));
+
+  FIX::Session::sendToTarget(orderCancelRequest);
 }
 
 auto Application::inbound(const FIX::Message &message,
@@ -221,7 +224,6 @@ auto Application::inbound(const FIX::Message &message,
   const auto content = message.toString();
   QuickFixMessage quick_fix_message{
     content : std::make_unique<std::string>(std::move(content)),
-    session_id : std::make_unique<FIX::SessionID>(std::move(session_id)),
     from : from,
   };
 
