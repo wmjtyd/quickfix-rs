@@ -62,6 +62,7 @@ const QUICKFIX_SSL_SUPPORT_FILES: [&str; 7] = [
 ];
 
 const APIFINY_FILES: [&str; 2] = ["Application.cpp", "Tradeclient.cpp"];
+const CCAPI_FILES: [&str; 2] = ["Application.cpp", "Tradeclient.cpp"];
 
 fn main() {
     let bindings = bindgen::Builder::default()
@@ -90,6 +91,11 @@ fn main() {
             APIFINY_FILES
                 .iter()
                 .map(|x| Path::new("cxx/tradeclient-apifiny").join(x)),
+        )
+        .files(
+            CCAPI_FILES
+                .iter()
+                .map(|x| Path::new("cxx/tradeclient-ccapi").join(x)),
         )
         .files(
             QUICKFIX_BASE_FILES

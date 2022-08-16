@@ -11,13 +11,13 @@
 #include <random>
 
 // config
-std::string ACCOUNT_ID = "";
-std::string SECRET_KEY_ID = "";
-std::string SECRET_KEY = "";
-std::string SYMBOL = "BTCUSDT";
-std::string VENUE = "BINANCE";
-std::string SenderCompID = ACCOUNT_ID;
-std::string TargetCompID = "APIFINY";
+static std::string ACCOUNT_ID = "";
+static std::string SECRET_KEY_ID = "";
+static std::string SECRET_KEY = "";
+static std::string SYMBOL = "BTCUSDT";
+static std::string VENUE = "BINANCE";
+static std::string SenderCompID = ACCOUNT_ID;
+static std::string TargetCompID = "APIFINY";
 
 // const std::string __SOH__2 = "";
 const std::string __SOH__ = std::string("\x01");
