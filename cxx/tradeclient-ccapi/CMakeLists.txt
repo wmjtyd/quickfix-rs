@@ -15,7 +15,7 @@ message("--  CMAKE_SOURCE_DIR ${CMAKE_SOURCE_DIR}"  )
 message("--  PROJECT_NAME ${PROJECT_NAME}" )
 target_include_directories(tradeclient-apifiny PRIVATE ${CMAKE_SOURCE_DIR}/vendor/quickfix-cpp/include ${CMAKE_SOURCE_DIR}/vendor/quickfix-cpp/include/quickfix ${CMAKE_SOURCE_DIR}
         ${CMAKE_SOURCE_DIR}/cxx/tradeclient-apifiny/inc ${CMAKE_SOURCE_DIR}/cxx ${CMAKE_SOURCE_DIR}/cxx/tradeclient-apifiny
-        ${CMAKE_SOURCE_DIR}/src/C++/)
+        ${CMAKE_SOURCE_DIR}/src/C++/ ${CMAKE_SOURCE_DIR}/vendor/ccapi/include)
 
 
 target_link_libraries(tradeclient-apifiny ${PROJECT_NAME})

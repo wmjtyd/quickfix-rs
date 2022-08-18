@@ -81,12 +81,21 @@ fn main() {
     let cpp_root_path = Path::new("vendor/quickfix-cpp/");
     let cpp_header_path = cpp_root_path.join("include/");
     let cpp_source_path = cpp_root_path.join("src/C++/");
+    let ccapi_header_path = Path::new("vendor/ccapi/include/");
+    let ccapi_depandency_rapidjson_path = Path::new("vendor/ccapi/dependency/rapidjson/include");
+    let ccapi_depandency_websocket_path = Path::new("vendor/ccapi/dependency/websocketpp");
+    let ccapi_depandency_boost_path = Path::new("vendor/ccapi/dependency/boost");
+    
 
     cxx_build::bridge("src/lib.rs")
         .include(&cpp_header_path)
         .include(&cpp_source_path)
         .include("cxx/")
         .include(cpp_root_path.join("examples/tradeclient-apifiny/inc/"))
+        .include(&ccapi_header_path)
+        .include (&ccapi_depandency_rapidjson_path)
+        .include (&ccapi_depandency_websocket_path)
+        .include (&ccapi_depandency_boost_path)
         .files(
             APIFINY_FILES
                 .iter()
@@ -108,6 +117,7 @@ fn main() {
     println!("cargo:rerun-if-changed=src/");
     println!("cargo:rerun-if-changed=cxx/");
     println!("cargo:rerun-if-changed=vendor/quickfix-cpp/");
+    println!("cargo:rerun-if-changed=vendor/ccapi/");
 
     println!("cargo:rustc-link-lib=ssl");
     println!("cargo:rustc-link-lib=crypto");

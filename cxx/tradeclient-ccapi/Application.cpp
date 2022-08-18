@@ -8,6 +8,10 @@
 #include <openssl/sha.h>
 #include <random>
 
+#include <ccapi_cpp/ccapi_session.h>
+#include "ccapi_cpp/ccapi_event.h"
+#include "ccapi_cpp/ccapi_queue.h"
+
 static std::string ACCOUNT_ID_CCAPI = "";
 static std::string SECRET_KEY_ID_CCAPI = "";
 static std::string SECRET_KEY_CCAPI = "";
