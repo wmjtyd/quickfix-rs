@@ -24,8 +24,8 @@ public:
       -> std::unique_ptr<std::string>;
   auto cancel_order(const std::string &order_id) const -> void;
 
-private:
-  
+  auto start() -> void;
+  auto stop() const -> void;
 
 private:
   // auto inbound(const FIX::Message &message, const FIX::SessionID &session_id,

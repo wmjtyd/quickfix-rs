@@ -16,7 +16,7 @@ public:
   //    TradeClient(const std::string &filepath) {};
   //    ~TradeClient() ;
 
-  virtual auto start() const -> void = 0;
+  virtual auto start() -> void = 0;
   virtual auto stop() const -> void = 0;
 
   virtual auto put_order(const std::string &symbol, const char side,

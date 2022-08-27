@@ -15,7 +15,7 @@ async fn main() {
     let (order_tx, order_rx) = mpsc::unbounded_channel();
     let (order_report_tx, mut order_report_rx) = mpsc::unbounded_channel();
     let trading_client = TradingClient::new(
-        TradingClientType::Apifiny,
+        TradingClientType::CCApi,
         Path::new("cxx/tradeclient-apifiny/tradeclient.cfg"),
         order_rx,
         order_report_tx,

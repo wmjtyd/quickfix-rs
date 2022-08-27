@@ -12,6 +12,7 @@ pub mod ffi {
     enum TradingClientType {
         Apifiny = 1,
         Wintmute,
+        CCApi,
     }
 
     #[derive(Copy, Clone, Debug, Eq, PartialEq, Hash)]

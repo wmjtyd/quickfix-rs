@@ -1,6 +1,7 @@
 
 #include "ITradeclient.h"
 #include "tradeclient-apifiny/Tradeclient.h"
+#include "tradeclient-ccapi/Tradeclient.h"
 
 #include "quickfix-rs/src/lib.rs.h"
 
@@ -16,6 +17,10 @@ auto create_client(
         new TradeClientApifiny(filepath, std::move(ctx), inbound_callback);
     break;
   case TradingClientType::Wintmute:
+    break;
+  case TradingClientType::CCApi:
+    pitradeclient =
+        new TradeClientCCApi(filepath, std::move(ctx), inbound_callback);
     break;
   }
 

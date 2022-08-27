@@ -20,9 +20,10 @@ TradeClientCCApi::~TradeClientCCApi() {
   // this->initiator = nullptr;
 }
 
-auto TradeClientCCApi::start() const -> void {
+auto TradeClientCCApi::start() -> void {
   try {
     // this->initiator->start();
+    this->application.start();
   } catch (std::exception &e) {
     std::cout << e.what() << std::endl;
   }
@@ -30,6 +31,7 @@ auto TradeClientCCApi::start() const -> void {
 
 auto TradeClientCCApi::stop() const -> void { 
   // this->initiator->stop(); 
+  this->application.stop();
 }
 
 auto TradeClientCCApi::put_order(const std::string &symbol, char side,

@@ -33,7 +33,7 @@ class CCApiWrapper {
         CCApiWrapper(std::string exchaneName, eventHandlerFunc *eventHandler);
         ~CCApiWrapper();
         void Start();
-        void Stop();
+        void Stop() const;
         void Request(int operation, std::string instrument = "", std::string correlationId = "",
             std::map<std::string, std::string> credential = {}) const ;
     private:
