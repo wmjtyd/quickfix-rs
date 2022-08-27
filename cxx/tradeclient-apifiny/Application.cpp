@@ -14,6 +14,7 @@
 static std::string ACCOUNT_ID = "";
 static std::string SECRET_KEY_ID = "";
 static std::string SECRET_KEY = "";
+
 static std::string SYMBOL = "BTCUSDT";
 static std::string VENUE = "BINANCE";
 static std::string SenderCompID = ACCOUNT_ID;

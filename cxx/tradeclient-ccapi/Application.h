@@ -6,6 +6,8 @@
 #include "quickfix/fix42/OrderCancelRequest.h"
 #include "rust/cxx.h"
 
+#include "ccapi_wrapper.h"
+
 enum class FixMessageType : uint8_t;
 
 struct QuickFixMessage;
@@ -32,4 +34,6 @@ private:
   rust::Box<TradingClientContext> ctx;
   rust::Fn<void(const QuickFixMessage, const rust::Box<TradingClientContext> &)>
       inbound_callback;
+
+  CCApiWrapper ccapiwrapper;  
 };
