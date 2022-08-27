@@ -41,14 +41,14 @@ auto ApplicationCCApi::new_order_single(const std::string &symbol, const char si
     -> std::unique_ptr<std::string> {
   // const auto order_id = generate_order_id_2(ACCOUNT_ID_CCAPI);
 
-  // this->ccapiwrapper.Request(CCAPI_EXECUTION_CREATE_ORDER, symbol); // symbol = "BTCUSDT"
+  this->ccapiwrapper.Request(CCAPI_EXECUTION_CREATE_ORDER, symbol); // symbol = "BTCUSDT"
   // return std::make_unique<std::string>(std::move(order_id));
   std::string order_id = "0"; //TODO: 暂时这样先编译通过
   return std::make_unique<std::string>(std::move(order_id));
 }
 
 auto ApplicationCCApi::cancel_order(const std::string &order_id) const -> void {
-  // this->ccapiwrapper.Request(CCAPI_EXECUTION_CANCEL_ORDER, order_id); // symbol = "BTCUSDT"
+  this->ccapiwrapper.Request(CCAPI_EXECUTION_CANCEL_ORDER, order_id); // symbol = "BTCUSDT"
 }
 
 /*auto ApplicationCCApi::inbound(const FIX::Message &message,

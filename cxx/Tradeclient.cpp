@@ -1,5 +1,8 @@
 
+#include "ITradeclient.h"
 #include "tradeclient-apifiny/Tradeclient.h"
+
+#include "quickfix-rs/src/lib.rs.h"
 
 auto create_client(
     const TradingClientType type, const std::string &filepath,

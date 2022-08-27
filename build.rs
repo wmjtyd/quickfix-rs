@@ -60,7 +60,7 @@ const QUICKFIX_SSL_SUPPORT_FILES: [&str; 7] = [
     "ThreadedSSLSocketInitiator.cpp",
     "UtilitySSL.cpp",
 ];
-
+const TRADECLIENT_FILES: [&str; 1] = ["Tradeclient.cpp"];
 const APIFINY_FILES: [&str; 2] = ["Application.cpp", "Tradeclient.cpp"];
 const CCAPI_FILES: [&str; 3] = ["Application.cpp", "Tradeclient.cpp", "ccapi_wrapper.cpp"];
 
@@ -96,6 +96,11 @@ fn main() {
         .include (&ccapi_depandency_rapidjson_path)
         .include (&ccapi_depandency_websocket_path)
         .include (&ccapi_depandency_boost_path)
+        .files(
+            TRADECLIENT_FILES
+                .iter()
+                .map(|x| Path::new("cxx/").join(x)),
+        )
         .files(
             APIFINY_FILES
                 .iter()

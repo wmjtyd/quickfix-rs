@@ -35,7 +35,7 @@ class CCApiWrapper {
         void Start();
         void Stop();
         void Request(int operation, std::string instrument = "", std::string correlationId = "",
-            std::map<std::string, std::string> credential = {}) ;
+            std::map<std::string, std::string> credential = {}) const ;
     private:
         std::string exchangeName;
         ::ccapi::Session *session;

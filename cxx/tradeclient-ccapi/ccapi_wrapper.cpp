@@ -42,7 +42,7 @@ void CCApiWrapper::Stop() {
 }
 
 void CCApiWrapper::Request(int operation, std::string instrument, std::string correlationId,
-             std::map<std::string, std::string> credential)  {
+             std::map<std::string, std::string> credential)  const {
   ::ccapi::Request request(Request::Operation(operation), this->exchangeName, instrument);
   request.appendParam({
       {"side", "SELL"},
