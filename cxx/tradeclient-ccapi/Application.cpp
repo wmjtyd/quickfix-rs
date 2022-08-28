@@ -29,11 +29,15 @@ ApplicationCCApi::ApplicationCCApi(
     rust::Fn<void(const QuickFixMessage, const rust::Box<TradingClientContext> &)>
         inbound_callback)
     : ctx(std::move(ctx)), inbound_callback(inbound_callback),
-    ccapiwrapper(CCApiWrapper("binance-us", eventHandler)) {
+    ccapiwrapper(CCApiWrapper("binance", eventHandler)) {
       // this->ccapiwrapper = new CCApiWrapper("binance-us", eventHandler);
+      this->ccapiwrapper.Start(); // symbol = "BTCUSDT"
     }
 
-
+ApplicationCCApi::~ApplicationCCApi() {
+      // this->ccapiwrapper = new CCApiWrapper("binance-us", eventHandler);
+      this->ccapiwrapper.Stop(); // symbol = "BTCUSDT" 
+    }
 
 auto ApplicationCCApi::new_order_single(const std::string &symbol, const char side,
                                    const double quantity, const double price,
@@ -51,13 +55,13 @@ auto ApplicationCCApi::cancel_order(const std::string &order_id) const -> void {
   this->ccapiwrapper.Request(CCAPI_EXECUTION_CANCEL_ORDER, order_id); // symbol = "BTCUSDT"
 }
 
-auto ApplicationCCApi::start() ->  void {
-  this->ccapiwrapper.Start(); // symbol = "BTCUSDT"
+auto ApplicationCCApi::start() const ->  void {
+  // this->ccapiwrapper.Start(); // symbol = "BTCUSDT"
 }
 
 
 auto ApplicationCCApi::stop() const -> void {
-  this->ccapiwrapper.Stop(); // symbol = "BTCUSDT"
+  // this->ccapiwrapper.Stop(); // symbol = "BTCUSDT"
 }
 
 /*auto ApplicationCCApi::inbound(const FIX::Message &message,

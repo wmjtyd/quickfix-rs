@@ -20,7 +20,7 @@ TradeClientCCApi::~TradeClientCCApi() {
   // this->initiator = nullptr;
 }
 
-auto TradeClientCCApi::start() -> void {
+auto TradeClientCCApi::start() const-> void {
   try {
     // this->initiator->start();
     this->application.start();

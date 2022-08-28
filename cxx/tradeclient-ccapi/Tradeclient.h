@@ -19,7 +19,7 @@ public:
                          inbound_callback);
   ~TradeClientCCApi();
 
-  auto start() -> void override;
+  auto start() const -> void override;
   auto stop() const -> void override;
 
   auto put_order(const std::string &symbol, char side, const double quantity,

@@ -28,7 +28,7 @@ void CCApiWrapper::Start() {
 //  Session session(sessionOptions, sessionConfigs, &eventHandler);
 }
 
-void CCApiWrapper::Stop() const {
+void CCApiWrapper::Stop() {
   if (this->session != nullptr) {
     this->session->stop();
     delete this->session;
