@@ -11,9 +11,9 @@ using ::ccapi::SessionOptions;
 using ::ccapi::UtilSystem;
 
 
-CCApiWrapper::CCApiWrapper(std::string exchangeName, eventHandlerFunc *eventHandler) {
+CCApiWrapper::CCApiWrapper(std::string exchangeName, eventHandlerFunc *eventHandler, void *myEventHandlerObj) {
   this->exchangeName = exchangeName;
-  this->myEventHandler = new MyEventHandler(eventHandler);
+  this->myEventHandler = new MyEventHandler(eventHandler, myEventHandlerObj);
 }
 
 CCApiWrapper::~CCApiWrapper() {

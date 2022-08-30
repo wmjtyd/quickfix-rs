@@ -28,6 +28,8 @@ public:
   auto start() const -> void;
   auto stop() const -> void;
 
+  static bool eventHandler(void *obj, const ccapi::Event& event, ccapi::Session* session);
+
 private:
   // auto inbound(const FIX::Message &message, const FIX::SessionID &session_id,
   //              const FixMessageType from) -> void;

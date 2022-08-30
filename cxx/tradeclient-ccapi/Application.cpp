@@ -18,8 +18,15 @@ static std::string ACCOUNT_ID_CCAPI = "";
 static std::string SECRET_KEY_ID_CCAPI = "";
 static std::string SECRET_KEY_CCAPI = "";
 
-static bool eventHandler(const ccapi::Event& event, ccapi::Session* session) {
-  std::cout << "Received an event in eventHandler:\n" + event.toStringPretty(2, 2) << std::endl;
+bool ApplicationCCApi::eventHandler(void *obj, const ccapi::Event& event, ccapi::Session* session) {
+  std::cout << "Received an event in eventHandler(Application):\n" + event.toStringPretty(2, 2) << std::endl;
+  auto pApplicationCCApi = (ApplicationCCApi*)(obj);
+  auto content = event.toStringPretty(2, 2);
+  QuickFixMessage quick_fix_message{
+    content : std::make_unique<std::string>(std::move(content)),
+    from : FixMessageType::App, // 1是借用quickfix里面的定义，代表from app
+  };
+  pApplicationCCApi->inbound_callback(std::move(quick_fix_message), pApplicationCCApi->ctx);
   return true;
 }
 
@@ -29,7 +36,7 @@ ApplicationCCApi::ApplicationCCApi(
     rust::Fn<void(const QuickFixMessage, const rust::Box<TradingClientContext> &)>
         inbound_callback)
     : ctx(std::move(ctx)), inbound_callback(inbound_callback),
-    ccapiwrapper(CCApiWrapper("binance", eventHandler)) {
+    ccapiwrapper(CCApiWrapper("binance", eventHandler, this)) {
       // this->ccapiwrapper = new CCApiWrapper("binance-us", eventHandler);
       this->ccapiwrapper.Start(); // symbol = "BTCUSDT"
     }
