@@ -4,7 +4,7 @@
 #include "quickfix/Values.h"
 #include "quickfix/fix42/NewOrderSingle.h"
 #include "quickfix/fix42/OrderCancelRequest.h"
-#include "rust/cxx.h"
+// #include "rust/cxx.h"
 
 #include "ccapi_wrapper.h"
 
@@ -15,9 +15,7 @@ struct TradingClientContext;
 
 class ApplicationCCApi {
 public:
-  ApplicationCCApi(rust::Box<TradingClientContext> ctx,
-              rust::Fn<void(const QuickFixMessage,
-                            const rust::Box<TradingClientContext> &)>);
+  ApplicationCCApi(eventHandlerFunc *eventHandler, void *myEventHandlerObj);
   ~ApplicationCCApi();                            
   auto new_order_single(const std::string &symbol, const char side,
                         const double quantity, const double price,
@@ -34,9 +32,12 @@ private:
   // auto inbound(const FIX::Message &message, const FIX::SessionID &session_id,
   //              const FixMessageType from) -> void;
 
-  rust::Box<TradingClientContext> ctx;
-  rust::Fn<void(const QuickFixMessage, const rust::Box<TradingClientContext> &)>
-      inbound_callback;
+  // rust::Box<TradingClientContext> ctx;
+  // rust::Fn<void(const QuickFixMessage, const rust::Box<TradingClientContext> &)>
+  //     inbound_callback;
 
   CCApiWrapper ccapiwrapper;  
+
+  eventHandlerFunc *eventHandle;
+  void *myEventHandlerObj;
 };

@@ -19,6 +19,8 @@ public:
                          inbound_callback);
   ~TradeClientCCApi();
 
+  static bool eventHandler(void *obj, const ccapi::Event& event, ccapi::Session* session);
+
   auto start() const -> void override;
   auto stop() const -> void override;
 
@@ -29,4 +31,8 @@ public:
 
 private:
   ApplicationCCApi application;
+
+  rust::Box<TradingClientContext> ctx;
+  rust::Fn<void(const QuickFixMessage, const rust::Box<TradingClientContext> &)>
+      inbound_callback;
 };
