@@ -21,16 +21,16 @@ static std::string SECRET_KEY_CCAPI = "";
 bool ApplicationCCApi::eventHandler(void *obj, const ccapi::Event& event, ccapi::Session* session) {
   std::cout << "Received an event in eventHandler(Application):\n" + event.toStringPretty(2, 2) << std::endl;
   auto pApplicationCCApi = (ApplicationCCApi*)(obj);
-  pApplicationCCApi->eventHandler(obj, event, session);
+  pApplicationCCApi->eventHandle(pApplicationCCApi->myEventHandlerObj, event, session);
   return true;
 }
 
 
 ApplicationCCApi::ApplicationCCApi(
-  eventHandlerFunc *eventHandler, void *myEventHandlerObj
+  eventHandlerFunc *eventHandle, void *myEventHandlerObj
     )
     : eventHandle(eventHandle), myEventHandlerObj(myEventHandlerObj),
-    ccapiwrapper(CCApiWrapper("binance", eventHandler, myEventHandlerObj)) {
+    ccapiwrapper(CCApiWrapper("binance", ApplicationCCApi::eventHandler, this)) {
       // this->ccapiwrapper = new CCApiWrapper("binance-us", eventHandler);
       this->ccapiwrapper.Start(); // symbol = "BTCUSDT"
     }
