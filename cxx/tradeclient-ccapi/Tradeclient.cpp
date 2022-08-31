@@ -21,13 +21,13 @@ TradeClientCCApi::TradeClientCCApi(
     application(TradeClientCCApi::eventHandler, this) {
 
     }
-
-#endif
+#else      
 TradeClientCCApi::TradeClientCCApi(
     const std::string &filepath)
     : application(TradeClientCCApi::eventHandler, this) {
 
     }
+#endif    
 
 TradeClientCCApi::~TradeClientCCApi() {
   // delete this->initiator;
