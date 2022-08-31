@@ -19,8 +19,9 @@ public:
                    rust::Fn<void(const QuickFixMessage,
                                  const rust::Box<TradingClientContext> &)>
                        inbound_callback);
-#endif
+#else
   TradeClientCCApi(const std::string &filepath);
+#endif
   ~TradeClientCCApi();
 
   static bool eventHandler(void *obj, const ccapi::Event &event,
