@@ -2,8 +2,9 @@
 
 #include "Application.h"
 #include "ITradeclient.h"
-
+#ifdef USE_TRADECLIENT_RUST_INTERFACE
 #include "rust/cxx.h"
+#endif
 
 #include <iostream>
 #include <memory>
@@ -12,11 +13,14 @@ struct TradingClientContext;
 
 class TradeClientCCApi : public ITradeClient {
 public:
+#ifdef USE_TRADECLIENT_RUST_INTERFACE
   TradeClientCCApi(const std::string &filepath,
                      rust::Box<TradingClientContext> ctx,
                      rust::Fn<void(const QuickFixMessage,
                                    const rust::Box<TradingClientContext> &)>
                          inbound_callback);
+#endif                         
+TradeClientCCApi(const std::string &filepath);
   ~TradeClientCCApi();
 
   static bool eventHandler(void *obj, const ccapi::Event& event, ccapi::Session* session);
@@ -31,8 +35,9 @@ public:
 
 private:
   ApplicationCCApi application;
-
+#ifdef USE_TRADECLIENT_RUST_INTERFACE
   rust::Box<TradingClientContext> ctx;
   rust::Fn<void(const QuickFixMessage, const rust::Box<TradingClientContext> &)>
       inbound_callback;
+#endif      
 };

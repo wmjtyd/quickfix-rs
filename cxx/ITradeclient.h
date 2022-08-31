@@ -1,7 +1,12 @@
 #pragma once
 
 #include "quickfix/SessionID.h"
+
+#ifdef USE_TRADECLIENT_RUST_INTERFACE
 #include "rust/cxx.h"
+#endif
+
+#include "common.h"
 
 #include <memory>
 
@@ -10,6 +15,12 @@ enum class TradingClientType : uint8_t;
 
 struct QuickFixMessage;
 struct TradingClientContext;
+
+enum TradeClientType {
+  TradeClientType_Apifiny = 1,
+  TradeClientType_Wintmut = 2,
+  TradeClientType_CCApi = 3,
+};
 
 class ITradeClient {
 public:
@@ -26,8 +37,13 @@ public:
   virtual auto cancel_order(const std::string &order_id) const -> void = 0;
 };
 
+#ifdef USE_TRADECLIENT_RUST_INTERFACE
 auto create_client(
     const TradingClientType type, const std::string &filepath,
     rust::Box<TradingClientContext> ctx,
     rust::Fn<void(const QuickFixMessage, const rust::Box<TradingClientContext> &)>
         inbound_callback) -> std::unique_ptr<ITradeClient>;
+#else
+auto create_client(
+    const TradeClientType type, const std::string &filepath, FromAppCallback cb) -> std::unique_ptr<ITradeClient>;
+#endif        

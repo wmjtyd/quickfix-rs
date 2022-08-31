@@ -1,10 +1,13 @@
 
 #include "ITradeclient.h"
-#include "tradeclient-apifiny/Tradeclient.h"
+// #include "tradeclient-apifiny/Tradeclient.h"
 #include "tradeclient-ccapi/Tradeclient.h"
 
+#ifdef USE_TRADECLIENT_RUST_INTERFACE
 #include "quickfix-rs/src/lib.rs.h"
+#endif
 
+#ifdef USE_TRADECLIENT_RUST_INTERFACE
 auto create_client(
     const TradingClientType type, const std::string &filepath,
     rust::Box<TradingClientContext> ctx,
@@ -13,8 +16,8 @@ auto create_client(
   ITradeClient *pitradeclient = nullptr;
   switch (type) {
   case TradingClientType::Apifiny:
-    pitradeclient =
-        new TradeClientApifiny(filepath, std::move(ctx), inbound_callback);
+    // pitradeclient =
+        // new TradeClientApifiny(filepath, std::move(ctx), inbound_callback);
     break;
   case TradingClientType::Wintmute:
     break;
@@ -26,3 +29,23 @@ auto create_client(
 
   return std::unique_ptr<ITradeClient>(pitradeclient);
 }
+#else
+auto create_client(
+    const TradeClientType type, const std::string &filepath, FromAppCallback cb) -> std::unique_ptr<ITradeClient> {
+  ITradeClient *pitradeclient = nullptr;
+  switch (type) {
+  case TradeClientType_Apifiny:
+    // pitradeclient =
+    //     new TradeClientApifiny(filepath, std::move(ctx), inbound_callback);
+    break;
+  case TradeClientType_Wintmut:
+    break;
+  case TradeClientType_CCApi:
+    // pitradeclient =
+    //     new TradeClientCCApi(filepath, std::move(ctx), inbound_callback);
+    break;
+  }
+
+  return std::unique_ptr<ITradeClient>(pitradeclient);
+}
+#endif

@@ -1,2 +1,3 @@
 add_subdirectory(tradeclient-apifiny)
 add_subdirectory(tradeclient-wintmute)
+add_subdirectory(tradeclient-ccapi)

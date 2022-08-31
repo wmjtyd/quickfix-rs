@@ -117,6 +117,7 @@ fn main() {
                 .chain(&QUICKFIX_SSL_SUPPORT_FILES)
                 .map(|x| cpp_source_path.join(x)),
         )
+        .define("USE_TRADECLIENT_RUST_INTERFACE", "")
         .compile("quickfix-cpp");
 
     println!("cargo:rerun-if-changed=src/");

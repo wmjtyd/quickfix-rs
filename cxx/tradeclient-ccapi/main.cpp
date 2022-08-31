@@ -23,13 +23,13 @@ int main( int argc, char** argv )
     try
     {
 
-        auto clientApifiny = create_client(TradeClient_Apifiny, file, fromAppCallback);
+        auto clientApifiny = create_client(TradeClientType_Apifiny, file, fromAppCallback);
         clientApifiny->start();
 //        clientApifiny->put_order();
         clientApifiny->stop();
 
-
-        delete clientApifiny;
+        clientApifiny.release();
+        //delete clientApifiny;
 
         return 0;
     }
