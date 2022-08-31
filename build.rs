@@ -85,7 +85,6 @@ fn main() {
     let ccapi_depandency_rapidjson_path = Path::new("vendor/ccapi/dependency/rapidjson/include");
     let ccapi_depandency_websocket_path = Path::new("vendor/ccapi/dependency/websocketpp");
     let ccapi_depandency_boost_path = Path::new("vendor/ccapi/dependency/boost");
-    
 
     cxx_build::bridge("src/lib.rs")
         .include(&cpp_header_path)
@@ -93,14 +92,10 @@ fn main() {
         .include("cxx/")
         .include(cpp_root_path.join("examples/tradeclient-apifiny/inc/"))
         .include(&ccapi_header_path)
-        .include (&ccapi_depandency_rapidjson_path)
-        .include (&ccapi_depandency_websocket_path)
-        .include (&ccapi_depandency_boost_path)
-        .files(
-            TRADECLIENT_FILES
-                .iter()
-                .map(|x| Path::new("cxx/").join(x)),
-        )
+        .include(&ccapi_depandency_rapidjson_path)
+        .include(&ccapi_depandency_websocket_path)
+        .include(&ccapi_depandency_boost_path)
+        .files(TRADECLIENT_FILES.iter().map(|x| Path::new("cxx/").join(x)))
         .files(
             APIFINY_FILES
                 .iter()
@@ -117,7 +112,7 @@ fn main() {
                 .chain(&QUICKFIX_SSL_SUPPORT_FILES)
                 .map(|x| cpp_source_path.join(x)),
         )
-        .define("USE_TRADECLIENT_RUST_INTERFACE", "")
+        .define("USE_TRADECLIENT_RUST_INTERFACE", None)
         .compile("quickfix-cpp");
 
     println!("cargo:rerun-if-changed=src/");

@@ -16,7 +16,8 @@ struct TradingClientContext;
 class ApplicationCCApi {
 public:
   ApplicationCCApi(eventHandlerFunc *eventHandler, void *myEventHandlerObj);
-  ~ApplicationCCApi();                            
+  ~ApplicationCCApi();
+
   auto new_order_single(const std::string &symbol, const char side,
                         const double quantity, const double price,
                         const char time_in_force) const
@@ -26,17 +27,19 @@ public:
   auto start() const -> void;
   auto stop() const -> void;
 
-  static bool eventHandler(void *obj, const ccapi::Event& event, ccapi::Session* session);
+  static bool eventHandler(void *obj, const ccapi::Event &event,
+                           ccapi::Session *session);
 
 private:
   // auto inbound(const FIX::Message &message, const FIX::SessionID &session_id,
   //              const FixMessageType from) -> void;
 
   // rust::Box<TradingClientContext> ctx;
-  // rust::Fn<void(const QuickFixMessage, const rust::Box<TradingClientContext> &)>
+  // rust::Fn<void(const QuickFixMessage, const rust::Box<TradingClientContext>
+  // &)>
   //     inbound_callback;
 
-  CCApiWrapper ccapiwrapper;  
+  CCApiWrapper ccapiwrapper;
 
   eventHandlerFunc *eventHandle;
   void *myEventHandlerObj;
