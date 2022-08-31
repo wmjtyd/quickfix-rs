@@ -15,16 +15,16 @@ class TradeClientCCApi : public ITradeClient {
 public:
 #ifdef USE_TRADECLIENT_RUST_INTERFACE
   TradeClientCCApi(const std::string &filepath,
-                     rust::Box<TradingClientContext> ctx,
-                     rust::Fn<void(const QuickFixMessage,
-                                   const rust::Box<TradingClientContext> &)>
-                         inbound_callback);
-#else                         
+                   rust::Box<TradingClientContext> ctx,
+                   rust::Fn<void(const QuickFixMessage,
+                                 const rust::Box<TradingClientContext> &)>
+                       inbound_callback);
+#endif
   TradeClientCCApi(const std::string &filepath);
-#endif        
   ~TradeClientCCApi();
 
-  static bool eventHandler(void *obj, const ccapi::Event& event, ccapi::Session* session);
+  static bool eventHandler(void *obj, const ccapi::Event &event,
+                           ccapi::Session *session);
 
   auto start() const -> void override;
   auto stop() const -> void override;
@@ -40,5 +40,5 @@ private:
   rust::Box<TradingClientContext> ctx;
   rust::Fn<void(const QuickFixMessage, const rust::Box<TradingClientContext> &)>
       inbound_callback;
-#endif      
+#endif
 };
