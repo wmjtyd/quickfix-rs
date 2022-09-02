@@ -1,5 +1,9 @@
 # 安装编译器和相关依赖
+## centos
 yum install clang
+## ubuntu
+sudo apt install clang
+sudo apt install libssl-dev
 
 # 下载代码
 git clone https://github.com/wmjtyd/quickfix-rs.git
