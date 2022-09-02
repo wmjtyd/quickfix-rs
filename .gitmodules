@@ -5,3 +5,6 @@
 	path = vendor/ccapi
 	url = https://github.com/crypto-chassis/ccapi.git
 	branch = master
+[submodule "vendor/CLI11"]
+	path = vendor/CLI11
+	url = https://github.com/CLIUtils/CLI11.git
