@@ -2,6 +2,11 @@ if (HAVE_SSL AND WIN32)
 set(applink_SOURCE ${OPENSSL_INCLUDE_DIR}/openssl/applink.c)
 endif()
 
+if(NOT DEFINED CLI11_DIR)
+    set (CLI11_DIR ${CMAKE_SOURCE_DIR}/vendor/CLI11/include)
+endif()
+
+
 # LINK_DIRECTORIES(${CMAKE_SOURCE_DIR}/vendor/quickfix-cpp/src/C++)
 link_libraries(libssl.a libcrypto.a)
 add_executable(tradeclient-ccapi ../Tradeclient.cpp Application.cpp Tradeclient.cpp main.cpp ccapi_wrapper.cpp ${applink_SOURCE})
@@ -18,7 +23,8 @@ target_include_directories(tradeclient-ccapi PRIVATE ${CMAKE_SOURCE_DIR}/vendor/
         ${CMAKE_SOURCE_DIR}/src/C++/ ${CMAKE_SOURCE_DIR}/vendor/ccapi/include
         ${CMAKE_SOURCE_DIR}/vendor/ccapi/dependency/boost
         ${CMAKE_SOURCE_DIR}/vendor/ccapi/dependency/rapidjson/include
-        ${CMAKE_SOURCE_DIR}/vendor/ccapi/dependency/websocketpp)
+        ${CMAKE_SOURCE_DIR}/vendor/ccapi/dependency/websocketpp
+        ${CMAKE_SOURCE_DIR}/vendor/CLI11/include)
   
 
 # target_link_libraries(tradeclient-ccapi ${PROJECT_NAME})

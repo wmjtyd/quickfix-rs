@@ -2,6 +2,10 @@
 #include <iostream>
 #include <fstream>
 
+#include "CLI/App.hpp"
+#include "CLI/Formatter.hpp"
+#include "CLI/Config.hpp"
+
 #include "ITradeclient.h"
 
 void fromAppCallback(std::string message, std::string sessionId)
