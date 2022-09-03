@@ -41,17 +41,30 @@ void CCApiWrapper::Stop() {
   }
 }
 
-void CCApiWrapper::Request(int operation, std::string instrument, std::string correlationId,
-             std::map<std::string, std::string> credential)  const {
+void CCApiWrapper::Request(int operation, std::string instrument, const std::string side, 
+                        const double quantity,const double price, const double stop_price,
+                        const std::string order_type,const std::string time_in_force,
+                        std::string correlationId,
+                        std::map<std::string, std::string> credential)  const {
   ::ccapi::Request request(Request::Operation(operation), this->exchangeName, instrument);
   request.appendParam({
-      {"side", "SELL"},
-      {"type", "STOP_LOSS_LIMIT"},
-      {"quantity", "0.0005"},
-      {"stopPrice", "20001"},
-      {"price", "20000"},
-      {"timeInForce", "GTC"},
+      {"side", side},
+      {"type", order_type},
+      {"quantity", std::to_string(quantity)},
+      {"stopPrice", std::to_string(stop_price)},
+      {"price", std::to_string(price)},
+      {"timeInForce", time_in_force},
   });
+  // request.appendParam({
+  //     {"side", "SELL"},
+  //     {"type", "STOP_LOSS_LIMIT"},
+  //     {"quantity", "0.0005"},
+  //     {"stopPrice", "20001"},
+  //     {"price", "20000"},
+  //     {"timeInForce", "GTC"},
+  // });
+  printf("CCApiWrapper: put_order: exchange(%s) symbol(%s) side(%s) quantity(%f) price(%f) order_type(%s) time_in_force(%s)", 
+                           this->exchangeName, instrument, side, quantity, price, order_type, time_in_force);
 
   this->session->sendRequest(request);
 }

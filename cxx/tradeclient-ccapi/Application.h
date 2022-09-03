@@ -18,9 +18,9 @@ public:
   ApplicationCCApi(eventHandlerFunc *eventHandler, void *myEventHandlerObj);
   ~ApplicationCCApi();
 
-  auto new_order_single(const std::string &symbol, const char side,
-                        const double quantity, const double price,
-                        const char time_in_force) const
+  auto new_order_single(const std::string &symbol, char side, 
+                        const double quantity,const double price, const double stop_price,
+                        const char order_type,const char time_in_force) const
       -> std::unique_ptr<std::string>;
   auto cancel_order(const std::string &order_id) const -> void;
 
@@ -29,6 +29,12 @@ public:
 
   static bool eventHandler(void *obj, const ccapi::Event &event,
                            ccapi::Session *session);
+private:
+  auto convertSide(const char side) const -> std::string;
+
+  auto convertOrderType(const char side) const -> std::string;
+
+  auto convertTimeInForce(const char side) const -> std::string;                          
 
 private:
   // auto inbound(const FIX::Message &message, const FIX::SessionID &session_id,

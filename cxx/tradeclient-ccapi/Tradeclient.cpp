@@ -7,9 +7,12 @@
 #include "../../src/getopt-repl.h"
 #endif
 
+
 #include <fstream>
 #include <iostream>
 #include <string>
+
+// #include "quickfix/FixValues.h"
 
 #ifdef USE_TRADECLIENT_RUST_INTERFACE
 TradeClientCCApi::TradeClientCCApi(
@@ -63,12 +66,12 @@ auto TradeClientCCApi::stop() const -> void {
   this->application.stop();
 }
 
-auto TradeClientCCApi::put_order(const std::string &symbol, char side,
-                                 const double quantity, const double price,
-                                 const char time_in_force) const
+auto TradeClientCCApi::put_order(const std::string &symbol, char side, 
+                 const double quantity,const double price, const double stop_price,
+                 const char order_type,const char time_in_force) const
     -> std::unique_ptr<std::string> {
-  return this->application.new_order_single(symbol, side, quantity, price,
-                                            time_in_force);
+  return this->application.new_order_single(symbol, side, quantity, price, stop_price, 
+                                            order_type, time_in_force);
 }
 
 auto TradeClientCCApi::cancel_order(const std::string &order_id) const -> void {

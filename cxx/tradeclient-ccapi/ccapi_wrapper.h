@@ -40,8 +40,11 @@ class CCApiWrapper {
         ~CCApiWrapper();
         void Start();
         void Stop();
-        void Request(int operation, std::string instrument = "", std::string correlationId = "",
-            std::map<std::string, std::string> credential = {}) const ;
+        void Request(int operation, std::string instrument = "", const std::string side = "", 
+                        const double quantity = 0,const double price = 0, const double stop_price = 0,
+                        const std::string order_type = "",const std::string time_in_force = "", 
+                        std::string correlationId = "",
+                        std::map<std::string, std::string> credential = {}) const ;
     private:
         std::string exchangeName;
         ::ccapi::Session *session;
