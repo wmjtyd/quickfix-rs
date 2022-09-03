@@ -96,7 +96,7 @@ int main( int argc, char** argv )
     app.add_option("-e,--exchane", exchangeName, "exchane name");
     // app.add_option("-c,--coin", coinpairs, "coinpairs, -c [BTC-ETH, BTC-USDT]");
     
-    app.add_option("-b,--symbol", symbol, "symbol, -s BTCUSDT");
+    app.add_option("-b,--symbol", symbol, "symbol, -s BTCUSDT")->required();
     app.add_option("-s,--side", side, "side, -s buy|sell"); //https://www.onixs.biz/fix-dictionary/4.4/tagNum_54.html
     app.add_option("-q,--quantity", quantity, "quantity, -q 1.22");
     app.add_option("-p,--price", price, "price, -p 1.22");
