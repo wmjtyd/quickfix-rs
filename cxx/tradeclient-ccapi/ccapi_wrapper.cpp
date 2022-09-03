@@ -46,6 +46,9 @@ void CCApiWrapper::Request(int operation, std::string instrument, const std::str
                         const std::string order_type,const std::string time_in_force,
                         std::string correlationId,
                         std::map<std::string, std::string> credential)  const {
+  printf("CCApiWrapper 1: put_order: exchange(%s) symbol(%s) side(%s) quantity(%f) price(%f) order_type(%s) time_in_force(%s)\n", 
+                           this->exchangeName.c_str(), instrument.c_str(), side.c_str(), 
+                           quantity, price, order_type.c_str(), time_in_force.c_str());                          
   ::ccapi::Request request(Request::Operation(operation), this->exchangeName, instrument);
   request.appendParam({
       {"side", side},
@@ -63,8 +66,9 @@ void CCApiWrapper::Request(int operation, std::string instrument, const std::str
   //     {"price", "20000"},
   //     {"timeInForce", "GTC"},
   // });
-  printf("CCApiWrapper: put_order: exchange(%s) symbol(%s) side(%s) quantity(%f) price(%f) order_type(%s) time_in_force(%s)\n", 
-                           this->exchangeName, instrument, side, quantity, price, order_type, time_in_force);
+  printf("CCApiWrapper 2: put_order: exchange(%s) symbol(%s) side(%s) quantity(%f) price(%f) order_type(%s) time_in_force(%s)\n", 
+                           this->exchangeName.c_str(), instrument.c_str(), side.c_str(), 
+                           quantity, price, order_type.c_str(), time_in_force.c_str());
 
   this->session->sendRequest(request);
 }

@@ -25,6 +25,8 @@ TradeClientCCApi::TradeClientCCApi(
 #else
 TradeClientCCApi::TradeClientCCApi(const std::string &filepath, FromAppCallback cb)
     : eventCallback(cb), application(TradeClientCCApi::eventHandler, this) {}
+TradeClientCCApi::TradeClientCCApi(const std::string &filepath, FromAppCallbackExecutionReport cb)
+    : executionReportCallback(cb), application(TradeClientCCApi::eventHandler, this) {}    
 #endif
 TradeClientCCApi::~TradeClientCCApi() {
   // delete this->initiator;
@@ -38,7 +40,14 @@ bool TradeClientCCApi::eventHandler(void *obj, const ccapi::Event &event,
             << std::endl;
   auto pObj = (TradeClientCCApi *)(obj);
   auto content = event.toStringPretty(2, 2);
-  pObj->eventCallback(content, "0");
+  if (pObj->eventCallback != nullptr) {
+    pObj->eventCallback(content, "0");
+  }
+
+  if (pObj->executionReportCallback != nullptr) {
+    // pObj->executionReportCallback(content, "0");
+  }
+  
 #ifdef USE_TRADECLIENT_RUST_INTERFACE
 
   QuickFixMessage quick_fix_message{

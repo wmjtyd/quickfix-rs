@@ -67,7 +67,10 @@ void signal_handler(int signal)
     stoped = true;
   }
 }
-
+/*
+example:
+./cxx/tradeclient-ccapi/tradeclient-ccapi -e binance -b BTCUSDT --side 1 -q 0.123 -p 0.321 --stop_price 0.22 -t 1 -o 4
+*/
 int main( int argc, char** argv )
 {
     std::signal(SIGINT, signal_handler);
@@ -117,7 +120,7 @@ int main( int argc, char** argv )
     {
 
         printf("put_order: exchange(%s) symbol(%s) side(%d) quantity(%f) price(%f) order_type(%d) time_in_force(%d)\n", 
-                           exchangeName, symbol, side, quantity, price, order_type, time_in_force);
+                           exchangeName.c_str(), symbol.c_str(), side, quantity, price, order_type, time_in_force);
         auto clientApifiny = create_client(TradeClientType_CCApi, configfile, fromAppCallback);
         clientApifiny->start();
         clientApifiny->put_order(symbol, side,
