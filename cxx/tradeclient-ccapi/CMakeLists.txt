@@ -6,9 +6,16 @@ if(NOT DEFINED CLI11_DIR)
     set (CLI11_DIR ${CMAKE_SOURCE_DIR}/vendor/CLI11/include)
 endif()
 
+find_package(OpenSSL REQUIRED)
+message("-- OPENSSL_INCLUDE_DIR: ${OPENSSL_INCLUDE_DIR}")
+message("-- OPENSSL_LIBRARIES: ${OPENSSL_LIBRARIES}")
+message("-- OPENSSL_ROOT_DIR: ${OPENSSL_ROOT_DIR}")
+
 
 # LINK_DIRECTORIES(${CMAKE_SOURCE_DIR}/vendor/quickfix-cpp/src/C++)
-link_libraries(libssl.a libcrypto.a)
+# link_libraries(libssl.a libcrypto.a)
+link_libraries(ssl crypto)
+
 add_executable(tradeclient-ccapi ../Tradeclient.cpp Application.cpp Tradeclient.cpp main.cpp ccapi_wrapper.cpp ${applink_SOURCE})
 TARGET_LINK_LIBRARIES(tradeclient-ccapi dl pthread)
 #link_directories(${CMAKE_SOURCE_DIR}/examples/tradeclient/lib/openssl/lib/MinGW)
