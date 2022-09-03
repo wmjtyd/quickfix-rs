@@ -93,7 +93,7 @@ int main( int argc, char** argv )
     CLI::App app{"app: tradeclient-ccapi"};
     CLI::App* subcom = app.add_subcommand("test", "description");
                          
-    app.add_option("-e,--exchane", exchangeName, "exchane name");
+    app.add_option("-e,--exchange", exchangeName, "exchange name")->required();
     // app.add_option("-c,--coin", coinpairs, "coinpairs, -c [BTC-ETH, BTC-USDT]");
     
     app.add_option("-b,--symbol", symbol, "symbol, -s BTCUSDT")->required();
