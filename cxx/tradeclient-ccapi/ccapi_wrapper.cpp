@@ -63,7 +63,7 @@ void CCApiWrapper::Request(int operation, std::string instrument, const std::str
   //     {"price", "20000"},
   //     {"timeInForce", "GTC"},
   // });
-  printf("CCApiWrapper: put_order: exchange(%s) symbol(%s) side(%s) quantity(%f) price(%f) order_type(%s) time_in_force(%s)", 
+  printf("CCApiWrapper: put_order: exchange(%s) symbol(%s) side(%s) quantity(%f) price(%f) order_type(%s) time_in_force(%s)\n", 
                            this->exchangeName, instrument, side, quantity, price, order_type, time_in_force);
 
   this->session->sendRequest(request);

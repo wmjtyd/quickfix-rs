@@ -1,6 +1,7 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include <csignal>
 
 #include "CLI/App.hpp"
 #include "CLI/Formatter.hpp"
@@ -56,9 +57,23 @@ binance api doc: https://binance-docs.github.io/apidocs/spot/en/#new-order-trade
   });
 */
 
+bool stoped = false;
+//
+void signal_handler(int signal)
+{
+  std::cout << "signal_handler:" << signal << std::endl;
+  if (signal == SIGINT || signal == SIGKILL)
+  {
+    stoped = true;
+  }
+}
 
 int main( int argc, char** argv )
 {
+    std::signal(SIGINT, signal_handler);
+    std::signal(SIGKILL, signal_handler);
+
+
     std::vector<std::string> coinpairs;
     std::string exchangeName;
 
@@ -101,7 +116,7 @@ int main( int argc, char** argv )
     try
     {
 
-        printf("put_order: exchange(%s) symbol(%s) side(%d) quantity(%f) price(%f) order_type(%d) time_in_force(%d)", 
+        printf("put_order: exchange(%s) symbol(%s) side(%d) quantity(%f) price(%f) order_type(%d) time_in_force(%d)\n", 
                            exchangeName, symbol, side, quantity, price, order_type, time_in_force);
         auto clientApifiny = create_client(TradeClientType_CCApi, configfile, fromAppCallback);
         clientApifiny->start();
@@ -110,6 +125,13 @@ int main( int argc, char** argv )
                                  price, stop_price,
                                  order_type,
                                  time_in_force);
+        while(true)
+        {
+            if (stoped)
+            {
+            break;
+            }
+        }                                 
         clientApifiny->stop();
 
         clientApifiny.release();
@@ -123,4 +145,5 @@ int main( int argc, char** argv )
         return 1;
     }
 }
+
 

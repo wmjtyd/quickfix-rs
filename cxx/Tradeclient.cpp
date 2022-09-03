@@ -41,8 +41,8 @@ auto create_client(
   case TradeClientType_Wintmut:
     break;
   case TradeClientType_CCApi:
-    // pitradeclient =
-    //     new TradeClientCCApi(filepath, std::move(ctx), inbound_callback);
+     pitradeclient =
+         new TradeClientCCApi(filepath, cb);
     break;
   }
 

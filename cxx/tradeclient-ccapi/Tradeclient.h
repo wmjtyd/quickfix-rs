@@ -20,7 +20,7 @@ public:
                                  const rust::Box<TradingClientContext> &)>
                        inbound_callback);
 #else
-  TradeClientCCApi(const std::string &filepath);
+  TradeClientCCApi(const std::string &filepath, FromAppCallback cb);
 #endif
   ~TradeClientCCApi();
 
@@ -38,6 +38,7 @@ public:
 
 private:
   ApplicationCCApi application;
+  FromAppCallback eventCallback;
 #ifdef USE_TRADECLIENT_RUST_INTERFACE
   rust::Box<TradingClientContext> ctx;
   rust::Fn<void(const QuickFixMessage, const rust::Box<TradingClientContext> &)>
