@@ -16,7 +16,7 @@ message("-- OPENSSL_ROOT_DIR: ${OPENSSL_ROOT_DIR}")
 # link_libraries(libssl.a libcrypto.a)
 link_libraries(ssl crypto)
 
-add_executable(tradeclient-ccapi ../Tradeclient.cpp Application.cpp Tradeclient.cpp main.cpp ccapi_wrapper.cpp ${applink_SOURCE})
+add_executable(tradeclient-ccapi ../Tradeclient.cpp ApplicationCCApi.cpp TradeclientCCApi.cpp main.cpp ccapi_wrapper.cpp ${applink_SOURCE})
 TARGET_LINK_LIBRARIES(tradeclient-ccapi dl pthread)
 #link_directories(${CMAKE_SOURCE_DIR}/examples/tradeclient/lib/openssl/lib/MinGW)
 #link_directories(${CMAKE_SOURCE_DIR}/examples/tradeclient/lib/openssl/lib/MinGW)

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Application.h"
+#include "ApplicationCCApi.h"
 #include "ITradeclient.h"
 #ifdef USE_TRADECLIENT_RUST_INTERFACE
 #include "rust/cxx.h"

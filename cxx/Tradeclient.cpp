@@ -1,7 +1,7 @@
 
 #include "ITradeclient.h"
 // #include "tradeclient-apifiny/Tradeclient.h"
-#include "tradeclient-ccapi/Tradeclient.h"
+#include "tradeclient-ccapi/TradeclientCCApi.h"
 
 #ifdef USE_TRADECLIENT_RUST_INTERFACE
 #include "quickfix-rs/src/lib.rs.h"

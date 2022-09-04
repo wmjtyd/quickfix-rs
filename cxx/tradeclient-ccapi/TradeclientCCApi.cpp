@@ -1,5 +1,5 @@
-#include "Tradeclient.h"
-#include "Application.h"
+#include "TradeclientCCApi.h"
+#include "ApplicationCCApi.h"
 
 #ifdef USE_TRADECLIENT_RUST_INTERFACE
 #include "quickfix-rs/src/lib.rs.h"
