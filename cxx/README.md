@@ -4,6 +4,7 @@ yum install clang
 ## ubuntu
 sudo apt install clang
 sudo apt install libssl-dev
+sudo apt-get install zlib1g-dev
 
 # 下载代码
 git clone https://github.com/wmjtyd/quickfix-rs.git
