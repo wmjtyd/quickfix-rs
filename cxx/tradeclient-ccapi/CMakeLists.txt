@@ -6,6 +6,11 @@ if(NOT DEFINED CLI11_DIR)
     set (CLI11_DIR ${CMAKE_SOURCE_DIR}/vendor/CLI11/include)
 endif()
 
+add_compile_definitions(CCAPI_ENABLE_SERVICE_EXECUTION_MANAGEMENT)
+add_compile_definitions(CCAPI_ENABLE_EXCHANGE_BINANCE)
+# add_compile_definitions(CCAPI_BINANCE_URL_REST_BASE="https://testnet.binance.vision/api")
+
+message("-- CCAPI_BINANCE_URL_REST_BASE: ${CCAPI_BINANCE_URL_REST_BASE}")
 find_package(OpenSSL REQUIRED)
 message("-- OPENSSL_INCLUDE_DIR: ${OPENSSL_INCLUDE_DIR}")
 message("-- OPENSSL_LIBRARIES: ${OPENSSL_LIBRARIES}")
