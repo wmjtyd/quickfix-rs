@@ -11,6 +11,23 @@ using ::ccapi::SessionOptions;
 using ::ccapi::UtilSystem;
 
 
+namespace ccapi {
+class MyLogger final : public Logger {
+ public:
+  void logMessage(const std::string& severity, const std::string& threadId, const std::string& timeISO, const std::string& fileName,
+                  const std::string& lineNumber, const std::string& message) override {
+    std::lock_guard<std::mutex> lock(m);
+    std::cout << threadId << ": [" << timeISO << "] {" << fileName << ":" << lineNumber << "} " << severity << std::string(8, ' ') << message << std::endl;
+  }
+
+ private:
+  std::mutex m;
+};
+MyLogger myLogger;
+Logger* Logger::logger = &myLogger;
+} 
+
+
 CCApiWrapper::CCApiWrapper(std::string exchangeName, eventHandlerFunc *eventHandler, void *myEventHandlerObj) {
   this->exchangeName = exchangeName;
   this->myEventHandler = new MyEventHandler(eventHandler, myEventHandlerObj);
