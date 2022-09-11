@@ -29,25 +29,31 @@ make tradeclient-ccapi
 
 
 # 如何运行
-# 设置api-key
-```
-export BINANCE_API_KEY=xxx
-export BINANCE_API_SECRET=xxx
-```
-
 ## 测试网环境变量设置(若不使用测试网，则跳过这步)
 如果需要连接测试网进行调试，设置以下cmake变量
 
 币安测试网baseurl
 在CMakeList.txt加入base url的定义：
 ```
-set(CCAPI_BINANCE_URL_REST_BASE https://testnet.binance.vision/api)
+add_compile_definitions(CCAPI_BINANCE_URL_REST_BASE="https://testnet.binance.vision/api")
 ```
 然后
 ```
 cmake .
 make tradeclient-ccapi
 ```
+
+#### 生成测试网api-key
+在https://testnet.binance.vision/ 网站上注册测试账号和生成api-key
+
+
+# 设置api-key
+```
+export BINANCE_API_KEY=xxx
+export BINANCE_API_SECRET=xxx
+```
+
+
 
 ### 运行程序
 ```
@@ -71,3 +77,6 @@ Step 2: Follow the official documentation of the Spot API, replacing the URLs of
 
 ### 测试网faq链接
 https://www.binance.com/en/support/faq/ab78f9a1b8824cf0a106b4229c76496d
+
+### 测试网界面
+https://testnet.binancefuture.com/en/futures/BTCUSDT

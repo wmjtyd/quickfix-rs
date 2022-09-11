@@ -24,6 +24,8 @@ void CCApiWrapper::Start() {
   SessionOptions sessionOptions;
   SessionConfigs sessionConfigs;
 //  MyEventHandler eventHandler;
+  auto url = sessionConfigs.getUrlRestBase().at(this->exchangeName);
+  printf("CCApiWrapper::Start exchange(%s) baseurl(%s) \n", this->exchangeName.c_str(), url.c_str());
   this->session = new Session(sessionOptions, sessionConfigs, this->myEventHandler);
 //  Session session(sessionOptions, sessionConfigs, &eventHandler);
 }

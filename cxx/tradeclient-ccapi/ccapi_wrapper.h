@@ -1,6 +1,5 @@
 #pragma once
-#define CCAPI_ENABLE_SERVICE_EXECUTION_MANAGEMENT
-#define CCAPI_ENABLE_EXCHANGE_BINANCE
+
 
 #include <string>
 #include <map>
