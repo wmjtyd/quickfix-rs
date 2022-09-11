@@ -69,7 +69,11 @@ void signal_handler(int signal)
 }
 /*
 example:
+1. ERROR_MESSAGE = {"code":-1013,"msg":"Filter failure: PRICE_FILTER"},
 ./cxx/tradeclient-ccapi/tradeclient-ccapi -e binance -b BTCUSDT --side 1 -q 0.123 -p 0.321 --stop_price 0.22 -t 1 -o 4
+
+2. success
+./cxx/tradeclient-ccapi/tradeclient-ccapi -e binance -b BTCUSDT --side 1 -q 0.123 -p 10000 --stop_price 31000 -t 1 -o 4
 */
 int main( int argc, char** argv )
 {
