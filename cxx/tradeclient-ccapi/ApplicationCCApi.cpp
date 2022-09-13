@@ -46,7 +46,7 @@ auto ApplicationCCApi::new_order_single(const std::string &symbol, char side,
                         const char order_type,const char time_in_force) const
     -> std::unique_ptr<std::string> {
   // const auto order_id = generate_order_id_2(ACCOUNT_ID_CCAPI);
-
+  double _price = -1;
   std::string _side;
   std::string _order_type;
   std::string _time_in_force;
@@ -55,8 +55,12 @@ auto ApplicationCCApi::new_order_single(const std::string &symbol, char side,
   _order_type = convertOrderType(order_type);
   _time_in_force = convertTimeInForce(time_in_force);
 
+  if (order_type != FIX::OrdType_MARKET) {
+      _price = price;
+  }
+
   this->ccapiwrapper.Request(CCAPI_EXECUTION_CREATE_ORDER, symbol, _side, 
-                        quantity, price, stop_price,
+                        quantity, _price, stop_price,
                         _order_type, _time_in_force); // symbol = "BTCUSDT"
   // return std::make_unique<std::string>(std::move(order_id));
   std::string order_id = "0"; //TODO: 暂时这样先编译通过
