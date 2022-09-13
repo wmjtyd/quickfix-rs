@@ -19,7 +19,12 @@ add_compile_definitions(CCAPI_ENABLE_LOG_TRACE)
 
 add_compile_definitions(CCAPI_ENABLE_SERVICE_EXECUTION_MANAGEMENT)
 add_compile_definitions(CCAPI_ENABLE_EXCHANGE_BINANCE)
+
 add_compile_definitions(CCAPI_BINANCE_URL_REST_BASE="https://testnet.binance.vision/api")
+add_compile_definitions(CCAPI_BINANCE_URL_WS_BASE="wss://testnet.binance.vision")
+
+# 期货测试网
+add_compile_definitions(CCAPI_BINANCE_USDS_FUTURES_URL_REST_BASE="https://testnet.binancefuture.com")
 
 message("-- CCAPI_BINANCE_URL_REST_BASE: ${CCAPI_BINANCE_URL_REST_BASE}")
 find_package(OpenSSL REQUIRED)
