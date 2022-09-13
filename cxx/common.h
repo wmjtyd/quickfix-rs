@@ -70,7 +70,10 @@ public:
     const char TimeInForce;
 };
 
+
+
+
 typedef  void (*FromAppCallback) (std::string message, std::string sessionId);
-typedef  void (*FromAppCallbackExecutionReport) (ExecutionReport executionReport) ;
+typedef  void (*FromAppCallbackExecutionReport) (const ExecutionReport &executionReport, std::string sessionId) ;
 
 #endif

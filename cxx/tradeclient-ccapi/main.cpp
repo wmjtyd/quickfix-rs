@@ -15,6 +15,12 @@ void fromAppCallback(std::string message, std::string sessionId)
     std::cout << "sessionId:" << sessionId << std::endl;
 }
 
+void fromAppCallbackExecutionReport(const ExecutionReport &executionReport, std::string sessionId)
+{
+    std::cout << "executionReport.OrderID:" << executionReport.OrderID << std::endl;
+    std::cout << "executionReport.OrdStatus:" << executionReport.OrdStatus << std::endl;
+    std::cout << "sessionId:" << sessionId << std::endl;
+}
 /*
 
 binance api doc: https://binance-docs.github.io/apidocs/spot/en/#new-order-trade
@@ -161,7 +167,7 @@ int main( int argc, char** argv )
 
         printf("put_order: exchange(%s) symbol(%s) side(%d) quantity(%f) price(%f) order_type(%d) time_in_force(%d)\n", 
                            exchangeName.c_str(), symbol.c_str(), side, quantity, price, order_type, time_in_force);
-        auto client = create_client(TradeClientType_CCApi, configfile, fromAppCallback);
+        auto client = create_client(TradeClientType_CCApi, configfile, fromAppCallbackExecutionReport);
         client->start();
 //        client->put_order(symbol, side,
 //                                 quantity,

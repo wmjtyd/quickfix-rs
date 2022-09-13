@@ -49,5 +49,5 @@ auto create_client(
         inbound_callback) -> std::unique_ptr<ITradeClient>;
 #else
 auto create_client(
-    const TradeClientType type, const std::string &filepath, FromAppCallback cb) -> std::unique_ptr<ITradeClient>;
+    const TradeClientType type, const std::string &filepath, FromAppCallbackExecutionReport cb) -> std::unique_ptr<ITradeClient>;
 #endif        

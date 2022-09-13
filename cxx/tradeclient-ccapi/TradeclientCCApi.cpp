@@ -45,6 +45,14 @@ bool TradeClientCCApi::eventHandler(void *obj, const ccapi::Event &event,
   }
 
   if (pObj->executionReportCallback != nullptr) {
+      std::vector<ccapi::Message> messagelist = event.getMessageList();
+      for (const auto& message : messagelist) {
+          const auto elemList = message.getElementList();
+          for (const auto& elem : elemList) {
+              std::cout << "elem:" << elem.toString() << std::endl;
+          }
+      }
+      ExecutionReport aExecutionReport();
     // pObj->executionReportCallback(content, "0");
   }
   
