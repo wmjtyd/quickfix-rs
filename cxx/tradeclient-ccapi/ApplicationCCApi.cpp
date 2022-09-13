@@ -210,7 +210,7 @@ auto ApplicationCCApi::convertTimeInForce(const char time_in_force) const -> std
     //   _time_in_force = "_MARKET";
     // break;
     case -1:
-      _time_in_force = nullptr;
+      _time_in_force = "";
     break;
     
     case FIX::TimeInForce_GOOD_TILL_CANCEL: //'1'
