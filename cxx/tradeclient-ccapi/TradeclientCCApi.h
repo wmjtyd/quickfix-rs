@@ -35,6 +35,8 @@ public:
                  const double quantity,const double price, const double stop_price,
                  const char order_type,const char time_in_force) const
       -> std::unique_ptr<std::string> override;
+  auto put_order(const NewOrderSingle &aNewOrderSingle) const -> std::unique_ptr<std::string> override;
+
   auto cancel_order(const std::string &order_id) const -> void override;
 
 private:

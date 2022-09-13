@@ -41,13 +41,17 @@ binance api doc: https://binance-docs.github.io/apidocs/spot/en/#new-order-trade
 市价FOK：市价全部成交，否则自动撤单。
 
 // 
-市价IOC
-GTC
+市价
 ./cxx/tradeclient-ccapi/tradeclient-ccapi -e binance -b BTCUSDT --side 1 --quantity 1 --price 0.321   --order_type 1
-IOC
-./cxx/tradeclient-ccapi/tradeclient-ccapi -e binance -b BTCUSDT --side 1 --quantity 1 --price 0.321  --time_in_force 3 --order_type 1
-FOK
-./cxx/tradeclient-ccapi/tradeclient-ccapi -e binance -b BTCUSDT --side 1 --quantity 1 --price 0.321  --time_in_force 4 --order_type 1
+
+ 限价DAY
+ ./cxx/tradeclient-ccapi/tradeclient-ccapi -e binance -b BTCUSDT --side 1 --quantity 1 --price 20000   --time_in_force 0 --order_type 2 //nok
+限价GTC
+./cxx/tradeclient-ccapi/tradeclient-ccapi -e binance -b BTCUSDT --side 1 --quantity 1 --price 20000   --time_in_force 1 --order_type 2
+限价IOC
+./cxx/tradeclient-ccapi/tradeclient-ccapi -e binance -b BTCUSDT --side 1 --quantity 1 --price 20000  --time_in_force 3 --order_type 2
+限价FOK
+./cxx/tradeclient-ccapi/tradeclient-ccapi -e binance -b BTCUSDT --side 1 --quantity 1 --price 20000  --time_in_force 4 --order_type 2
 限价FOK
 
 
@@ -157,23 +161,29 @@ int main( int argc, char** argv )
 
         printf("put_order: exchange(%s) symbol(%s) side(%d) quantity(%f) price(%f) order_type(%d) time_in_force(%d)\n", 
                            exchangeName.c_str(), symbol.c_str(), side, quantity, price, order_type, time_in_force);
-        auto clientApifiny = create_client(TradeClientType_CCApi, configfile, fromAppCallback);
-        clientApifiny->start();
-        clientApifiny->put_order(symbol, side,
-                                 quantity, 
-                                 price, stop_price,
-                                 order_type,
-                                 time_in_force);
+        auto client = create_client(TradeClientType_CCApi, configfile, fromAppCallback);
+        client->start();
+//        client->put_order(symbol, side,
+//                                 quantity,
+//                                 price, stop_price,
+//                                 order_type,
+//                                 time_in_force);
+        std::string cl_order_id = "order_xxx";
+        NewOrderSingle aNewOrderSingle = NewOrderSingle(symbol, cl_order_id, side,
+                                                        order_type, quantity, price, stop_price,
+                                                        time_in_force);
+        client->put_order(aNewOrderSingle);
+
         while(true)
         {
             if (stoped)
             {
             break;
             }
-        }                                 
-        clientApifiny->stop();
+        }
+        client->stop();
 
-        clientApifiny.release();
+        client.release();
         //delete clientApifiny;
 
         return 0;

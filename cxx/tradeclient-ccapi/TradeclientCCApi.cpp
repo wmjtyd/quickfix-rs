@@ -83,6 +83,13 @@ auto TradeClientCCApi::put_order(const std::string &symbol, char side,
                                             order_type, time_in_force);
 }
 
+auto TradeClientCCApi::put_order(const NewOrderSingle &aNewOrderSingle) const
+-> std::unique_ptr<std::string> {
+    return this->application.new_order_single(aNewOrderSingle.Symbol, aNewOrderSingle.Side,
+                                              aNewOrderSingle.Quantity, aNewOrderSingle.Price, aNewOrderSingle.StopPrice,
+                                              aNewOrderSingle.OrdType, aNewOrderSingle.TimeInForce);
+}
+
 auto TradeClientCCApi::cancel_order(const std::string &order_id) const -> void {
   this->application.cancel_order(order_id);
 }

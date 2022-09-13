@@ -40,6 +40,36 @@ class ExecutionReport
 
   };
 
+
+class NewOrderSingle  {
+public:
+    NewOrderSingle(
+            const std::string &aSymbol,
+            const std::string &aClOrdID,
+            const char &aSide,
+            const char &aOrdType,
+            const double &aQuantity,
+            const double &aPrice,
+            const double &aStopPrice,
+            const char &aTimeInForce) : Symbol(aSymbol), ClOrdID(aClOrdID), Side(aSide), OrdType(aOrdType),
+            Quantity(aQuantity), Price(aPrice), StopPrice(aStopPrice), TimeInForce(aTimeInForce) {
+
+    }
+public:
+    const std::string Symbol;
+    const std::string ClOrdID;
+    const std::string HandlInst; //还未使用
+    const char Side;
+    const std::string TransactTime; //还未使用
+    const char OrdType;
+
+    const double Quantity;
+
+    const double Price;
+    const double StopPrice;
+    const char TimeInForce;
+};
+
 typedef  void (*FromAppCallback) (std::string message, std::string sessionId);
 typedef  void (*FromAppCallbackExecutionReport) (ExecutionReport executionReport) ;
 
