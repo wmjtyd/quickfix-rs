@@ -204,7 +204,7 @@ https://www.onixs.biz/fix-dictionary/4.4/tagNum_59.html
 7 = At the Close
 */
 auto ApplicationCCApi::convertTimeInForce(const char time_in_force) const -> std::string {
-  std::string _time_in_force = nullptr;
+  std::string _time_in_force;
   switch(time_in_force) {
     // case Fix::TimeInForce_DAY: //'0'
     //   _time_in_force = "_MARKET";
