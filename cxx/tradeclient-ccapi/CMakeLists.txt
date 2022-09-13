@@ -20,6 +20,7 @@ add_compile_definitions(CCAPI_ENABLE_LOG_TRACE)
 add_compile_definitions(CCAPI_ENABLE_SERVICE_EXECUTION_MANAGEMENT)
 add_compile_definitions(CCAPI_ENABLE_EXCHANGE_BINANCE)
 
+# 测试网base url配置
 add_compile_definitions(CCAPI_BINANCE_URL_REST_BASE="https://testnet.binance.vision/api")
 add_compile_definitions(CCAPI_BINANCE_URL_WS_BASE="wss://testnet.binance.vision")
 
