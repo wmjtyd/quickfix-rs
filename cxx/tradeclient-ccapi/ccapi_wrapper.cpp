@@ -75,9 +75,14 @@ void CCApiWrapper::Request(int operation, std::string instrument, const std::str
       {"type", order_type},
       {"quantity", std::to_string(quantity)},
       // {"stopPrice", std::to_string(stop_price)},
-      {"price", std::to_string(price)},
+//      {"price", std::to_string(price)},
       // {"timeInForce", time_in_force},
   };
+
+  if (price != -1) {
+      param["price"] = std::to_string(price);
+  }
+
   if (stop_price != 0) {
     param["stopPrice"] = std::to_string(stop_price);
   }
