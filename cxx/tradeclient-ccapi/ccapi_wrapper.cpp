@@ -82,8 +82,8 @@ void CCApiWrapper::Request(int operation, std::string instrument, const std::str
     param["stopPrice"] = std::to_string(stop_price);
   }
 
-  if (time_in_force != nullptr) {
-    param["timeInForce"] = std::to_string(time_in_force);
+  if (time_in_force != "") {
+    param["timeInForce"] = time_in_force;
   }
   request.appendParam(param);
   // request.appendParam({
