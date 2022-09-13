@@ -204,11 +204,14 @@ https://www.onixs.biz/fix-dictionary/4.4/tagNum_59.html
 7 = At the Close
 */
 auto ApplicationCCApi::convertTimeInForce(const char time_in_force) const -> std::string {
-  std::string _time_in_force = "";
+  std::string _time_in_force = nullptr;
   switch(time_in_force) {
     // case Fix::TimeInForce_DAY: //'0'
     //   _time_in_force = "_MARKET";
     // break;
+    case -1:
+      _time_in_force = nullptr;
+    break;
     
     case FIX::TimeInForce_GOOD_TILL_CANCEL: //'1'
       _time_in_force = "GTC";

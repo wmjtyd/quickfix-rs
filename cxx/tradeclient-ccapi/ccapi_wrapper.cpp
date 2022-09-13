@@ -69,14 +69,23 @@ void CCApiWrapper::Request(int operation, std::string instrument, const std::str
                            this->exchangeName.c_str(), instrument.c_str(), side.c_str(), 
                            quantity, price, order_type.c_str(), time_in_force.c_str());                          
   ::ccapi::Request request(Request::Operation(operation), this->exchangeName, instrument);
-  request.appendParam({
+  std::map<std::string, std::string> param;
+  param = {
       {"side", side},
       {"type", order_type},
       {"quantity", std::to_string(quantity)},
-      {"stopPrice", std::to_string(stop_price)},
+      // {"stopPrice", std::to_string(stop_price)},
       {"price", std::to_string(price)},
-      {"timeInForce", time_in_force},
-  });
+      // {"timeInForce", time_in_force},
+  };
+  if (stop_price != 0) {
+    param["stopPrice"] = std::to_string(stop_price);
+  }
+
+  if (time_in_force != nullptr) {
+    param["timeInForce"] = std::to_string(time_in_force);
+  }
+  request.appendParam(param);
   // request.appendParam({
   //     {"side", "SELL"},
   //     {"type", "STOP_LOSS_LIMIT"},

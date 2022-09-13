@@ -32,9 +32,9 @@ public:
 private:
   auto convertSide(const char side) const -> std::string;
 
-  auto convertOrderType(const char side) const -> std::string;
+  auto convertOrderType(const char order_type) const -> std::string;
 
-  auto convertTimeInForce(const char side) const -> std::string;                          
+  auto convertTimeInForce(const char time_in_force) const -> std::string;                          
 
 private:
   // auto inbound(const FIX::Message &message, const FIX::SessionID &session_id,
