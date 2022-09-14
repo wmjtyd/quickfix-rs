@@ -62,7 +62,7 @@ bool TradeClientCCApi::eventHandler(void *obj, const ccapi::Event &event,
               std::cout << "elem.httpSatusCode:" << httpSatusCode << std::endl;
               if (messageType == ccapi::Message::Type::RESPONSE_ERROR
                || messageType == ccapi::Message::Type::REQUEST_FAILURE) {
-                auto errorMessage = elem.getValue("ERROR_MESSAGE");
+                aExecutionReport.ErrorMessage = elem.getValue("ERROR_MESSAGE");
                 auto httpSatusCode = elem.getValue("HTTP_STATUS_CODE");
 
                } else if (messageType == ccapi::Message::Type::CREATE_ORDER) {

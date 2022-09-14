@@ -20,6 +20,7 @@ void fromAppCallbackExecutionReport(const std::vector<ExecutionReport> &excution
     for (const auto& executionReport : excutionReportList) {
         std::cout << "executionReport.OrderID:" << executionReport.OrderID << std::endl;
         std::cout << "executionReport.OrdStatus:" << executionReport.OrdStatus << std::endl;
+        std::cout << "executionReport.ErrorMessage:" << executionReport.ErrorMessage << std::endl;
         std::cout << "sessionId:" << sessionId << std::endl;
     }
 
