@@ -79,6 +79,6 @@ public:
 
 
 typedef  void (*FromAppCallback) (std::string message, std::string sessionId);
-typedef  void (*FromAppCallbackExecutionReport) (const ExecutionReport &executionReport, std::string sessionId) ;
+typedef  void (*FromAppCallbackExecutionReport) (const std::vector<ExecutionReport> &excutionReportList, std::string sessionId) ;
 
 #endif
