@@ -15,11 +15,14 @@ void fromAppCallback(std::string message, std::string sessionId)
     std::cout << "sessionId:" << sessionId << std::endl;
 }
 
-void fromAppCallbackExecutionReport(const ExecutionReport &executionReport, std::string sessionId)
+void fromAppCallbackExecutionReport(std::vector<ExecutionReport> &excutionReportList, std::string sessionId)
 {
-    std::cout << "executionReport.OrderID:" << executionReport.OrderID << std::endl;
-    std::cout << "executionReport.OrdStatus:" << executionReport.OrdStatus << std::endl;
-    std::cout << "sessionId:" << sessionId << std::endl;
+    for (const auto& excutionReport : excutionReportList) {
+        std::cout << "executionReport.OrderID:" << executionReport.OrderID << std::endl;
+        std::cout << "executionReport.OrdStatus:" << executionReport.OrdStatus << std::endl;
+        std::cout << "sessionId:" << sessionId << std::endl;
+    }
+
 }
 /*
 

@@ -55,7 +55,7 @@ bool TradeClientCCApi::eventHandler(void *obj, const ccapi::Event &event,
           for (const auto& elem : elemList) {
               // std::cout << "elem:" << elem.toStringPretty() << std::endl;
               ExecutionReport aExecutionReport;
-              
+
               auto errorMessage = elem.getValue("ERROR_MESSAGE");
               auto httpSatusCode = elem.getValue("HTTP_STATUS_CODE");
               std::cout << "elem.errorMessage:" << errorMessage << std::endl;
@@ -90,7 +90,7 @@ bool TradeClientCCApi::eventHandler(void *obj, const ccapi::Event &event,
           }
       }
       
-    // pObj->executionReportCallback(content, "0");
+    pObj->executionReportCallback(excutionReportList, "0");
   }
   
 #ifdef USE_TRADECLIENT_RUST_INTERFACE
