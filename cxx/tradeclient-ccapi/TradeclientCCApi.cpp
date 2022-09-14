@@ -13,6 +13,7 @@
 #include <string>
 
 // #include "quickfix/FixValues.h"
+#include "quickfix/Values.h"
 
 #ifdef USE_TRADECLIENT_RUST_INTERFACE
 TradeClientCCApi::TradeClientCCApi(
@@ -45,14 +46,49 @@ bool TradeClientCCApi::eventHandler(void *obj, const ccapi::Event &event,
   }
 
   if (pObj->executionReportCallback != nullptr) {
+      std::vector<ExecutionReport> excutionReportList;
       std::vector<ccapi::Message> messagelist = event.getMessageList();
       for (const auto& message : messagelist) {
+          auto messageType = message.getType();
+          std::cout << "message.messageType:" << int(messageType) << std::endl;
           const auto elemList = message.getElementList();
           for (const auto& elem : elemList) {
-              std::cout << "elem:" << elem.toString() << std::endl;
+              // std::cout << "elem:" << elem.toStringPretty() << std::endl;
+              ExecutionReport aExecutionReport();
+              auto errorMessage = elem.getValue("ERROR_MESSAGE");
+              auto httpSatusCode = elem.getValue("HTTP_STATUS_CODE");
+              std::cout << "elem.errorMessage:" << errorMessage << std::endl;
+              std::cout << "elem.httpSatusCode:" << httpSatusCode << std::endl;
+              if (messageType == ccapi::Message::Type::RESPONSE_ERROR
+               || messageType == ccapi::Message::Type::REQUEST_FAILURE) {
+                auto errorMessage = elem.getValue("ERROR_MESSAGE");
+                auto httpSatusCode = elem.getValue("HTTP_STATUS_CODE");
+
+               } else if (messageType == ccapi::Message::Type::CREATE_ORDER) {
+                aExecutionReport.ClOrdId = elem.getValue("CLIENT_ORDER_ID");
+                aExecutionReport.Symbol = elem.getValue("INSTRUMENT");
+                aExecutionReport.ClOrdId = elem.getValue("ORDER_ID");
+                aExecutionReport.OrdStatus = FIX::OrdStatus_NEW;
+               } else if (messageType == ccapi::Message::Type::CANCEL_OPEN_ORDERS) {
+                aExecutionReport.ClOrdId = elem.getValue("CLIENT_ORDER_ID");
+                aExecutionReport.Symbol = elem.getValue("INSTRUMENT");
+                aExecutionReport.ClOrdId = elem.getValue("ORDER_ID");
+                aExecutionReport.OrdStatus = FIX::OrdStatus_CANCELED;
+               } else if (messageType == ccapi::Message::Type::CANCEL_ORDER) {
+                aExecutionReport.ClOrdId = elem.getValue("CLIENT_ORDER_ID");
+                aExecutionReport.Symbol = elem.getValue("INSTRUMENT");
+                aExecutionReport.ClOrdId = elem.getValue("ORDER_ID");
+                aExecutionReport.OrdStatus = FIX::OrdStatus_CANCELED;
+               } else if (messageType == ccapi::Message::Type::EXECUTION_MANAGEMENT_EVENTS_ORDER_UPDATE) {
+                aExecutionReport.ClOrdId = elem.getValue("CLIENT_ORDER_ID");
+                aExecutionReport.Symbol = elem.getValue("INSTRUMENT");
+                aExecutionReport.ClOrdId = elem.getValue("ORDER_ID");
+               } 
+   
+              excutionReportList.push_back(aExecutionReport);
           }
       }
-      ExecutionReport aExecutionReport();
+      
     // pObj->executionReportCallback(content, "0");
   }
   
