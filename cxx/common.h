@@ -13,29 +13,34 @@ class ExecutionReport
     // ExecutionReport(const Message& m) : Message(m) {}
     // ExecutionReport(const ExecutionReport& m) : Message(m) {}
     // static FIX::MsgType MsgType() { return FIX::MsgType("8"); }
+    ExecutionReport() {}
 
-    ExecutionReport(
-      const std::string& aOrderID,
-      const std::string& aExecID,
-      const std::string& aExecType,
-      const int& aOrdStatus,
-      const int& aSide,
-      const double& aLeavesQty,
-      const double& aCumQty)
-    : OrderID(aOrderID), ExecID(aExecID), ExecType(aExecType),OrdStatus(aOrdStatus),
-      Side(aSide),LeavesQty(aLeavesQty),CumQty(aCumQty)
-    {
+    // ExecutionReport(
+    //   const std::string& aOrderID,
+    //   const std::string& aExecID,
+    //   const std::string& aExecType,
+    //   const int& aOrdStatus,
+    //   const int& aSide,
+    //   const double& aLeavesQty,
+    //   const double& aCumQty)
+    // : OrderID(aOrderID), ExecID(aExecID), ExecType(aExecType),OrdStatus(aOrdStatus),
+    //   Side(aSide)/*,LeavesQty(aLeavesQty),CumQty(aCumQty)*/
+    // {
 
-    }
+    // }
 
     public:
+      std::string Symbol;
       std::string OrderID;
+      std::string ClOrdId;
       std::string ExecID;
       std::string ExecType;
-      int OrdStatus;
+      char OrdStatus;
       int Side;
-      double LeavesQty;
-      double CumQty;
+      // double LeavesQty;
+      // double CumQty;
+
+      std::string ErrorMessage;
 
 
   };

@@ -54,7 +54,8 @@ bool TradeClientCCApi::eventHandler(void *obj, const ccapi::Event &event,
           const auto elemList = message.getElementList();
           for (const auto& elem : elemList) {
               // std::cout << "elem:" << elem.toStringPretty() << std::endl;
-              ExecutionReport aExecutionReport();
+              ExecutionReport aExecutionReport;
+              
               auto errorMessage = elem.getValue("ERROR_MESSAGE");
               auto httpSatusCode = elem.getValue("HTTP_STATUS_CODE");
               std::cout << "elem.errorMessage:" << errorMessage << std::endl;
