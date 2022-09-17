@@ -81,9 +81,9 @@ public:
     OrderCancelRequest(
                 const std::string aSymbol,
                 const std::string aOrdID,
-                const std::string aOrigClOrdID,
-                const std::string aClOrdID,
-                const char aSide) : Symbol(aSymbol), OrdID(aOrdID), OrigClOrdID(aOrigClOrdID), ClOrdID(aClOrdID), Side(aSide) {
+                const std::string aOrigClOrdID = "",
+                const std::string aClOrdID = "",
+                const char aSide = 0) : Symbol(aSymbol), OrdID(aOrdID), OrigClOrdID(aOrigClOrdID), ClOrdID(aClOrdID), Side(aSide) {
 
     }
 public:

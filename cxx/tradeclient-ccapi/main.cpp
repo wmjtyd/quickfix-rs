@@ -140,20 +140,54 @@ int main( int argc, char** argv )
     double price;
     double stop_price;
 
+    std::string order_id = "";
+
     CLI::App app{"app: tradeclient-ccapi"};
-    CLI::App* subcom = app.add_subcommand("test", "description");
-                         
-    app.add_option("-e,--exchange", exchangeName, "exchange name")->required();
+    app.set_help_all_flag("--help-all", "Expand all help");
+
+    CLI::App* subcom_create_order = app.add_subcommand("create_order", "create_order");
+    CLI::App* subcom_cancel_order = app.add_subcommand("cancel_order", "cancel_order");
+    CLI::App* subcom_get_order = app.add_subcommand("get_order", "get_order");
+    CLI::App* subcom_get_open_orders = app.add_subcommand("get_open_orders", "get_open_orders");
+    CLI::App* subcom_cancel_open_orders = app.add_subcommand("cancel_open_orders", "cancel_open_orders");
+
+    CLI::App* subcom_get_accounts = app.add_subcommand("get_accounts", "get_accounts");
+
+    CLI::App* subcom_get_account_balances = app.add_subcommand("get_account_balances", "get_account_balances");
+    CLI::App* subcom_get_account_postions = app.add_subcommand("get_account_postions", "get_account_postions");
+
+    app.require_subcommand();  // 1 or more
+
+    { //create_order  
+        subcom_create_order->add_option("-e,--exchange", exchangeName, "exchange name")->required();
     // app.add_option("-c,--coin", coinpairs, "coinpairs, -c [BTC-ETH, BTC-USDT]");
     
-    app.add_option("-b,--symbol", symbol, "symbol, -s BTCUSDT")->required();
-    app.add_option("-s,--side", side, "side, -s buy|sell")->required(); //https://www.onixs.biz/fix-dictionary/4.4/tagNum_54.html
-    app.add_option("-q,--quantity", quantity, "quantity, -q 1.22")->required();
-    app.add_option("-p,--price", price, "price, -p 1.22");
-    app.add_option("--stop_price", stop_price, "stop_price, -p 1.22");
-    app.add_option("-t,--time_in_force", time_in_force, "time_in_force, -t 0"); //https://www.onixs.biz/fix-dictionary/4.4/tagNum_59.html //https://www.onixs.biz/fix-dictionary/5.0.SP2/tagNum_59.html
-    app.add_option("-o,--order_type", order_type, "order_type, -o 1.22")->required(); //https://www.onixs.biz/fix-dictionary/4.4/tagNum_40.html
+        subcom_create_order->add_option("-b,--symbol", symbol, "symbol, -s BTCUSDT")->required();
+        subcom_create_order->add_option("-s,--side", side, "side, -s buy|sell")->required(); //https://www.onixs.biz/fix-dictionary/4.4/tagNum_54.html
+        subcom_create_order->add_option("-q,--quantity", quantity, "quantity, -q 1.22")->required();
+        subcom_create_order->add_option("-p,--price", price, "price, -p 1.22");
+        subcom_create_order->add_option("--stop_price", stop_price, "stop_price, -p 1.22");
+        subcom_create_order->add_option("-t,--time_in_force", time_in_force, "time_in_force, -t 0"); //https://www.onixs.biz/fix-dictionary/4.4/tagNum_59.html //https://www.onixs.biz/fix-dictionary/5.0.SP2/tagNum_59.html
+        subcom_create_order->add_option("-o,--order_type", order_type, "order_type, -o 1.22")->required(); //https://www.onixs.biz/fix-dictionary/4.4/tagNum_40.html
+    }
+
+    {
+        subcom_cancel_order->add_option("-b,--symbol", symbol, "symbol, -s BTCUSDT")->required();
+        subcom_cancel_order->add_option("-i,--orderid", order_id, "symbol, -s BTCUSDT")->required();
+    }
     
+    {
+        subcom_get_order->add_option("-b,--symbol", symbol, "symbol, -s BTCUSDT")->required();
+        subcom_get_order->add_option("-i,--orderid", order_id, "symbol, -s BTCUSDT")->required();
+    }
+
+    {        
+        subcom_get_open_orders->add_option("-b,--symbol", symbol, "symbol, -s BTCUSDT")->required();
+    }
+
+    {        
+        subcom_cancel_open_orders->add_option("-b,--symbol", symbol, "symbol, -s BTCUSDT")->required();
+    }
 
     app.add_option("-f,--configfile", configfile, "-f ./configfile");
 
@@ -166,13 +200,20 @@ int main( int argc, char** argv )
     // }
     // std::string file = argv[ 1 ];
 
-    try
-    {
+    // for(auto *subcom : app.get_subcommands())
+        // std::cout << "Subcommand: " << subcom->get_name() << std::endl;
 
+
+    auto subcom = app.get_subcommand();
+    std::cout << "Subcommand: " << subcom->get_name() << std::endl;
+    auto subcomName = subcom->get_name();
+
+    auto client = create_client(TradeClientType_CCApi, configfile, fromAppCallbackExecutionReport);
+    client->start();
+
+    if (subcomName == "create_order") {
         printf("put_order: exchange(%s) symbol(%s) side(%d) quantity(%f) price(%f) order_type(%d) time_in_force(%d)\n", 
-                           exchangeName.c_str(), symbol.c_str(), side, quantity, price, order_type, time_in_force);
-        auto client = create_client(TradeClientType_CCApi, configfile, fromAppCallbackExecutionReport);
-        client->start();
+                    exchangeName.c_str(), symbol.c_str(), side, quantity, price, order_type, time_in_force);
 //        client->put_order(symbol, side,
 //                                 quantity,
 //                                 price, stop_price,
@@ -183,6 +224,31 @@ int main( int argc, char** argv )
                                                         order_type, quantity, price, stop_price,
                                                         time_in_force);
         client->put_order(aNewOrderSingle);
+    } else if (subcomName == "cancel_order") {
+        OrderCancelRequest aOrderCancelRequest = OrderCancelRequest(symbol, order_id);
+        client->cancel_order(aOrderCancelRequest);
+    } else if (subcomName == "get_order") {
+        client->get_order(symbol, order_id);
+    } else if (subcomName == "get_open_orders") {
+        client->get_open_orders(symbol);
+    } else if (subcomName == "cancel_open_orders") {
+        client->cancel_open_orders(symbol);
+    } else if (subcomName == "get_accounts") {
+        //client->get_accounts();
+    } else if (subcomName == "get_account_balances") {
+        client->get_account_balances();
+    } else if (subcomName == "get_account_postions") {
+        //client->get_account_postions();
+    }
+
+    return 0;    
+
+    try
+    {
+
+
+
+
 
         while(true)
         {
