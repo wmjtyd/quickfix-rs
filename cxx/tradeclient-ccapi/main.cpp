@@ -161,7 +161,7 @@ int main( int argc, char** argv )
     app.add_option("-e,--exchange", exchangeName, "exchange name")->required();
 
     { //create_order  
-        subcom_create_order->add_option("-e,--exchange", exchangeName, "exchange name")->required();
+        // subcom_create_order->add_option("-e,--exchange", exchangeName, "exchange name")->required();
     // app.add_option("-c,--coin", coinpairs, "coinpairs, -c [BTC-ETH, BTC-USDT]");
     
         subcom_create_order->add_option("-b,--symbol", symbol, "symbol, -s BTCUSDT")->required();
