@@ -156,6 +156,10 @@ auto TradeClientCCApi::get_open_orders(const std::string &symbol) const -> void 
   this->application.get_open_orders(symbol);
 }
 
+auto TradeClientCCApi::get_recent_trades(const std::string &symbol) const -> void {
+  this->application.get_recent_trades(symbol);
+}
+
 auto TradeClientCCApi::get_account_balances() const -> void {
   this->application.get_account_balances();
 }

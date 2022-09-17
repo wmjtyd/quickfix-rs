@@ -43,6 +43,9 @@ public:
 
   auto get_order(const std::string &symbol, const std::string &order_id) const -> void override;
   auto get_open_orders(const std::string &symbol) const -> void override;
+
+  auto get_recent_trades(const std::string &symbol) const -> void override;
+
   auto get_account_balances() const -> void override;
 
   auto get_accounts() const -> void override;

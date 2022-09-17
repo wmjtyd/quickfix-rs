@@ -150,6 +150,7 @@ int main( int argc, char** argv )
     CLI::App* subcom_get_order = app.add_subcommand("get_order", "get_order");
     CLI::App* subcom_get_open_orders = app.add_subcommand("get_open_orders", "get_open_orders");
     CLI::App* subcom_cancel_open_orders = app.add_subcommand("cancel_open_orders", "cancel_open_orders");
+    CLI::App* subcom_get_recent_trades = app.add_subcommand("get_recent_trades", "cancel_open_orders");
 
     CLI::App* subcom_get_accounts = app.add_subcommand("get_accounts", "get_accounts");
 
@@ -194,6 +195,10 @@ int main( int argc, char** argv )
         subcom_cancel_open_orders->add_option("-b,--symbol", symbol, "symbol, -s BTCUSDT")->required();
     }
 
+    {
+        subcom_get_recent_trades->add_option("-b,--symbol", symbol, "symbol, -s BTCUSDT")->required();
+    }
+    
     app.add_option("-f,--configfile", configfile, "-f ./configfile");
 
     CLI11_PARSE(app, argc, argv);
@@ -254,16 +259,21 @@ int main( int argc, char** argv )
                 // ./cxx/tradeclient-ccapi/tradeclient-ccapi -e binance cancel_open_orders -b BTCUSDT 
                 client->cancel_open_orders(symbol);
 
+            } else if (subcomName == "get_recent_trades") {
+                // ./cxx/tradeclient-ccapi/tradeclient-ccapi -e binance get_recent_trades -b BTCUSDT 
+                client->get_recent_trades(symbol);
+
             } else if (subcomName == "get_accounts") {
+                // ./cxx/tradeclient-ccapi/tradeclient-ccapi -e binance get_accounts
                 client->get_accounts();
             } else if (subcomName == "get_account_balances") {
                 // ./cxx/tradeclient-ccapi/tradeclient-ccapi -e binance get_account_balances
                 client->get_account_balances();
             } else if (subcomName == "get_account_postions") {
+                // ./cxx/tradeclient-ccapi/tradeclient-ccapi -e binance get_account_postions
                 client->get_account_postions();
-            }
-
-
+            } 
+            
 
         while(true)
         {

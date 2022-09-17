@@ -83,6 +83,10 @@ auto ApplicationCCApi::get_open_orders(const std::string &symbol) const -> void 
   this->ccapiwrapper.Request(CCAPI_EXECUTION_GET_OPEN_ORDERS, symbol); // symbol = "BTCUSDT"
 }
 
+auto ApplicationCCApi::get_recent_trades(const std::string &symbol) const -> void {
+  this->ccapiwrapper.Request(CCAPI_EXECUTION_GET_RECENT_TRADES, symbol); // symbol = "BTCUSDT"
+}
+
 auto ApplicationCCApi::get_account_balances() const -> void {
   this->ccapiwrapper.Request(CCAPI_EXECUTION_GET_ACCOUNT_BALANCES); // symbol = "BTCUSDT"
 }

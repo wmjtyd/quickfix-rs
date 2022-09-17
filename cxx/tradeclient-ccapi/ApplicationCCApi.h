@@ -27,6 +27,8 @@ public:
 
   auto get_order(const std::string &symbol, const std::string &order_id) const -> void;
   auto get_open_orders(const std::string &symbol) const -> void;
+  auto get_recent_trades(const std::string &symbol) const -> void;
+
   auto get_account_balances() const -> void;
 
   auto get_accounts() const -> void;

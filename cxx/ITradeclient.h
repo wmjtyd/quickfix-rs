@@ -43,6 +43,9 @@ public:
 
   virtual auto get_order(const std::string &symbol, const std::string &order_id) const -> void = 0;
   virtual auto get_open_orders(const std::string &symbol) const -> void = 0;
+
+  virtual auto get_recent_trades(const std::string &symbol) const -> void = 0;
+
   virtual auto get_account_balances() const -> void = 0;
 
   virtual auto get_accounts() const -> void = 0;
