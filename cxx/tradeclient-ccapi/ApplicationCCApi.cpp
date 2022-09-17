@@ -67,7 +67,7 @@ auto ApplicationCCApi::new_order_single(const std::string &symbol, const std::st
   return std::make_unique<std::string>(std::move(order_id));
 }
 
-auto ApplicationCCApi::cancel_order(const std::string &order_id) const -> void {
+auto ApplicationCCApi::cancel_order(const std::string &symbol, const std::string &order_id) const -> void {
   this->ccapiwrapper.Request(CCAPI_EXECUTION_CANCEL_ORDER, order_id); // symbol = "BTCUSDT"
 }
 

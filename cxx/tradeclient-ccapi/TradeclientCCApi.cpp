@@ -135,8 +135,17 @@ auto TradeClientCCApi::put_order(const NewOrderSingle &aNewOrderSingle) const
                                               aNewOrderSingle.OrdType, aNewOrderSingle.TimeInForce);
 }
 
-auto TradeClientCCApi::cancel_order(const std::string &order_id) const -> void {
-  this->application.cancel_order(order_id);
+auto TradeClientCCApi::cancel_order(const OrderCancelRequest &aOrderCancelRequest) const -> void {
+  this->application.cancel_order(aOrderCancelRequest.Symbol, aOrderCancelRequest.OrdID);
+}
+
+auto TradeClientCCApi::cancel_all_order(const OrderCancelRequest &aOrderCancelRequest) const -> void {
+  this->application.cancel_order(aOrderCancelRequest.Symbol, aOrderCancelRequest.OrdID);
+}
+
+
+auto TradeClientCCApi::cancel_order(const std::string &symbol, const std::string &order_id) const -> void {
+  this->application.cancel_order(symbol, order_id);
 }
 
 /*auto create_client_ccapi(

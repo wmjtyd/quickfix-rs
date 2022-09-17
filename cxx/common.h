@@ -76,6 +76,24 @@ public:
 };
 
 
+class OrderCancelRequest  {
+public:
+    OrderCancelRequest(
+                const std::string aSymbol,
+                const std::string aOrdID,
+                const std::string aOrigClOrdID,
+                const std::string aClOrdID,
+                const char aSide) : Symbol(aSymbol), OrdID(aOrdID), OrigClOrdID(aOrigClOrdID), ClOrdID(aClOrdID), Side(aSide) {
+
+    }
+public:
+    const std::string Symbol;
+    const std::string OrdID; // Either orderId or origClientOrderId must be sent. -- from binance api doc
+    const std::string OrigClOrdID;
+    const std::string ClOrdID;
+    const char Side;
+};
+
 
 
 typedef  void (*FromAppCallback) (std::string message, std::string sessionId);

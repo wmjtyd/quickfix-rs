@@ -35,10 +35,12 @@ public:
                          const char order_type,
                          const char time_in_force) const
       -> std::unique_ptr<std::string> = 0;
+  virtual auto cancel_order(const std::string &symbol, const std::string &order_id) const -> void = 0;
 
   virtual auto put_order(const NewOrderSingle &aNewOrderSingle) const -> std::unique_ptr<std::string> = 0;
+  virtual auto cancel_order(const OrderCancelRequest &aOrderCancelRequest) const -> void = 0;
+  virtual auto cancel_all_order(const OrderCancelRequest &aOrderCancelRequest) const -> void = 0;
 
-  virtual auto cancel_order(const std::string &order_id) const -> void = 0;
 };
 
 #ifdef USE_TRADECLIENT_RUST_INTERFACE
