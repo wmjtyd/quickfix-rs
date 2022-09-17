@@ -161,9 +161,10 @@ int main( int argc, char** argv )
     app.add_option("-e,--exchange", exchangeName, "exchange name")->required();
 
     { //create_order  
+    //1./cxx/tradeclient-ccapi/tradeclient-ccapi -e binance create_order -b BTCUSDT --side 1 -q 0.123 -p 10000 --stop_price 31000 -t 1 -o 4
         // subcom_create_order->add_option("-e,--exchange", exchangeName, "exchange name")->required();
     // app.add_option("-c,--coin", coinpairs, "coinpairs, -c [BTC-ETH, BTC-USDT]");
-    
+        
         subcom_create_order->add_option("-b,--symbol", symbol, "symbol, -s BTCUSDT")->required();
         subcom_create_order->add_option("-s,--side", side, "side, -s buy|sell")->required(); //https://www.onixs.biz/fix-dictionary/4.4/tagNum_54.html
         subcom_create_order->add_option("-q,--quantity", quantity, "quantity, -q 1.22")->required();
@@ -174,16 +175,18 @@ int main( int argc, char** argv )
     }
 
     {
+        // ./cxx/tradeclient-ccapi/tradeclient-ccapi -e binance cancel_order -b BTCUSDT --orderid 4011450
         subcom_cancel_order->add_option("-b,--symbol", symbol, "symbol, -s BTCUSDT")->required();
-        subcom_cancel_order->add_option("-i,--orderid", order_id, "symbol, -s BTCUSDT")->required();
+        subcom_cancel_order->add_option("-i,--orderid", order_id, "--orderid xxx")->required();
     }
     
     {
         subcom_get_order->add_option("-b,--symbol", symbol, "symbol, -s BTCUSDT")->required();
-        subcom_get_order->add_option("-i,--orderid", order_id, "symbol, -s BTCUSDT")->required();
+        subcom_get_order->add_option("-i,--orderid", order_id, "--orderid xxx")->required();
     }
 
     {        
+        // ./cxx/tradeclient-ccapi/tradeclient-ccapi -e binance get_open_orders -b BTCUSDT 
         subcom_get_open_orders->add_option("-b,--symbol", symbol, "symbol, -s BTCUSDT")->required();
     }
 

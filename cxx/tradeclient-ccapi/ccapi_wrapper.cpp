@@ -60,7 +60,7 @@ void CCApiWrapper::Stop() {
   }
 }
 
-void CCApiWrapper::Request(int operation, std::string instrument, const std::string client_order_id, const std::string side, 
+void CCApiWrapper::Request(int operation, std::string instrument, const std::string order_id, const std::string client_order_id, const std::string side, 
                         const double quantity,const double price, const double stop_price,
                         const std::string order_type,const std::string time_in_force,
                         std::string correlationId,
@@ -70,32 +70,39 @@ void CCApiWrapper::Request(int operation, std::string instrument, const std::str
                            quantity, price, order_type.c_str(), time_in_force.c_str());                          
   ::ccapi::Request request(Request::Operation(operation), this->exchangeName, instrument);
   std::map<std::string, std::string> param;
-  param = {
-      {"side", side},
-      {"type", order_type},
-      {"quantity", std::to_string(quantity)},
-      //
-      	
-      // {"stopPrice", std::to_string(stop_price)},
-//      {"price", std::to_string(price)},
-      // {"timeInForce", time_in_force},
-  };
+  if (operation == CCAPI_EXECUTION_CANCEL_ORDER) {
+    if (order_id.length() != 0) {
+        param["orderId"] = order_id; // STRING	NO	A unique id among open orders. Automatically generated if not sent.
+    }
+  } else {
+    param = {
+          {"side", side},
+          {"type", order_type},
+          {"quantity", std::to_string(quantity)},
+          //
+            
+          // {"stopPrice", std::to_string(stop_price)},
+    //      {"price", std::to_string(price)},
+          // {"timeInForce", time_in_force},
+      };
+      
+      if (client_order_id.length() !=0 ) {
+          param["newClientOrderId"] = std::to_string(price); // STRING	NO	A unique id among open orders. Automatically generated if not sent.
+      }
+
+      if (price != -1) {
+          param["price"] = std::to_string(price);
+      }
+
+      if (stop_price != 0) {
+        param["stopPrice"] = std::to_string(stop_price);
+      }
+
+      if (time_in_force != "") {
+        param["timeInForce"] = time_in_force;
+      }
+  }
   
-  if (client_order_id.length() !=0 ) {
-      param["newClientOrderId"] = std::to_string(price); // STRING	NO	A unique id among open orders. Automatically generated if not sent.
-  }
-
-  if (price != -1) {
-      param["price"] = std::to_string(price);
-  }
-
-  if (stop_price != 0) {
-    param["stopPrice"] = std::to_string(stop_price);
-  }
-
-  if (time_in_force != "") {
-    param["timeInForce"] = time_in_force;
-  }
   request.appendParam(param);
   // request.appendParam({
   //     {"side", "SELL"},

@@ -44,7 +44,8 @@ class CCApiWrapper {
         ~CCApiWrapper();
         void Start();
         void Stop();
-        void Request(int operation, std::string instrument = "", const std::string client_order_id = "", const std::string side = "", 
+        void Request(int operation, std::string instrument = "", const std::string order_id = "", 
+                        const std::string client_order_id = "", const std::string side = "", 
                         const double quantity = 0,const double price = 0, const double stop_price = 0,
                         const std::string order_type = "",const std::string time_in_force = "", 
                         std::string correlationId = "",

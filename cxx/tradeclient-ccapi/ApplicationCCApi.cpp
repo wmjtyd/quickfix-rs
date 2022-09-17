@@ -59,7 +59,7 @@ auto ApplicationCCApi::new_order_single(const std::string &symbol, const std::st
       _price = price;
   }
 
-  this->ccapiwrapper.Request(CCAPI_EXECUTION_CREATE_ORDER, symbol, client_order_id, _side, 
+  this->ccapiwrapper.Request(CCAPI_EXECUTION_CREATE_ORDER, symbol, "", client_order_id, _side, 
                         quantity, _price, stop_price,
                         _order_type, _time_in_force); // symbol = "BTCUSDT"
   // return std::make_unique<std::string>(std::move(order_id));
