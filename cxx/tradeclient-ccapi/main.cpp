@@ -158,6 +158,8 @@ int main( int argc, char** argv )
 
     app.require_subcommand();  // 1 or more
 
+    app.add_option("-e,--exchange", exchangeName, "exchange name")->required();
+
     { //create_order  
         subcom_create_order->add_option("-e,--exchange", exchangeName, "exchange name")->required();
     // app.add_option("-c,--coin", coinpairs, "coinpairs, -c [BTC-ETH, BTC-USDT]");
@@ -202,51 +204,54 @@ int main( int argc, char** argv )
 
     // for(auto *subcom : app.get_subcommands())
         // std::cout << "Subcommand: " << subcom->get_name() << std::endl;
-
-
-    auto subcom = app.get_subcommand();
-    std::cout << "Subcommand: " << subcom->get_name() << std::endl;
-    auto subcomName = subcom->get_name();
-
-    auto client = create_client(TradeClientType_CCApi, configfile, fromAppCallbackExecutionReport);
-    client->start();
-
-    if (subcomName == "create_order") {
-        printf("put_order: exchange(%s) symbol(%s) side(%d) quantity(%f) price(%f) order_type(%d) time_in_force(%d)\n", 
-                    exchangeName.c_str(), symbol.c_str(), side, quantity, price, order_type, time_in_force);
-//        client->put_order(symbol, side,
-//                                 quantity,
-//                                 price, stop_price,
-//                                 order_type,
-//                                 time_in_force);
-        std::string cl_order_id = "";
-        NewOrderSingle aNewOrderSingle = NewOrderSingle(symbol, cl_order_id, side,
-                                                        order_type, quantity, price, stop_price,
-                                                        time_in_force);
-        client->put_order(aNewOrderSingle);
-    } else if (subcomName == "cancel_order") {
-        OrderCancelRequest aOrderCancelRequest = OrderCancelRequest(symbol, order_id);
-        client->cancel_order(aOrderCancelRequest);
-    } else if (subcomName == "get_order") {
-        client->get_order(symbol, order_id);
-    } else if (subcomName == "get_open_orders") {
-        client->get_open_orders(symbol);
-    } else if (subcomName == "cancel_open_orders") {
-        client->cancel_open_orders(symbol);
-    } else if (subcomName == "get_accounts") {
-        //client->get_accounts();
-    } else if (subcomName == "get_account_balances") {
-        client->get_account_balances();
-    } else if (subcomName == "get_account_postions") {
-        //client->get_account_postions();
+    std::string subcomName = "";
+    for(auto *subcom : app.get_subcommands()) {
+        subcomName = subcom->get_name();
+        std::cout << "Subcommand: " << subcom->get_name() << std::endl;
     }
+        
+        
 
-    return 0;    
-
+    
     try
     {
 
 
+        auto client = create_client(TradeClientType_CCApi, configfile, fromAppCallbackExecutionReport);
+            client->start();
+
+            if (subcomName == "create_order") {
+                printf("put_order: exchange(%s) symbol(%s) side(%d) quantity(%f) price(%f) order_type(%d) time_in_force(%d)\n", 
+                            exchangeName.c_str(), symbol.c_str(), side, quantity, price, order_type, time_in_force);
+        //        client->put_order(symbol, side,
+        //                                 quantity,
+        //                                 price, stop_price,
+        //                                 order_type,
+        //                                 time_in_force);
+                std::string cl_order_id = "";
+                NewOrderSingle aNewOrderSingle = NewOrderSingle(symbol, cl_order_id, side,
+                                                                order_type, quantity, price, stop_price,
+                                                                time_in_force);
+                client->put_order(aNewOrderSingle);
+            } else if (subcomName == "cancel_order") {
+                OrderCancelRequest aOrderCancelRequest = OrderCancelRequest(symbol, order_id);
+                client->cancel_order(aOrderCancelRequest);
+            } else if (subcomName == "get_order") {
+                client->get_order(symbol, order_id);
+            } else if (subcomName == "get_open_orders") {
+
+                // ./cxx/tradeclient-ccapi/tradeclient-ccapi -e binance get_open_orders -b BTCUSDT 
+
+                client->get_open_orders(symbol);
+            } else if (subcomName == "cancel_open_orders") {
+                client->cancel_open_orders(symbol);
+            } else if (subcomName == "get_accounts") {
+                //client->get_accounts();
+            } else if (subcomName == "get_account_balances") {
+                client->get_account_balances();
+            } else if (subcomName == "get_account_postions") {
+                //client->get_account_postions();
+            }
 
 
 
