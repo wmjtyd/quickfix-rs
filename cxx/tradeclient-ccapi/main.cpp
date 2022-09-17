@@ -224,6 +224,7 @@ int main( int argc, char** argv )
             client->start();
 
             if (subcomName == "create_order") {
+                // ./cxx/tradeclient-ccapi/tradeclient-ccapi -e binance create_order -b BTCUSDT --side 1 -q 0.123 -p 10000 --stop_price 31000 -t 1 -o 4
                 printf("cmd: create_order: exchange(%s) symbol(%s) side(%d) quantity(%f) price(%f) order_type(%d) time_in_force(%d)\n", 
                             exchangeName.c_str(), symbol.c_str(), side, quantity, price, order_type, time_in_force);
         //        client->put_order(symbol, side,
@@ -237,26 +238,29 @@ int main( int argc, char** argv )
                                                                 time_in_force);
                 client->put_order(aNewOrderSingle);
             } else if (subcomName == "cancel_order") {
-                //  ./cxx/tradeclient-ccapi/tradeclient-ccapi -e binance cancel_order -b BTCUSDT --orderid 4011450
+                //  ./cxx/tradeclient-ccapi/tradeclient-ccapi -e binance cancel_order -b BTCUSDT --orderid 4030874
                 printf("cmd: cancel_order: exchange(%s) symbol(%s) order_id(%s)\n", 
                             exchangeName.c_str(), symbol.c_str(), order_id.c_str());
                 OrderCancelRequest aOrderCancelRequest = OrderCancelRequest(symbol, order_id);
                 client->cancel_order(aOrderCancelRequest);
             } else if (subcomName == "get_order") {
+                // ./cxx/tradeclient-ccapi/tradeclient-ccapi -e binance get_order -b BTCUSDT --orderid 4031374
                 client->get_order(symbol, order_id);
             } else if (subcomName == "get_open_orders") {
-
                 // ./cxx/tradeclient-ccapi/tradeclient-ccapi -e binance get_open_orders -b BTCUSDT 
-
                 client->get_open_orders(symbol);
+
             } else if (subcomName == "cancel_open_orders") {
+                // ./cxx/tradeclient-ccapi/tradeclient-ccapi -e binance cancel_open_orders -b BTCUSDT 
                 client->cancel_open_orders(symbol);
+
             } else if (subcomName == "get_accounts") {
-                //client->get_accounts();
+                client->get_accounts();
             } else if (subcomName == "get_account_balances") {
+                // ./cxx/tradeclient-ccapi/tradeclient-ccapi -e binance get_account_balances
                 client->get_account_balances();
             } else if (subcomName == "get_account_postions") {
-                //client->get_account_postions();
+                client->get_account_postions();
             }
 
 

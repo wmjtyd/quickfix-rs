@@ -45,6 +45,9 @@ public:
   auto get_open_orders(const std::string &symbol) const -> void override;
   auto get_account_balances() const -> void override;
 
+  auto get_accounts() const -> void override;
+  auto get_account_postions() const -> void override;
+
 private:
   ApplicationCCApi application;
   FromAppCallback eventCallback;

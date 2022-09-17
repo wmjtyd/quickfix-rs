@@ -160,6 +160,13 @@ auto TradeClientCCApi::get_account_balances() const -> void {
   this->application.get_account_balances();
 }
 
+auto TradeClientCCApi::get_accounts() const -> void {
+  this->application.get_accounts();
+}
+
+auto TradeClientCCApi::get_account_postions() const -> void {
+  this->application.get_account_postions();
+}
 
 /*auto create_client_ccapi(
     const TradingClientType type, const std::string &filepath,

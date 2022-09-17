@@ -70,7 +70,7 @@ void CCApiWrapper::Request(int operation, std::string instrument, const std::str
                            quantity, price, order_type.c_str(), time_in_force.c_str());                          
   ::ccapi::Request request(Request::Operation(operation), this->exchangeName, instrument);
   std::map<std::string, std::string> param;
-  if (operation == CCAPI_EXECUTION_CANCEL_ORDER) {
+  if (operation == CCAPI_EXECUTION_CANCEL_ORDER || operation == CCAPI_EXECUTION_GET_ORDER) {
     if (order_id.length() != 0) {
         param["orderId"] = order_id; // STRING	NO	A unique id among open orders. Automatically generated if not sent.
     }

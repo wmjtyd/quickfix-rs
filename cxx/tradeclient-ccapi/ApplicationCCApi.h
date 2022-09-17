@@ -29,6 +29,9 @@ public:
   auto get_open_orders(const std::string &symbol) const -> void;
   auto get_account_balances() const -> void;
 
+  auto get_accounts() const -> void;
+  auto get_account_postions() const -> void;
+
   auto start() const -> void;
   auto stop() const -> void;
 
