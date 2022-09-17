@@ -224,7 +224,7 @@ int main( int argc, char** argv )
             client->start();
 
             if (subcomName == "create_order") {
-                printf("put_order: exchange(%s) symbol(%s) side(%d) quantity(%f) price(%f) order_type(%d) time_in_force(%d)\n", 
+                printf("cmd: create_order: exchange(%s) symbol(%s) side(%d) quantity(%f) price(%f) order_type(%d) time_in_force(%d)\n", 
                             exchangeName.c_str(), symbol.c_str(), side, quantity, price, order_type, time_in_force);
         //        client->put_order(symbol, side,
         //                                 quantity,
@@ -237,6 +237,9 @@ int main( int argc, char** argv )
                                                                 time_in_force);
                 client->put_order(aNewOrderSingle);
             } else if (subcomName == "cancel_order") {
+                //  ./cxx/tradeclient-ccapi/tradeclient-ccapi -e binance cancel_order -b BTCUSDT --orderid 4011450
+                printf("cmd: cancel_order: exchange(%s) symbol(%s) order_id(%s)\n", 
+                            exchangeName.c_str(), symbol.c_str(), order_id.c_str());
                 OrderCancelRequest aOrderCancelRequest = OrderCancelRequest(symbol, order_id);
                 client->cancel_order(aOrderCancelRequest);
             } else if (subcomName == "get_order") {

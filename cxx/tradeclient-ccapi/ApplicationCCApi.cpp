@@ -68,7 +68,7 @@ auto ApplicationCCApi::new_order_single(const std::string &symbol, const std::st
 }
 
 auto ApplicationCCApi::cancel_order(const std::string &symbol, const std::string &order_id) const -> void {
-  this->ccapiwrapper.Request(CCAPI_EXECUTION_CANCEL_ORDER, order_id); // symbol = "BTCUSDT"
+  this->ccapiwrapper.Request(CCAPI_EXECUTION_CANCEL_ORDER, symbol, order_id); // symbol = "BTCUSDT"
 }
 
 auto ApplicationCCApi::cancel_open_orders(const std::string &symbol) const -> void {
