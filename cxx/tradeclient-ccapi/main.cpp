@@ -178,7 +178,7 @@ int main( int argc, char** argv )
 //                                 price, stop_price,
 //                                 order_type,
 //                                 time_in_force);
-        std::string cl_order_id = "order_xxx";
+        std::string cl_order_id = "";
         NewOrderSingle aNewOrderSingle = NewOrderSingle(symbol, cl_order_id, side,
                                                         order_type, quantity, price, stop_price,
                                                         time_in_force);

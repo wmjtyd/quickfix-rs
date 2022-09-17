@@ -60,7 +60,7 @@ void CCApiWrapper::Stop() {
   }
 }
 
-void CCApiWrapper::Request(int operation, std::string instrument, const std::string side, 
+void CCApiWrapper::Request(int operation, std::string instrument, const std::string client_order_id, const std::string side, 
                         const double quantity,const double price, const double stop_price,
                         const std::string order_type,const std::string time_in_force,
                         std::string correlationId,
@@ -74,10 +74,16 @@ void CCApiWrapper::Request(int operation, std::string instrument, const std::str
       {"side", side},
       {"type", order_type},
       {"quantity", std::to_string(quantity)},
+      //
+      	
       // {"stopPrice", std::to_string(stop_price)},
 //      {"price", std::to_string(price)},
       // {"timeInForce", time_in_force},
   };
+  
+  if (client_order_id.length() !=0 ) {
+      param["newClientOrderId"] = std::to_string(price); // STRING	NO	A unique id among open orders. Automatically generated if not sent.
+  }
 
   if (price != -1) {
       param["price"] = std::to_string(price);
