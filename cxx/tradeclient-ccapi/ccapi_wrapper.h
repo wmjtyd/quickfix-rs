@@ -7,11 +7,16 @@
 #include "ccapi_cpp/ccapi_session.h"
 
 
+const int CCAPI_EXECUTION_GET_RECENT_TRADES = int(::ccapi::Request::Operation::GET_RECENT_TRADES);
 const int CCAPI_EXECUTION_CREATE_ORDER = int(::ccapi::Request::Operation::CREATE_ORDER);
 const int CCAPI_EXECUTION_CANCEL_ORDER = int(::ccapi::Request::Operation::CANCEL_ORDER);
 
-
-
+const int CCAPI_EXECUTION_GET_ORDER = int(::ccapi::Request::Operation::GET_ORDER);
+const int CCAPI_EXECUTION_GET_OPEN_ORDERS = int(::ccapi::Request::Operation::GET_OPEN_ORDERS);
+const int CCAPI_EXECUTION_CANCEL_OPEN_ORDERS = int(::ccapi::Request::Operation::CANCEL_OPEN_ORDERS);
+const int CCAPI_EXECUTION_GET_ACCOUNTS = int(::ccapi::Request::Operation::GET_ACCOUNTS);
+const int CCAPI_EXECUTION_GET_ACCOUNT_BALANCES = int(::ccapi::Request::Operation::GET_ACCOUNT_BALANCES);
+const int CCAPI_EXECUTION_GET_ACCOUNT_POSITIONS = int(::ccapi::Request::Operation::GET_ACCOUNT_POSITIONS);
 
 typedef bool eventHandlerFunc(void *obj, const ccapi::Event& event, ccapi::Session* session);
 class MyEventHandler : public ccapi::EventHandler {

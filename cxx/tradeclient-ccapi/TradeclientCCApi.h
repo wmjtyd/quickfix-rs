@@ -39,7 +39,11 @@ public:
 
   auto put_order(const NewOrderSingle &aNewOrderSingle) const -> std::unique_ptr<std::string> override;
   auto cancel_order(const OrderCancelRequest &aOrderCancelRequest) const -> void override;
-  auto cancel_all_order(const OrderCancelRequest &aOrderCancelRequest) const -> void override;
+  auto cancel_open_orders(const std::string &symbol) const -> void override;
+
+  auto get_order(const std::string &symbol, const std::string &order_id) const -> void override;
+  auto get_open_orders(const std::string &symbol) const -> void override;
+  auto get_account_balances() const -> void override;
 
 private:
   ApplicationCCApi application;

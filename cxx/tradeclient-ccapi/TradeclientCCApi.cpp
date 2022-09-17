@@ -128,6 +128,11 @@ auto TradeClientCCApi::put_order(const std::string &symbol, char side,
                                             order_type, time_in_force);
 }
 
+auto TradeClientCCApi::cancel_order(const std::string &symbol, const std::string &order_id) const -> void {
+  this->application.cancel_order(symbol, order_id);
+}
+
+
 auto TradeClientCCApi::put_order(const NewOrderSingle &aNewOrderSingle) const
 -> std::unique_ptr<std::string> {
     return this->application.new_order_single(aNewOrderSingle.Symbol, aNewOrderSingle.ClOrdID, aNewOrderSingle.Side,
@@ -139,14 +144,22 @@ auto TradeClientCCApi::cancel_order(const OrderCancelRequest &aOrderCancelReques
   this->application.cancel_order(aOrderCancelRequest.Symbol, aOrderCancelRequest.OrdID);
 }
 
-auto TradeClientCCApi::cancel_all_order(const OrderCancelRequest &aOrderCancelRequest) const -> void {
-  this->application.cancel_order(aOrderCancelRequest.Symbol, aOrderCancelRequest.OrdID);
+auto TradeClientCCApi::cancel_open_orders(const std::string &symbol) const -> void {
+  this->application.cancel_open_orders(symbol);
 }
 
-
-auto TradeClientCCApi::cancel_order(const std::string &symbol, const std::string &order_id) const -> void {
-  this->application.cancel_order(symbol, order_id);
+auto TradeClientCCApi::get_order(const std::string &symbol, const std::string &order_id) const -> void {
+  this->application.get_order(symbol, order_id);
 }
+
+auto TradeClientCCApi::get_open_orders(const std::string &symbol) const -> void {
+  this->application.get_open_orders(symbol);
+}
+
+auto TradeClientCCApi::get_account_balances() const -> void {
+  this->application.get_account_balances();
+}
+
 
 /*auto create_client_ccapi(
     const TradingClientType type, const std::string &filepath,

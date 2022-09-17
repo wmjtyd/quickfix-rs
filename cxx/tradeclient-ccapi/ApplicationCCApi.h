@@ -23,6 +23,11 @@ public:
                         const char order_type,const char time_in_force) const
       -> std::unique_ptr<std::string>;
   auto cancel_order(const std::string &symbol, const std::string &order_id) const -> void;
+  auto cancel_open_orders(const std::string &symbol) const -> void;
+
+  auto get_order(const std::string &symbol, const std::string &order_id) const -> void;
+  auto get_open_orders(const std::string &symbol) const -> void;
+  auto get_account_balances() const -> void;
 
   auto start() const -> void;
   auto stop() const -> void;
