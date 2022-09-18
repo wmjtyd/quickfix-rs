@@ -14,6 +14,65 @@
 
 // #include "quickfix/FixValues.h"
 #include "quickfix/Values.h"
+#include "ccapi_cpp/ccapi_macro.h"
+
+
+
+std::string TradeClientCCApi::convert_to_fix(const std::string &name, ccapi::Element elem) {
+    std::string result = "";
+    const std::map<std::string, std::string> &fixFieldNameMap = {
+      {"BUY", std::string(1, FIX::Side_BUY)},
+      {"SELL", std::string(1, FIX::Side_SELL)},
+
+      /*
+      Execution types:
+NEW - The order has been accepted into the engine.
+CANCELED - The order has been canceled by the user.
+REPLACED (currently unused)
+REJECTED - The order has been rejected and was not processed. (This is never pushed into the User Data Stream)
+TRADE - Part of the order or all of the order's quantity has filled.
+EXPIRED - The order was canceled according to the order type's rules 
+(e.g. LIMIT FOK orders with no fill, LIMIT IOC or MARKET orders that partially fill) or by the exchange, 
+(e.g. orders canceled during liquidation, orders canceled during maintenance)
+
+  const char OrdStatus_NEW = '0';
+  const char OrdStatus_PARTIALLY_FILLED = '1';
+  const char OrdStatus_FILLED = '2';
+  const char OrdStatus_DONE_FOR_DAY = '3';
+  const char OrdStatus_CANCELED = '4';
+  const char OrdStatus_REPLACED = '5';
+  const char OrdStatus_PENDING_CANCEL_REPLACE = '6';
+  const char OrdStatus_STOPPED = '7';
+  const char OrdStatus_REJECTED = '8';
+  const char OrdStatus_SUSPENDED = '9';
+  const char OrdStatus_PENDING_NEW = 'A';
+  const char OrdStatus_CALCULATED = 'B';
+  const char OrdStatus_EXPIRED = 'C';
+  const char OrdStatus_PENDING_CANCEL = '6';
+  const char OrdStatus_ACCEPTED_FOR_BIDDING = 'D';
+  const char OrdStatus_PENDING_REPLACE = 'E';
+  */
+        {"NEW", std::string(1, FIX::OrdStatus_NEW)},
+        {"CANCELED", std::string(1, FIX::OrdStatus_CANCELED)},
+        {"REPLACED", std::string(1, FIX::OrdStatus_REPLACED)},
+        {"REJECTED", std::string(1, FIX::OrdStatus_REJECTED)},
+        {"TRADE", std::string(1, FIX::OrdStatus_PARTIALLY_FILLED)}, //这里要有一个特殊处理
+        {"EXPIRED", std::string(1, FIX::OrdStatus_EXPIRED)},
+
+    };
+    std::map<std::string, std::string>::const_iterator it = fixFieldNameMap.find(name);
+    if(it != fixFieldNameMap.end()) {
+      result = it->second;
+      if (name == "TRADE") {
+        //币安的TRADE状态根据成交情况，对应fix的两个状态
+        std::string filledQuantity = elem.getValue(CCAPI_EM_ORDER_CUMULATIVE_FILLED_QUANTITY);
+        std::string orderQuantity = elem.getValue(CCAPI_EM_ORDER_CUMULATIVE_FILLED_QUANTITY);
+        result = FIX::OrdStatus_FILLED;
+      }
+    }
+  
+    return result;
+}
 
 #ifdef USE_TRADECLIENT_RUST_INTERFACE
 TradeClientCCApi::TradeClientCCApi(
@@ -34,6 +93,7 @@ TradeClientCCApi::~TradeClientCCApi() {
   // this->initiator = nullptr;
 }
 
+
 bool TradeClientCCApi::eventHandler(void *obj, const ccapi::Event &event,
                                     ccapi::Session *session) {
   std::cout << "Received an event in eventHandler(TradeClientCCApi):\n" +
@@ -48,8 +108,10 @@ bool TradeClientCCApi::eventHandler(void *obj, const ccapi::Event &event,
   if (pObj->executionReportCallback != nullptr) {
       std::vector<ExecutionReport> excutionReportList;
       std::vector<ccapi::Message> messagelist = event.getMessageList();
+      ccapi::Event::Type eventType = event.getType();
+
       for (const auto& message : messagelist) {
-          auto messageType = message.getType();
+          ccapi::Message::Type messageType = message.getType();
           std::cout << "message.messageType:" << int(messageType) << std::endl;
           const auto elemList = message.getElementList();
           for (const auto& elem : elemList) {
@@ -62,28 +124,42 @@ bool TradeClientCCApi::eventHandler(void *obj, const ccapi::Event &event,
               std::cout << "elem.httpSatusCode:" << httpSatusCode << std::endl;
               if (messageType == ccapi::Message::Type::RESPONSE_ERROR
                || messageType == ccapi::Message::Type::REQUEST_FAILURE) {
+
                 aExecutionReport.ErrorMessage = elem.getValue("ERROR_MESSAGE");
                 auto httpSatusCode = elem.getValue("HTTP_STATUS_CODE");
 
                } else if (messageType == ccapi::Message::Type::CREATE_ORDER) {
-                aExecutionReport.ClOrdId = elem.getValue("CLIENT_ORDER_ID");
-                aExecutionReport.Symbol = elem.getValue("INSTRUMENT");
-                aExecutionReport.ClOrdId = elem.getValue("ORDER_ID");
+
+                aExecutionReport.ClOrdId = elem.getValue(CCAPI_EM_ORDER_ID);
+                aExecutionReport.Symbol = elem.getValue(CCAPI_EM_ORDER_INSTRUMENT);
+                aExecutionReport.OrderID = elem.getValue(CCAPI_EM_CLIENT_ORDER_ID);
+
                 aExecutionReport.OrdStatus = FIX::OrdStatus_NEW;
+                
                } else if (messageType == ccapi::Message::Type::CANCEL_OPEN_ORDERS) {
-                aExecutionReport.ClOrdId = elem.getValue("CLIENT_ORDER_ID");
-                aExecutionReport.Symbol = elem.getValue("INSTRUMENT");
-                aExecutionReport.ClOrdId = elem.getValue("ORDER_ID");
-                aExecutionReport.OrdStatus = FIX::OrdStatus_CANCELED;
+
+                aExecutionReport.ClOrdId = elem.getValue(CCAPI_EM_ORDER_ID);
+                aExecutionReport.Symbol = elem.getValue(CCAPI_EM_ORDER_INSTRUMENT);
+                aExecutionReport.OrderID = elem.getValue(CCAPI_EM_CLIENT_ORDER_ID);
+
+                aExecutionReport.OrderID = atof(elem.getValue(CCAPI_EM_ORDER_CUMULATIVE_FILLED_PRICE_TIMES_QUANTITY).c_str());
+                aExecutionReport.OrderID = atof(elem.getValue(CCAPI_EM_ORDER_CUMULATIVE_FILLED_QUANTITY).c_str());
+                aExecutionReport.OrderID = atof(elem.getValue(CCAPI_EM_ORDER_LIMIT_PRICE).c_str());
+                aExecutionReport.OrderID = atof(elem.getValue(CCAPI_EM_ORDER_QUANTITY).c_str());
+                aExecutionReport.Side = convert_to_fix(elem.getValue(CCAPI_EM_ORDER_SIDE), elem).c_str()[0]; //这里是std::string转char，但这种方法不是很好
+                aExecutionReport.OrdStatus = convert_to_fix(elem.getValue(CCAPI_EM_ORDER_STATUS), elem).c_str()[0]; 
+                // assert(elem.getValue("STATUS")  == APP_EVENT_HANDLER_BASE_ORDER_STATUS_CANCELED);
+                
+
                } else if (messageType == ccapi::Message::Type::CANCEL_ORDER) {
-                aExecutionReport.ClOrdId = elem.getValue("CLIENT_ORDER_ID");
-                aExecutionReport.Symbol = elem.getValue("INSTRUMENT");
-                aExecutionReport.ClOrdId = elem.getValue("ORDER_ID");
-                aExecutionReport.OrdStatus = FIX::OrdStatus_CANCELED;
+                aExecutionReport.ClOrdId = elem.getValue(CCAPI_EM_ORDER_ID);
+                aExecutionReport.Symbol = elem.getValue(CCAPI_EM_ORDER_INSTRUMENT);
+                aExecutionReport.OrderID = elem.getValue(CCAPI_EM_CLIENT_ORDER_ID);
+                aExecutionReport.OrdStatus = convert_to_fix(elem.getValue(CCAPI_EM_ORDER_STATUS), elem).c_str()[0]; 
                } else if (messageType == ccapi::Message::Type::EXECUTION_MANAGEMENT_EVENTS_ORDER_UPDATE) {
-                aExecutionReport.ClOrdId = elem.getValue("CLIENT_ORDER_ID");
-                aExecutionReport.Symbol = elem.getValue("INSTRUMENT");
-                aExecutionReport.ClOrdId = elem.getValue("ORDER_ID");
+                aExecutionReport.ClOrdId = elem.getValue(CCAPI_EM_ORDER_ID);
+                aExecutionReport.Symbol = elem.getValue(CCAPI_EM_ORDER_INSTRUMENT);
+                aExecutionReport.OrderID = elem.getValue(CCAPI_EM_CLIENT_ORDER_ID);
                } 
    
               excutionReportList.push_back(aExecutionReport);

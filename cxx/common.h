@@ -35,8 +35,11 @@ class ExecutionReport
       std::string ClOrdId;
       std::string ExecID;
       std::string ExecType;
+
+      double CumQty; 
+      double Qty; // TODO 这个后续核对fix对应字段的名称
       char OrdStatus;
-      int Side;
+      char Side;
       // double LeavesQty;
       // double CumQty;
 

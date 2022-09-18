@@ -52,6 +52,9 @@ public:
   auto get_account_postions() const -> void override;
 
 private:
+  static std::string convert_to_fix(const std::string &value, ccapi::Element elem);
+
+private:
   ApplicationCCApi application;
   FromAppCallback eventCallback;
   FromAppCallbackExecutionReport executionReportCallback;
