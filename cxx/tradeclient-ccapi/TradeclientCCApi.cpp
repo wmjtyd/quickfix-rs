@@ -18,6 +18,33 @@
 
 
 
+const std::map<ccapi::Message::Type, const char> execTypeMap = {
+  {ccapi::Message::Type::CREATE_ORDER, FIX::ExecType_NEW},
+  {ccapi::Message::Type::CANCEL_ORDER, FIX::ExecType_CANCELLED},
+  {ccapi::Message::Type::GET_ORDER, FIX::ExecType_ORDER_STATUS},
+  {ccapi::Message::Type::GET_OPEN_ORDERS, FIX::ExecType_ORDER_STATUS},
+  {ccapi::Message::Type::CANCEL_OPEN_ORDERS, FIX::ExecType_CANCELLED},
+
+  {ccapi::Message::Type::GET_ACCOUNTS, ExecType_GET_ACCOUNTS},
+  {ccapi::Message::Type::GET_ACCOUNT_BALANCES, ExecType_GET_ACCOUNT_BALANCES},
+  {ccapi::Message::Type::GET_ACCOUNT_POSITIONS, ExecType_GET_ACCOUNT_POSITIONS},
+  // {_, ExecType_EXPIRED},
+
+  {ccapi::Message::Type::RESPONSE_ERROR, ExecType_RESPONSE_ERROR},
+  {ccapi::Message::Type::REQUEST_FAILURE, ExecType_REQUEST_FAILURE},
+
+};
+
+char TradeClientCCApi::convert_exec_type_to_fix(ccapi::Message::Type type) {
+  char result = ExecType_UNKOWN;
+  std::map<ccapi::Message::Type, const char>::const_iterator it = execTypeMap.find(type);
+    if(it != execTypeMap.end()) {
+      result = it->second;
+    }
+
+  return result;
+}
+
 std::string TradeClientCCApi::convert_to_fix(const std::string &name, ccapi::Element elem) {
     std::string result = "";
     const std::map<std::string, std::string> &fixFieldNameMap = {
@@ -118,18 +145,16 @@ bool TradeClientCCApi::eventHandler(void *obj, const ccapi::Event &event,
               // std::cout << "elem:" << elem.toStringPretty() << std::endl;
               ExecutionReport aExecutionReport;
 
-              auto errorMessage = elem.getValue("ERROR_MESSAGE");
-              auto httpSatusCode = elem.getValue("HTTP_STATUS_CODE");
-              std::cout << "elem.errorMessage:" << errorMessage << std::endl;
-              std::cout << "elem.httpSatusCode:" << httpSatusCode << std::endl;
+              aExecutionReport.ExecType = convert_exec_type_to_fix(messageType);
+
               if (messageType == ccapi::Message::Type::RESPONSE_ERROR
                || messageType == ccapi::Message::Type::REQUEST_FAILURE) {
 
                 aExecutionReport.ErrorMessage = elem.getValue("ERROR_MESSAGE");
-                auto httpSatusCode = elem.getValue("HTTP_STATUS_CODE");
+                aExecutionReport.httpStatusCode = atoi(elem.getValue("HTTP_STATUS_CODE").c_str());
 
                } else if (messageType == ccapi::Message::Type::CREATE_ORDER) {
-
+                
                 aExecutionReport.ClOrdId = elem.getValue(CCAPI_EM_ORDER_ID);
                 aExecutionReport.Symbol = elem.getValue(CCAPI_EM_ORDER_INSTRUMENT);
                 aExecutionReport.OrderID = elem.getValue(CCAPI_EM_CLIENT_ORDER_ID);
@@ -151,16 +176,62 @@ bool TradeClientCCApi::eventHandler(void *obj, const ccapi::Event &event,
                 // assert(elem.getValue("STATUS")  == APP_EVENT_HANDLER_BASE_ORDER_STATUS_CANCELED);
                 
 
+               } else if (messageType == ccapi::Message::Type::GET_OPEN_ORDERS) {
+                aExecutionReport.ClOrdId = elem.getValue(CCAPI_EM_ORDER_ID);
+                aExecutionReport.Symbol = elem.getValue(CCAPI_EM_ORDER_INSTRUMENT);
+                aExecutionReport.OrderID = elem.getValue(CCAPI_EM_CLIENT_ORDER_ID);
+
+                // _ = atof(elem.getValue(CUMULATIVE_FILLED_PRICE_TIMES_QUANTITY).c_str()); TODO 暂未找到对应字段
+                aExecutionReport.CumQty = atof(elem.getValue(CCAPI_EM_ORDER_CUMULATIVE_FILLED_QUANTITY).c_str());
+                aExecutionReport.OrderQty = atof(elem.getValue(CCAPI_EM_ORDER_QUANTITY).c_str());
+
+                aExecutionReport.LimitPrice = atof(elem.getValue(CCAPI_EM_ORDER_LIMIT_PRICE).c_str());
+
+                aExecutionReport.Side = convert_to_fix(elem.getValue(CCAPI_EM_ORDER_SIDE), elem).c_str()[0]; 
+                aExecutionReport.OrdStatus = convert_to_fix(elem.getValue(CCAPI_EM_ORDER_STATUS), elem).c_str()[0]; 
+            
                } else if (messageType == ccapi::Message::Type::CANCEL_ORDER) {
                 aExecutionReport.ClOrdId = elem.getValue(CCAPI_EM_ORDER_ID);
                 aExecutionReport.Symbol = elem.getValue(CCAPI_EM_ORDER_INSTRUMENT);
                 aExecutionReport.OrderID = elem.getValue(CCAPI_EM_CLIENT_ORDER_ID);
+
+                // _ = atof(elem.getValue(CUMULATIVE_FILLED_PRICE_TIMES_QUANTITY).c_str()); TODO 暂未找到对应字段
+                aExecutionReport.CumQty = atof(elem.getValue(CCAPI_EM_ORDER_CUMULATIVE_FILLED_QUANTITY).c_str());
+                aExecutionReport.OrderQty = atof(elem.getValue(CCAPI_EM_ORDER_QUANTITY).c_str());
+
+                aExecutionReport.LimitPrice = atof(elem.getValue(CCAPI_EM_ORDER_LIMIT_PRICE).c_str());
+
+                aExecutionReport.Side = convert_to_fix(elem.getValue(CCAPI_EM_ORDER_SIDE), elem).c_str()[0]; 
                 aExecutionReport.OrdStatus = convert_to_fix(elem.getValue(CCAPI_EM_ORDER_STATUS), elem).c_str()[0]; 
                } else if (messageType == ccapi::Message::Type::EXECUTION_MANAGEMENT_EVENTS_ORDER_UPDATE) {
                 aExecutionReport.ClOrdId = elem.getValue(CCAPI_EM_ORDER_ID);
                 aExecutionReport.Symbol = elem.getValue(CCAPI_EM_ORDER_INSTRUMENT);
                 aExecutionReport.OrderID = elem.getValue(CCAPI_EM_CLIENT_ORDER_ID);
-               } 
+
+                // _ = atof(elem.getValue(CUMULATIVE_FILLED_PRICE_TIMES_QUANTITY).c_str()); TODO 暂未找到对应字段
+                aExecutionReport.CumQty = atof(elem.getValue(CCAPI_EM_ORDER_CUMULATIVE_FILLED_QUANTITY).c_str());
+                aExecutionReport.OrderQty = atof(elem.getValue(CCAPI_EM_ORDER_QUANTITY).c_str());
+
+                aExecutionReport.LimitPrice = atof(elem.getValue(CCAPI_EM_ORDER_LIMIT_PRICE).c_str());
+
+                aExecutionReport.Side = convert_to_fix(elem.getValue(CCAPI_EM_ORDER_SIDE), elem).c_str()[0]; 
+                aExecutionReport.OrdStatus = convert_to_fix(elem.getValue(CCAPI_EM_ORDER_STATUS), elem).c_str()[0]; 
+                
+               } else {
+                // TODO这里后续要加逻辑，elem有值才会更新对应字段
+                aExecutionReport.ClOrdId = elem.getValue(CCAPI_EM_ORDER_ID);
+                aExecutionReport.Symbol = elem.getValue(CCAPI_EM_ORDER_INSTRUMENT);
+                aExecutionReport.OrderID = elem.getValue(CCAPI_EM_CLIENT_ORDER_ID);
+
+                // _ = atof(elem.getValue(CUMULATIVE_FILLED_PRICE_TIMES_QUANTITY).c_str()); TODO 暂未找到对应字段
+                aExecutionReport.CumQty = atof(elem.getValue(CCAPI_EM_ORDER_CUMULATIVE_FILLED_QUANTITY).c_str());
+                aExecutionReport.OrderQty = atof(elem.getValue(CCAPI_EM_ORDER_QUANTITY).c_str());
+
+                aExecutionReport.LimitPrice = atof(elem.getValue(CCAPI_EM_ORDER_LIMIT_PRICE).c_str());
+
+                aExecutionReport.Side = convert_to_fix(elem.getValue(CCAPI_EM_ORDER_SIDE), elem).c_str()[0]; 
+                aExecutionReport.OrdStatus = convert_to_fix(elem.getValue(CCAPI_EM_ORDER_STATUS), elem).c_str()[0]; 
+               }
    
               excutionReportList.push_back(aExecutionReport);
           }

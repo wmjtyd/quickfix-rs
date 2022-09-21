@@ -53,6 +53,7 @@ public:
 
 private:
   static std::string convert_to_fix(const std::string &value, ccapi::Element elem);
+  static char convert_exec_type_to_fix(ccapi::Message::Type type);
 
 private:
   ApplicationCCApi application;

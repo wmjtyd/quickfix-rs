@@ -4,6 +4,15 @@
 #include <vector>
 
 
+const char ExecType_UNKOWN = 'a';
+const char ExecType_EXPIRED = 'b';
+const char ExecType_GET_ACCOUNTS = 'c';
+const char ExecType_GET_ACCOUNT_BALANCES = 'd';
+const char ExecType_GET_ACCOUNT_POSITIONS = 'e';
+
+const char ExecType_GET_OPEN_ORDERS = 'f';
+const char ExecType_RESPONSE_ERROR = 'g';
+const char ExecType_REQUEST_FAILURE = 'h';
 
 class ExecutionReport
   {
@@ -30,20 +39,26 @@ class ExecutionReport
     // }
 
     public:
+      char ExecType;
       std::string Symbol;
       std::string OrderID;
       std::string ClOrdId;
       std::string ExecID;
-      std::string ExecType;
 
-      double CumQty; 
-      double Qty; // TODO 这个后续核对fix对应字段的名称
+
+      double CumQty;  //Total quantity (e.g. number of shares) filled. //https://www.onixs.biz/fix-dictionary/4.4/tagNum_14.html
+      double OrderQty; // TODO 这个后续核对fix对应字段的名称
       char OrdStatus;
       char Side;
       // double LeavesQty;
       // double CumQty;
 
+      //
       std::string ErrorMessage;
+      int httpStatusCode;
+    //   double CumulativeFilledPriceTimesQuantity;
+    //   double CumulativeFilledQuantity;
+      double LimitPrice;
 
 
   };
