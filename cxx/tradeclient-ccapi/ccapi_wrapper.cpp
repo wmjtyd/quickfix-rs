@@ -41,11 +41,26 @@ void CCApiWrapper::Start() {
   SessionOptions sessionOptions;
   SessionConfigs sessionConfigs;
 //  MyEventHandler eventHandler;
+
+  this->requestType = CCApiWrapper::RequestType_Ws;
+  this->correlationWs = "same correlation id for subscription and request";
+  
   auto url = sessionConfigs.getUrlRestBase().at(this->exchangeName);
   printf("CCApiWrapper::Start exchange(%s) baseurl(%s) \n", this->exchangeName.c_str(), url.c_str());
   this->session = new Session(sessionOptions, sessionConfigs, this->myEventHandler);
   // Subscription subscription(this->exchangeName.c_str(), "BTCUSDT", "ORDER_UPDATE", "", "same correlation id for subscription and request");
   // this->session->subscribe(subscription);
+  if (this->requestType == RequestType_Ws) {
+    printf("CCApiWrapper::Start subscription for ws\n");
+    this->correlationWs = "same correlation id for subscription and request";
+    std::vector<Subscription> subscriptionList;
+
+    subscriptionList.push_back(Subscription(this->exchangeName.c_str(), "BTCUSDT", CCAPI_EM_ORDER_UPDATE, this->correlationWs));
+    this->session->subscribe(subscriptionList);
+  }
+
+
+
 
 //  Session session(sessionOptions, sessionConfigs, &eventHandler);
 }
@@ -119,7 +134,17 @@ void CCApiWrapper::Request(int operation, std::string instrument, const std::str
                            this->exchangeName.c_str(), instrument.c_str(), side.c_str(), 
                            quantity, price, order_type.c_str(), time_in_force.c_str());
 
-  // this->session->sendRequestByFix(request);
-  // this->session->sendRequestByWebsocket(request);
-  this->session->sendRequest(request);
+  if (this->requestType == CCApiWrapper::RequestType_Fix) {
+    this->session->sendRequestByFix(request);
+  } else if (this->requestType == RequestType_Ws) {
+
+    request.setCorrelationId(this->correlationWs); //设置和ws subscription一样的id
+    this->session->sendRequestByWebsocket(request);
+    
+  } else { //requestType == 0
+    this->session->sendRequest(request);
+  }
+  // 
+  
+  // 
 }

@@ -38,6 +38,11 @@ class MyEventHandler : public ccapi::EventHandler {
 };
 
 class CCApiWrapper {
+    enum RequestType {
+      RequestType_Rest = 0,
+      RequestType_Ws = 1,
+      RequestType_Fix = 2,
+    };
     public:
         CCApiWrapper() = delete;
         CCApiWrapper(std::string exchaneName, eventHandlerFunc *eventHandler, void *myEventHandlerObj);
@@ -54,6 +59,8 @@ class CCApiWrapper {
         std::string exchangeName;
         ::ccapi::Session *session;
         MyEventHandler *myEventHandler;
+        std::string correlationWs;
+        RequestType requestType;
 
 };
 
