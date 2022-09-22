@@ -9,7 +9,7 @@ using ::ccapi::Session;
 using ::ccapi::SessionConfigs;
 using ::ccapi::SessionOptions;
 using ::ccapi::UtilSystem;
-
+using ::ccapi::Subscription;
 
 namespace ccapi {
 class MyLogger final : public Logger {
@@ -44,6 +44,9 @@ void CCApiWrapper::Start() {
   auto url = sessionConfigs.getUrlRestBase().at(this->exchangeName);
   printf("CCApiWrapper::Start exchange(%s) baseurl(%s) \n", this->exchangeName.c_str(), url.c_str());
   this->session = new Session(sessionOptions, sessionConfigs, this->myEventHandler);
+  // Subscription subscription(this->exchangeName.c_str(), "BTCUSDT", "ORDER_UPDATE", "", "same correlation id for subscription and request");
+  // this->session->subscribe(subscription);
+
 //  Session session(sessionOptions, sessionConfigs, &eventHandler);
 }
 
@@ -116,5 +119,7 @@ void CCApiWrapper::Request(int operation, std::string instrument, const std::str
                            this->exchangeName.c_str(), instrument.c_str(), side.c_str(), 
                            quantity, price, order_type.c_str(), time_in_force.c_str());
 
+  // this->session->sendRequestByFix(request);
+  // this->session->sendRequestByWebsocket(request);
   this->session->sendRequest(request);
 }

@@ -18,7 +18,7 @@ cmake .
 make all
 
 # 编译主工程代码
-cd xxx/quickfix-rs
+cd your_path/quickfix-rs
 
 rust使用 
 cargo build
