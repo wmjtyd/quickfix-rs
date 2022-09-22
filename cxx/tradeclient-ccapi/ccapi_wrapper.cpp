@@ -59,6 +59,7 @@ void CCApiWrapper::Start() {
     // this->session->subscribe(subscription);
     subscriptionList.push_back(Subscription(this->exchangeName.c_str(), "BTCUSDT", CCAPI_EM_ORDER_UPDATE, "", this->correlationWs));
     this->session->subscribe(subscriptionList);
+    std::this_thread::sleep_for(std::chrono::seconds(10));
   }
 
 
