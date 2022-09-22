@@ -51,11 +51,13 @@ void CCApiWrapper::Start() {
   // Subscription subscription(this->exchangeName.c_str(), "BTCUSDT", "ORDER_UPDATE", "", "same correlation id for subscription and request");
   // this->session->subscribe(subscription);
   if (this->requestType == RequestType_Ws) {
-    printf("CCApiWrapper::Start subscription for ws\n");
+    printf("CCApiWrapper::Start subscription for ws exchange(%s)\n",  this->exchangeName.c_str());
     this->correlationWs = "same correlation id for subscription and request";
     std::vector<Subscription> subscriptionList;
 
-    subscriptionList.push_back(Subscription(this->exchangeName.c_str(), "BTCUSDT", CCAPI_EM_ORDER_UPDATE, this->correlationWs));
+    // Subscription subscription(this->exchangeName.c_str(), "BTCUSDT", "ORDER_UPDATE", "", "same correlation id for subscription and request");
+    // this->session->subscribe(subscription);
+    subscriptionList.push_back(Subscription(this->exchangeName.c_str(), "BTCUSDT", CCAPI_EM_ORDER_UPDATE, "", this->correlationWs));
     this->session->subscribe(subscriptionList);
   }
 
