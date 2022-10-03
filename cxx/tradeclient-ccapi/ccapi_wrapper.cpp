@@ -42,7 +42,7 @@ void CCApiWrapper::Start() {
   SessionConfigs sessionConfigs;
 //  MyEventHandler eventHandler;
 
-  this->requestType = CCApiWrapper::RequestType_Ws;
+  this->requestType = CCApiWrapper::RequestType_Rest;
   this->correlationWs = "same correlation id for subscription and request";
   
   auto url = sessionConfigs.getUrlRestBase().at(this->exchangeName);

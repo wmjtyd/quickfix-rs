@@ -24,9 +24,13 @@ rust使用
 cargo build
 
 cpp使用 
+## 编译Debug版本
 cmake .
 make tradeclient-ccapi
 
+## 编译Release版本
+cmake . -DCMAKE_BUILD_TYPE=Release #默认是Debug
+make tradeclient-ccapi
 
 # 如何运行
 ## 测试网环境变量设置(若不使用测试网，则跳过这步)

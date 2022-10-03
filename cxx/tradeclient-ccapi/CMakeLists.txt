@@ -5,8 +5,30 @@ endif()
 if(NOT DEFINED CLI11_DIR)
     set (CLI11_DIR ${CMAKE_SOURCE_DIR}/vendor/CLI11/include)
 endif()
+message("-- CMAKE_BUILD_TYPE: ${CMAKE_BUILD_TYPE}")
+#set(CMAKE_BUILD_TYPE Debug) 默认就是Debug
+if(CMAKE_BUILD_TYPE AND (CMAKE_BUILD_TYPE STREQUAL "Debug"))
+    message("Debug mode:${CMAKE_C_FLAGS_DEBUG}")
+    message("-- CMAKE_BUILD_TYPE2: ${CMAKE_BUILD_TYPE}")
+#    set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -Wall -O0")
+    #这里是增加调试信息，可以打印出行号
+    add_compile_definitions(DEBUG_VERSION)
+    set(CMAKE_CXX_FLAGS   "-no-pie")
+    set(CMAKE_C_FLAGS   "-no-pie")
+    set(BOOST_STACKTRACE_USE_ADDR2LINE   "1")
+    add_definitions("-Wall -g")
+elseif(CMAKE_BUILD_TYPE AND (CMAKE_BUILD_TYPE STREQUAL "Release"))
+#    set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -Wall -O3")
+    message("Release mode:${CMAKE_C_FLAGS_RELEASE}")
+else()
+    message("else:${CMAKE_BUILD_TYPE}")
+    message("else:${CMAKE_C_FLAGS_RELEASE}")
+endif()
 
 
+
+
+add_compile_definitions(BOOST_STACKTRACE_USE_ADDR2LINE)
 
 # add_compile_definitions(CCAPI_USE_SINGLE_THREAD)
 add_compile_definitions(CCAPI_ENABLE_LOG_FATAL)
