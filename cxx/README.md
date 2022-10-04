@@ -5,6 +5,7 @@ yum install clang
 sudo apt install clang
 sudo apt install libssl-dev
 sudo apt-get install zlib1g-dev
+sudo apt-get install libboost-stacktrace-dev	
 
 # 下载代码
 git clone https://github.com/wmjtyd/quickfix-rs.git
