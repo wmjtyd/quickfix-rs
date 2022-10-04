@@ -147,7 +147,7 @@ int main( int argc, char** argv )
     char time_in_force = -1;
     char order_type;
     double price;
-    double stop_price;
+    double stop_price = -1;
 
     std::string order_id = "";
 
