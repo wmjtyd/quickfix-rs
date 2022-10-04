@@ -8,3 +8,8 @@ Cargo.lock
 .vscode/
 build/
 CMakeFiles
+
+vendor
+vendor/ccapi
+vendor/CLI11
+vendor/quickfix-cpp

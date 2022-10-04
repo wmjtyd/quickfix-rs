@@ -4,3 +4,7 @@
 [submodule "vendor/CLI11"]
 	path = vendor/CLI11
 	url = https://github.com/CLIUtils/CLI11.git
+[submodule "vendor/ccapi"]
+	path = vendor/ccapi
+	url = https://github.com/xtuyaowu/ccapi.git
+	branch = master
