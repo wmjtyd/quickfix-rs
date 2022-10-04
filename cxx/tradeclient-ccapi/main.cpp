@@ -234,7 +234,7 @@ int main( int argc, char** argv )
     {
 
 
-        auto client = create_client(TradeClientType_CCApi, configfile, fromAppCallbackExecutionReport);
+        auto client = create_client(exchangeName, TradeClientType_CCApi, configfile, fromAppCallbackExecutionReport);
             client->start();
 
             if (subcomName == "create_order") {

@@ -28,10 +28,10 @@ bool ApplicationCCApi::eventHandler(void *obj, const ccapi::Event& event, ccapi:
 
 
 ApplicationCCApi::ApplicationCCApi(
-  eventHandlerFunc *eventHandle, void *myEventHandlerObj
+  const std::string exchangeName, eventHandlerFunc *eventHandle, void *myEventHandlerObj
     )
     : eventHandle(eventHandle), myEventHandlerObj(myEventHandlerObj),
-    ccapiwrapper(CCApiWrapper("binance", ApplicationCCApi::eventHandler, this)) {
+    ccapiwrapper(CCApiWrapper(exchangeName, ApplicationCCApi::eventHandler, this)) {
       // this->ccapiwrapper = new CCApiWrapper("binance-us", eventHandler);
       this->ccapiwrapper.Start(); // symbol = "BTCUSDT"
     }

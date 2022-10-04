@@ -15,7 +15,7 @@ struct TradingClientContext;
 
 class ApplicationCCApi {
 public:
-  ApplicationCCApi(eventHandlerFunc *eventHandler, void *myEventHandlerObj);
+  ApplicationCCApi(const std::string exchangeName, eventHandlerFunc *eventHandler, void *myEventHandlerObj);
   ~ApplicationCCApi();
 
   auto new_order_single(const std::string &symbol, const std::string &client_order_id, char side, 

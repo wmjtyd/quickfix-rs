@@ -16,6 +16,7 @@ if(CMAKE_BUILD_TYPE AND (CMAKE_BUILD_TYPE STREQUAL "Debug"))
     set(CMAKE_CXX_FLAGS   "-no-pie")
     set(CMAKE_C_FLAGS   "-no-pie")
     set(BOOST_STACKTRACE_USE_ADDR2LINE   "1")
+#    add_compile_definitions(BOOST_STACKTRACE_USE_ADDR2LINE)
     add_definitions("-Wall -g")
 elseif(CMAKE_BUILD_TYPE AND (CMAKE_BUILD_TYPE STREQUAL "Release"))
 #    set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -Wall -O3")
@@ -28,7 +29,7 @@ endif()
 
 
 
-add_compile_definitions(BOOST_STACKTRACE_USE_ADDR2LINE)
+
 
 # add_compile_definitions(CCAPI_USE_SINGLE_THREAD)
 add_compile_definitions(CCAPI_ENABLE_LOG_FATAL)
@@ -41,6 +42,9 @@ add_compile_definitions(CCAPI_ENABLE_LOG_TRACE)
 
 add_compile_definitions(CCAPI_ENABLE_SERVICE_EXECUTION_MANAGEMENT)
 add_compile_definitions(CCAPI_ENABLE_EXCHANGE_BINANCE)
+add_compile_definitions(CCAPI_ENABLE_EXCHANGE_BINANCE_US)
+add_compile_definitions(CCAPI_ENABLE_EXCHANGE_BINANCE_USDS_FUTURES)
+add_compile_definitions(CCAPI_ENABLE_EXCHANGE_BINANCE_COIN_FUTURES)
 
 # 测试网base url配置
 add_compile_definitions(CCAPI_BINANCE_URL_REST_BASE="https://testnet.binance.vision/api")
@@ -48,6 +52,8 @@ add_compile_definitions(CCAPI_BINANCE_URL_WS_BASE="wss://testnet.binance.vision"
 
 # 期货测试网
 add_compile_definitions(CCAPI_BINANCE_USDS_FUTURES_URL_REST_BASE="https://testnet.binancefuture.com")
+add_compile_definitions(CCAPI_BINANCE_USDS_FUTURES_URL_WS_BASE="wss://stream.binancefuture.com")
+
 
 message("-- CCAPI_BINANCE_URL_REST_BASE: ${CCAPI_BINANCE_URL_REST_BASE}")
 find_package(OpenSSL REQUIRED)

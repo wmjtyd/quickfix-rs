@@ -20,8 +20,8 @@ public:
                                  const rust::Box<TradingClientContext> &)>
                        inbound_callback);
 #else
-  TradeClientCCApi(const std::string &filepath, FromAppCallback cb);
-  TradeClientCCApi(const std::string &filepath, FromAppCallbackExecutionReport cb);
+  TradeClientCCApi(const std::string exchangeName, const std::string &filepath, FromAppCallback cb);
+  TradeClientCCApi(const std::string exchangeName, const std::string &filepath, FromAppCallbackExecutionReport cb);
 #endif
   ~TradeClientCCApi();
 
