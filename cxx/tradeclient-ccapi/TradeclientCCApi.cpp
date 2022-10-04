@@ -110,10 +110,10 @@ TradeClientCCApi::TradeClientCCApi(
     : ctx(std::move(ctx)), inbound_callback(inbound_callback),
       application(TradeClientCCApi::eventHandler, this) {}
 #else
-TradeClientCCApi::TradeClientCCApi(const std::string &filepath, FromAppCallback cb)
-    : eventCallback(cb), application(TradeClientCCApi::eventHandler, this) {}
-TradeClientCCApi::TradeClientCCApi(const std::string &filepath, FromAppCallbackExecutionReport cb)
-    : executionReportCallback(cb), application(TradeClientCCApi::eventHandler, this) {}    
+TradeClientCCApi::TradeClientCCApi(const std::string exchangeName, const std::string &filepath, FromAppCallback cb)
+    : eventCallback(cb), application(exchangeName, TradeClientCCApi::eventHandler, this) {}
+TradeClientCCApi::TradeClientCCApi(std::string exchangeName, const std::string &filepath, FromAppCallbackExecutionReport cb)
+    : executionReportCallback(cb), application(exchangeName, TradeClientCCApi::eventHandler, this) {}
 #endif
 TradeClientCCApi::~TradeClientCCApi() {
   // delete this->initiator;

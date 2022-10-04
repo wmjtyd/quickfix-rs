@@ -8,6 +8,7 @@
 #include "CLI/Config.hpp"
 
 #include "ITradeclient.h"
+#include <boost/stacktrace.hpp>
 
 void fromAppCallback(std::string message, std::string sessionId)
 {
@@ -112,6 +113,12 @@ void signal_handler(int signal)
   {
     stoped = true;
   }
+
+  if (signal == SIGSEGV)
+  {
+      std::cout << boost::stacktrace::stacktrace();
+      exit(-1);
+  }
 }
 /*
 example:
@@ -123,9 +130,11 @@ example:
 */
 int main( int argc, char** argv )
 {
+    // ... somewhere inside the `bar(int)` function that is called recursively:
+
     std::signal(SIGINT, signal_handler);
     std::signal(SIGKILL, signal_handler);
-
+    std::signal(SIGSEGV, signal_handler);
 
     std::vector<std::string> coinpairs;
     std::string exchangeName;
@@ -138,7 +147,7 @@ int main( int argc, char** argv )
     char time_in_force = -1;
     char order_type;
     double price;
-    double stop_price;
+    double stop_price = -1;
 
     std::string order_id = "";
 
@@ -225,7 +234,7 @@ int main( int argc, char** argv )
     {
 
 
-        auto client = create_client(TradeClientType_CCApi, configfile, fromAppCallbackExecutionReport);
+        auto client = create_client(exchangeName, TradeClientType_CCApi, configfile, fromAppCallbackExecutionReport);
             client->start();
 
             if (subcomName == "create_order") {
@@ -291,6 +300,7 @@ int main( int argc, char** argv )
     }
     catch ( std::exception & e )
     {
+        std::cout << boost::stacktrace::stacktrace();
         std::cout << e.what();
         return 1;
     }

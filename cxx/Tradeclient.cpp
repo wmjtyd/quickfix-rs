@@ -31,7 +31,7 @@ auto create_client(
 }
 #else
 auto create_client(
-    const TradeClientType type, const std::string &filepath, FromAppCallbackExecutionReport cb) -> std::unique_ptr<ITradeClient> {
+  const std::string &exchangeName, const TradeClientType type, const std::string &filepath, FromAppCallbackExecutionReport cb) -> std::unique_ptr<ITradeClient> {
   ITradeClient *pitradeclient = nullptr;
   switch (type) {
   case TradeClientType_Apifiny:
@@ -42,7 +42,7 @@ auto create_client(
     break;
   case TradeClientType_CCApi:
      pitradeclient =
-         new TradeClientCCApi(filepath, cb);
+         new TradeClientCCApi(exchangeName, filepath, cb);
     break;
   }
 

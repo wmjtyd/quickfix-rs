@@ -28,10 +28,10 @@ bool ApplicationCCApi::eventHandler(void *obj, const ccapi::Event& event, ccapi:
 
 
 ApplicationCCApi::ApplicationCCApi(
-  eventHandlerFunc *eventHandle, void *myEventHandlerObj
+  const std::string exchangeName, eventHandlerFunc *eventHandle, void *myEventHandlerObj
     )
     : eventHandle(eventHandle), myEventHandlerObj(myEventHandlerObj),
-    ccapiwrapper(CCApiWrapper("binance", ApplicationCCApi::eventHandler, this)) {
+    ccapiwrapper(CCApiWrapper(exchangeName, ApplicationCCApi::eventHandler, this)) {
       // this->ccapiwrapper = new CCApiWrapper("binance-us", eventHandler);
       this->ccapiwrapper.Start(); // symbol = "BTCUSDT"
       this->ccapiwrapper.SubscriptionInit("BTC-USD,ETH-USD"); //For multiple transactions follows:"BTC-USD,ETH-USD",single as "BTC-USD"

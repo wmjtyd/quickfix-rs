@@ -42,7 +42,7 @@ void CCApiWrapper::Start() {
   SessionConfigs sessionConfigs;
 //  MyEventHandler eventHandler;
 
-  this->requestType = CCApiWrapper::RequestType_Ws;
+  this->requestType = CCApiWrapper::RequestType_Rest;
   this->correlationWs = "same correlation id for subscription and request";
   
   auto url = sessionConfigs.getUrlRestBase().at(this->exchangeName);
@@ -83,9 +83,9 @@ void CCApiWrapper::Request(int operation, std::string instrument, const std::str
                         const std::string order_type,const std::string time_in_force,
                         std::string correlationId,
                         std::map<std::string, std::string> credential)  const {
-  printf("CCApiWrapper 1: put_order: exchange(%s) symbol(%s) order_id(%s) side(%s) quantity(%f) price(%f) order_type(%s) time_in_force(%s)\n", 
+  printf("CCApiWrapper 1: put_order: exchange(%s) symbol(%s) order_id(%s) side(%s) quantity(%f) price(%f) stop_price(%f) order_type(%s) time_in_force(%s)\n",
                            this->exchangeName.c_str(), instrument.c_str(), order_id.c_str(), side.c_str(), 
-                           quantity, price, order_type.c_str(), time_in_force.c_str());                          
+                           quantity, price, stop_price, order_type.c_str(), time_in_force.c_str());
   ::ccapi::Request request(Request::Operation(operation), this->exchangeName, instrument);
   std::map<std::string, std::string> param;
   if (operation == CCAPI_EXECUTION_CANCEL_ORDER || operation == CCAPI_EXECUTION_GET_ORDER) {
@@ -112,7 +112,7 @@ void CCApiWrapper::Request(int operation, std::string instrument, const std::str
           param["price"] = std::to_string(price);
       }
 
-      if (stop_price != 0) {
+      if (stop_price != -1) {
         param["stopPrice"] = std::to_string(stop_price);
       }
 
@@ -130,11 +130,11 @@ void CCApiWrapper::Request(int operation, std::string instrument, const std::str
   //     {"price", "20000"},
   //     {"timeInForce", "GTC"},
   // });
-  printf("CCApiWrapper 2: put_order: exchange(%s) symbol(%s) side(%s) quantity(%f) price(%f) order_type(%s) time_in_force(%s)\n", 
-                           this->exchangeName.c_str(), instrument.c_str(), side.c_str(), 
-                           quantity, price, order_type.c_str(), time_in_force.c_str());
+    printf("CCApiWrapper 2: put_order: exchange(%s) symbol(%s) order_id(%s) side(%s) quantity(%f) price(%f) stop_price(%f) order_type(%s) time_in_force(%s)\n",
+           this->exchangeName.c_str(), instrument.c_str(), order_id.c_str(), side.c_str(),
+           quantity, price, stop_price, order_type.c_str(), time_in_force.c_str());
 
-  if (this->requestType == CCApiWrapper::RequestType_Fix) {
+    if (this->requestType == CCApiWrapper::RequestType_Fix) {
     this->session->sendRequestByFix(request);
   } else if (this->requestType == RequestType_Ws) {
 
