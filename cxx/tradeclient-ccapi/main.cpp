@@ -150,7 +150,8 @@ int main( int argc, char** argv )
     double stop_price = -1;
 
     std::string order_id = "";
-    std::string event = "";
+    // std::string event = "";
+    std::vector<std::string> events;
 
     CLI::App app{"app: tradeclient-ccapi"};
     app.set_help_all_flag("--help-all", "Expand all help");
@@ -213,7 +214,8 @@ int main( int argc, char** argv )
 
     {
         subcom_subscribe->add_option("-b,--symbol", symbol, "symbol, -s BTCUSDT")->required();
-        subcom_subscribe->add_option("--event", event, "event, --event ORDER_UPDATE")->required();
+        // subcom_subscribe->add_option("--event", event, "event, --event ORDER_UPDATE")->required();
+        subcom_subscribe->add_option("--events", events, "events, --events [ORDER_UPDATE,PRIVATE_TRADE,BALANCE_UPDATE,BALANCE_POSITION_UPDATE]")->required();
     }
     
     app.add_option("-f,--configfile", configfile, "-f ./configfile");
@@ -290,8 +292,21 @@ int main( int argc, char** argv )
                 // ./cxx/tradeclient-ccapi/tradeclient-ccapi -e binance get_account_postions
                 client->get_account_postions();
             } else if (subcomName == "subscribe") {
-                // ./cxx/tradeclient-ccapi/tradeclient-ccapi -e binance subscribe -b BTCUSDT --event ORDER_UPDATE
-                client->subscribe(symbol, event);
+                printf("cmd: subscribe: exchange(%s) symbol(%s) events[", 
+                            exchangeName.c_str(), symbol.c_str());
+                for(auto e : events) {
+                    printf("%s ", e.c_str());
+                }
+                printf("]\n");
+                
+                /* ./cxx/tradeclient-ccapi/tradeclient-ccapi -e binance subscribe -b BTCUSDT --events [ORDER_UPDATE]
+                   ./cxx/tradeclient-ccapi/tradeclient-ccapi -e binance subscribe -b BTCUSDT --events [PRIVATE_TRADE]
+                   ./cxx/tradeclient-ccapi/tradeclient-ccapi -e binance subscribe -b BTCUSDT --events [BALANCE_UPDATE]
+                   ./cxx/tradeclient-ccapi/tradeclient-ccapi -e binance subscribe -b BTCUSDT --events [BALANCE_POSITION_UPDATE]
+
+                   ./cxx/tradeclient-ccapi/tradeclient-ccapi -e binance subscribe -b BTCUSDT --events [ORDER_UPDATE,PRIVATE_TRADE,BALANCE_UPDATE,BALANCE_POSITION_UPDATE]
+                */
+                client->subscribe(symbol, events);
             } 
             
 

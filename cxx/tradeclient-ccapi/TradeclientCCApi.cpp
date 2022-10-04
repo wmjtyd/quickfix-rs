@@ -275,9 +275,9 @@ auto TradeClientCCApi::stop() const -> void {
   this->application.stop();
 }
 
-auto TradeClientCCApi::subscribe(const std::string &symbol, const std::string eventName, const std::string correlationId) const -> void {
+auto TradeClientCCApi::subscribe(const std::string &symbol, const std::vector<std::string> eventNames, const std::string correlationId) const -> void {
   // this->application.subscribe(symbol, eventName, correlationId);
-  this->application.subscribe(symbol, eventName, correlationId);
+  this->application.subscribe(symbol, eventNames, correlationId);
   return;
 }; 
 
