@@ -47,26 +47,23 @@ void CCApiWrapper::Start() {
   
   auto url = sessionConfigs.getUrlRestBase().at(this->exchangeName);
   printf("CCApiWrapper::Start exchange(%s) baseurl(%s) \n", this->exchangeName.c_str(), url.c_str());
+  //Session session(sessionOptions, sessionConfigs, &eventHandler);
   this->session = new Session(sessionOptions, sessionConfigs, this->myEventHandler);
-  // Subscription subscription(this->exchangeName.c_str(), "BTCUSDT", "ORDER_UPDATE", "", "same correlation id for subscription and request");
-  // this->session->subscribe(subscription);
-  if (this->requestType == RequestType_Ws) {
+  std::this_thread::sleep_for(std::chrono::seconds(5));
+
+}
+
+void CCApiWrapper::SubscriptionInit(const std::string instrument){
+    // Subscription subscription(this->exchangeName.c_str(), "BTCUSDT", "ORDER_UPDATE", "", "same correlation id for subscription and request");
+    // this->session->subscribe(subscription);
     printf("CCApiWrapper::Start subscription for ws exchange(%s)\n",  this->exchangeName.c_str());
     this->correlationWs = "same correlation id for subscription and request";
     std::vector<Subscription> subscriptionList;
-
-    // Subscription subscription(this->exchangeName.c_str(), "BTCUSDT", "ORDER_UPDATE", "", "same correlation id for subscription and request");
-    // this->session->subscribe(subscription);
-    subscriptionList.push_back(Subscription(this->exchangeName.c_str(), "BTCUSDT", CCAPI_EM_ORDER_UPDATE, "", this->correlationWs));
+    subscriptionList.push_back(Subscription(this->exchangeName.c_str(), instrument.c_str(), CCAPI_EM_ORDER_UPDATE, "", this->correlationWs));
     this->session->subscribe(subscriptionList);
-    std::this_thread::sleep_for(std::chrono::seconds(10));
-  }
-
-
-
-
-//  Session session(sessionOptions, sessionConfigs, &eventHandler);
+    std::this_thread::sleep_for(std::chrono::seconds(5));
 }
+
 
 void CCApiWrapper::Stop() {
   if (this->session != nullptr) {

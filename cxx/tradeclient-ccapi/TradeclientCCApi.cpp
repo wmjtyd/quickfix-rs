@@ -217,7 +217,15 @@ bool TradeClientCCApi::eventHandler(void *obj, const ccapi::Event &event,
                 aExecutionReport.Side = convert_to_fix(elem.getValue(CCAPI_EM_ORDER_SIDE), elem).c_str()[0]; 
                 aExecutionReport.OrdStatus = convert_to_fix(elem.getValue(CCAPI_EM_ORDER_STATUS), elem).c_str()[0]; 
                 
-               } else {
+               } else if (messageType == ccapi::Message::Type::EXECUTION_MANAGEMENT_EVENTS_BALANCE_UPDATE) {
+                aExecutionReport.AssetFree = atof(elem.getValue(CCAPI_EM_ASSET_FREE).c_str());
+                aExecutionReport.AssetLocked = atof(elem.getValue(CCAPI_EM_ASSET_LOCKED).c_str());
+                aExecutionReport.Instrument = elem.getValue(CCAPI_INSTRUMENT);
+                
+               } else if (messageType == ccapi::Message::Type::EXECUTION_MANAGEMENT_EVENTS_BALANCE_POSITION_UPDATE) {
+                
+                
+               }else {
                 // TODO这里后续要加逻辑，elem有值才会更新对应字段
                 aExecutionReport.ClOrdId = elem.getValue(CCAPI_EM_ORDER_ID);
                 aExecutionReport.Symbol = elem.getValue(CCAPI_EM_ORDER_INSTRUMENT);

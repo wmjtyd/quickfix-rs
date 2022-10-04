@@ -34,6 +34,7 @@ ApplicationCCApi::ApplicationCCApi(
     ccapiwrapper(CCApiWrapper(exchangeName, ApplicationCCApi::eventHandler, this)) {
       // this->ccapiwrapper = new CCApiWrapper("binance-us", eventHandler);
       this->ccapiwrapper.Start(); // symbol = "BTCUSDT"
+      this->ccapiwrapper.SubscriptionInit("BTC-USD,ETH-USD"); //For multiple transactions follows:"BTC-USD,ETH-USD",single as "BTC-USD"
     }
 
 ApplicationCCApi::~ApplicationCCApi() {
