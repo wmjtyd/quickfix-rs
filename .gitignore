@@ -5,7 +5,7 @@ Cargo.lock
 .emacs.desktop
 
 /vendor/
-.vscode/
+
 build/
 CMakeFiles
 
