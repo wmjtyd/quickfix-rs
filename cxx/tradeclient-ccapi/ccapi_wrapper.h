@@ -50,7 +50,7 @@ class CCApiWrapper {
         void Start();
         void Stop();
 
-        void Subscribe(const std::string instrument, const std::string eventName , std::string correlationId = "") const;
+        void Subscribe(const std::string instrument, const std::vector<std::string> eventNames, std::string correlationId = "") const;
 
         void Request(int operation, std::string instrument = "", const std::string order_id = "", 
                         const std::string client_order_id = "", const std::string side = "", 

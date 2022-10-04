@@ -41,8 +41,8 @@ ApplicationCCApi::~ApplicationCCApi() {
       this->ccapiwrapper.Stop(); // symbol = "BTCUSDT" 
     }
 
-auto ApplicationCCApi::subscribe(const std::string &symbol, const std::string eventName, std::string correlationId) const -> void {
-  this->ccapiwrapper.Subscribe(symbol, eventName, correlationId);
+auto ApplicationCCApi::subscribe(const std::string &symbol, const std::vector<std::string> eventNames, std::string correlationId) const -> void {
+  this->ccapiwrapper.Subscribe(symbol, eventNames, correlationId);
 }
 auto ApplicationCCApi::new_order_single(const std::string &symbol, const std::string &client_order_id, char side, 
                         const double quantity,const double price, const double stop_price,

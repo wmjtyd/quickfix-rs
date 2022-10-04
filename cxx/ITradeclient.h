@@ -51,7 +51,7 @@ public:
   virtual auto get_accounts() const -> void = 0;
   virtual auto get_account_postions() const -> void = 0;  
 
-  virtual auto subscribe(const std::string &symbol, const std::string eventName, std::string correlationId = "") const -> void = 0;  
+  virtual auto subscribe(const std::string &symbol, const std::vector<std::string> eventNames, std::string correlationId = "") const -> void = 0;  
   
 };
 
