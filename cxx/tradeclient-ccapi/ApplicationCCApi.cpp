@@ -33,8 +33,7 @@ ApplicationCCApi::ApplicationCCApi(
     : eventHandle(eventHandle), myEventHandlerObj(myEventHandlerObj),
     ccapiwrapper(CCApiWrapper(exchangeName, ApplicationCCApi::eventHandler, this)) {
       // this->ccapiwrapper = new CCApiWrapper("binance-us", eventHandler);
-      this->ccapiwrapper.Start(); // symbol = "BTCUSDT"
-      this->ccapiwrapper.SubscriptionInit("BTC-USD,ETH-USD"); //For multiple transactions follows:"BTC-USD,ETH-USD",single as "BTC-USD"
+      this->ccapiwrapper.Start(); // symbol = "BTCUSDT"    
     }
 
 ApplicationCCApi::~ApplicationCCApi() {
@@ -42,6 +41,9 @@ ApplicationCCApi::~ApplicationCCApi() {
       this->ccapiwrapper.Stop(); // symbol = "BTCUSDT" 
     }
 
+auto ApplicationCCApi::subscribe(const std::string &symbol, const std::string eventName, std::string correlationId) const -> void {
+  this->ccapiwrapper.Subscribe(symbol, eventName, correlationId);
+}
 auto ApplicationCCApi::new_order_single(const std::string &symbol, const std::string &client_order_id, char side, 
                         const double quantity,const double price, const double stop_price,
                         const char order_type,const char time_in_force) const

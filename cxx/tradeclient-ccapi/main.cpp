@@ -150,21 +150,24 @@ int main( int argc, char** argv )
     double stop_price = -1;
 
     std::string order_id = "";
+    std::string event = "";
 
     CLI::App app{"app: tradeclient-ccapi"};
     app.set_help_all_flag("--help-all", "Expand all help");
 
-    CLI::App* subcom_create_order = app.add_subcommand("create_order", "create_order");
-    CLI::App* subcom_cancel_order = app.add_subcommand("cancel_order", "cancel_order");
-    CLI::App* subcom_get_order = app.add_subcommand("get_order", "get_order");
-    CLI::App* subcom_get_open_orders = app.add_subcommand("get_open_orders", "get_open_orders");
-    CLI::App* subcom_cancel_open_orders = app.add_subcommand("cancel_open_orders", "cancel_open_orders");
-    CLI::App* subcom_get_recent_trades = app.add_subcommand("get_recent_trades", "cancel_open_orders");
+    CLI::App* subcom_create_order = app.add_subcommand("create_order", "subcmd create_order");
+    CLI::App* subcom_cancel_order = app.add_subcommand("cancel_order", "subcmd cancel_order");
+    CLI::App* subcom_get_order = app.add_subcommand("get_order", "subcmd get_order");
+    CLI::App* subcom_get_open_orders = app.add_subcommand("get_open_orders", "subcmd get_open_orders");
+    CLI::App* subcom_cancel_open_orders = app.add_subcommand("cancel_open_orders", "subcmd cancel_open_orders");
+    CLI::App* subcom_get_recent_trades = app.add_subcommand("get_recent_trades", "subcmd cancel_open_orders");
 
-    CLI::App* subcom_get_accounts = app.add_subcommand("get_accounts", "get_accounts");
+    CLI::App* subcom_get_accounts = app.add_subcommand("get_accounts", "subcmd get_accounts");
 
-    CLI::App* subcom_get_account_balances = app.add_subcommand("get_account_balances", "get_account_balances");
-    CLI::App* subcom_get_account_postions = app.add_subcommand("get_account_postions", "get_account_postions");
+    CLI::App* subcom_get_account_balances = app.add_subcommand("get_account_balances", "subcmd get_account_balances");
+    CLI::App* subcom_get_account_postions = app.add_subcommand("get_account_postions", "subcmd get_account_postions");
+
+    CLI::App* subcom_subscribe = app.add_subcommand("subscribe", "subcmd subscribe");
 
     app.require_subcommand();  // 1 or more
 
@@ -206,6 +209,11 @@ int main( int argc, char** argv )
 
     {
         subcom_get_recent_trades->add_option("-b,--symbol", symbol, "symbol, -s BTCUSDT")->required();
+    }
+
+    {
+        subcom_subscribe->add_option("-b,--symbol", symbol, "symbol, -s BTCUSDT")->required();
+        subcom_subscribe->add_option("--event", event, "event, --event ORDER_UPDATE")->required();
     }
     
     app.add_option("-f,--configfile", configfile, "-f ./configfile");
@@ -281,6 +289,9 @@ int main( int argc, char** argv )
             } else if (subcomName == "get_account_postions") {
                 // ./cxx/tradeclient-ccapi/tradeclient-ccapi -e binance get_account_postions
                 client->get_account_postions();
+            } else if (subcomName == "subscribe") {
+                // ./cxx/tradeclient-ccapi/tradeclient-ccapi -e binance subscribe -b BTCUSDT --event ORDER_UPDATE
+                client->subscribe(symbol, event);
             } 
             
 

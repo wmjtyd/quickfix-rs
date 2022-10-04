@@ -49,7 +49,9 @@ class CCApiWrapper {
         ~CCApiWrapper();
         void Start();
         void Stop();
-        void SubscriptionInit(const std::string instrument = "");
+
+        void Subscribe(const std::string instrument, const std::string eventName , std::string correlationId = "") const;
+
         void Request(int operation, std::string instrument = "", const std::string order_id = "", 
                         const std::string client_order_id = "", const std::string side = "", 
                         const double quantity = 0,const double price = 0, const double stop_price = 0,

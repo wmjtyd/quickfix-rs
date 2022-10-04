@@ -18,6 +18,8 @@ public:
   ApplicationCCApi(const std::string exchangeName, eventHandlerFunc *eventHandler, void *myEventHandlerObj);
   ~ApplicationCCApi();
 
+  auto subscribe(const std::string &symbol, const std::string eventName, std::string correlationId = "") const -> void;
+
   auto new_order_single(const std::string &symbol, const std::string &client_order_id, char side, 
                         const double quantity,const double price, const double stop_price,
                         const char order_type,const char time_in_force) const

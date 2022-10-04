@@ -31,6 +31,8 @@ public:
   auto start() const -> void override;
   auto stop() const -> void override;
 
+  auto subscribe(const std::string &symbol, const std::string eventName, const std::string correlationId = "") const -> void override; 
+
   auto put_order(const std::string &symbol, char side, 
                  const double quantity,const double price, const double stop_price,
                  const char order_type,const char time_in_force) const
