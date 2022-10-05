@@ -9,10 +9,13 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/cxx/tradeclient-ccapi/tradeclient-ccapi",
-            "args": [],
+            "args": ["-e", "binance", "subscribe","-b","BTCUSDT","--events","[BALANCE_POSITION_UPDATE]"],
             "stopAtEntry": true,
             "cwd": "${fileDirname}",
-            "environment": [],
+            "environment": [
+                {"name": "BINANCE_API_KEY", "value": "xxx"},
+                {"name": "BINANCE_API_SECRET", "value": "xxx"}
+            ],
             "externalConsole": false,
             "MIMode": "gdb",
             "setupCommands": [

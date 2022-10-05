@@ -115,7 +115,8 @@ void signal_handler(int signal)
   }
 
   if (signal == SIGSEGV)
-  {
+  { 
+      std::cout << std::endl << "call stack: "<< std::endl;
       std::cout << boost::stacktrace::stacktrace();
       exit(-1);
   }
@@ -131,7 +132,6 @@ example:
 int main( int argc, char** argv )
 {
     // ... somewhere inside the `bar(int)` function that is called recursively:
-
     std::signal(SIGINT, signal_handler);
     std::signal(SIGKILL, signal_handler);
     std::signal(SIGSEGV, signal_handler);
@@ -326,6 +326,7 @@ int main( int argc, char** argv )
     }
     catch ( std::exception & e )
     {
+        std::cout << std::endl << "exception:" << std::endl;
         std::cout << boost::stacktrace::stacktrace();
         std::cout << e.what();
         return 1;

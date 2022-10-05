@@ -9,6 +9,9 @@ Cargo.lock
 build/
 CMakeFiles
 
+
+cxx/tradeclient-ccapi/tradeclient-ccapi
+
 vendor
 vendor/ccapi
 vendor/CLI11
