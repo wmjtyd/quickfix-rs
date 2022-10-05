@@ -30,7 +30,7 @@ void fromAppCallbackExecutionReport(const std::vector<ExecutionReport> &excution
 
 binance api doc: https://binance-docs.github.io/apidocs/spot/en/#new-order-trade
 
-
+ 
 限价GFD，
 限价FDK，
 市价剩转限价GFD，
