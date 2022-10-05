@@ -44,7 +44,7 @@ class ExecutionReport
       std::string OrderID;
       std::string ClOrdId;
       std::string ExecID;
-      std::string Instrument;
+      // std::string Instrument;
 
 
       double CumQty;  //Total quantity (e.g. number of shares) filled. //https://www.onixs.biz/fix-dictionary/4.4/tagNum_14.html
