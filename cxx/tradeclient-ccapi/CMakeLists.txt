@@ -6,15 +6,16 @@ if(NOT DEFINED CLI11_DIR)
     set (CLI11_DIR ${CMAKE_SOURCE_DIR}/vendor/CLI11/include)
 endif()
 message("-- CMAKE_BUILD_TYPE: ${CMAKE_BUILD_TYPE}")
-#set(CMAKE_BUILD_TYPE Debug) 默认就是Debug
+set(CMAKE_BUILD_TYPE Debug) #默认就是Debug
 if(CMAKE_BUILD_TYPE AND (CMAKE_BUILD_TYPE STREQUAL "Debug"))
     message("Debug mode:${CMAKE_C_FLAGS_DEBUG}")
     message("-- CMAKE_BUILD_TYPE2: ${CMAKE_BUILD_TYPE}")
 #    set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -Wall -O0")
     #这里是增加调试信息，可以打印出行号
     add_compile_definitions(DEBUG_VERSION)
-    set(CMAKE_CXX_FLAGS   "-no-pie")
-    set(CMAKE_C_FLAGS   "-no-pie")
+    set(CMAKE_CXX_FLAGS   "-no-pie -Wall -O0 -g")
+    set(CMAKE_C_FLAGS   "-no-pie -Wall -O0 -g")
+    set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -Wall -O0 -g")
     set(BOOST_STACKTRACE_USE_ADDR2LINE   "1")
 #    add_compile_definitions(BOOST_STACKTRACE_USE_ADDR2LINE)
     add_definitions("-Wall -g")
@@ -25,7 +26,6 @@ else()
     message("else:${CMAKE_BUILD_TYPE}")
     message("else:${CMAKE_C_FLAGS_RELEASE}")
 endif()
-
 
 
 
