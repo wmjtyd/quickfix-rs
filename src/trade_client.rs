@@ -13,25 +13,17 @@ use crate::ffi;
 pub enum OrderMessage {
     NewOrder {
         symbol: String,
-        side: char,
+        side: c_char,
         quantity: f64,
         price: f64,
         stop_price: f64,
-        order_type: char,
-        time_in_force: char,
+        order_type: c_char,
+        time_in_force: c_char,
     },
     CancelOrder {
         symbol: String,
         order_id: String,
     },
-}
-
-struct OrderCancelRequest {
-    pub symbol: String,
-    pub ord_id: String,
-    pub orig_client_ord_id: String,
-    pub client_ord_id: String,
-    pub side: char,
 }
 
 pub struct TradingClientContext(mpsc::UnboundedSender<ffi::QuickFixMessage>);
@@ -83,22 +75,22 @@ impl TradingClient {
     pub fn new_order(
         self: &TradingClient,
         symbol: &str,
-        side: char,
+        side: c_char,
         quantity: f64,
         price: f64,
         stop_price: f64,
-        order_type: char,
-        time_in_force: char,
+        order_type: c_char,
+        time_in_force: c_char,
     ) -> cxx::UniquePtr<cxx::CxxString> {
         let_cxx_string!(symbol = symbol);
         self.cxx_inner.put_order(
             &symbol,
-            side as c_char,
+            side,
             quantity,
             price,
             stop_price,
-            order_type as c_char,
-            time_in_force as c_char,
+            order_type,
+            time_in_force,
         )
     }
 

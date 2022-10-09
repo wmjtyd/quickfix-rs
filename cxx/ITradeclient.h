@@ -22,6 +22,26 @@ enum TradeClientType {
   TradeClientType_CCApi = 3,
 };
 
+#ifndef CXXBRIDGE1_STRUCT_RustExecutionReport
+#define CXXBRIDGE1_STRUCT_RustExecutionReport
+struct RustExecutionReport final {
+  char exec_type;
+  ::rust::String symbol;
+  ::rust::String order_id;
+  ::rust::String client_ord_id;
+  ::rust::String exec_id;
+  double cum_qty;
+  double order_qty;
+  char ord_status;
+  char side;
+  double asset_free;
+  double asset_locked;
+  ::rust::String error_message;
+
+  using IsRelocatable = ::std::true_type;
+};
+#endif // CXXBRIDGE1_STRUCT_RustExecutionReport
+
 class ITradeClient {
 public:
   //    TradeClient(const std::string &filepath) {};

@@ -8,6 +8,26 @@ include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
 #[cxx::bridge]
 pub mod ffi {
 
+
+    struct RustExecutionReport {
+        exec_type: c_char,
+        symbol: String,
+        order_id: String,
+        client_ord_id: String,
+        exec_id: String,
+
+        cum_qty: f64,  //Total quantity (e.g. number of shares) filled. //https://www.onixs.biz/fix-dictionary/4.4/tagNum_14.html
+        order_qty: f64, // TODO 这个后续核对fix对应字段的名称
+        ord_status: c_char,
+        side: c_char,
+        asset_free: f64,
+        asset_locked: f64,
+
+
+        error_message: String,
+    }
+
+
     #[derive(Copy, Clone, Debug, Eq, PartialEq, Hash)]
     enum TradingClientType {
         Apifiny = 1,
