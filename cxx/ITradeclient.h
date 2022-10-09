@@ -35,10 +35,15 @@ public:
                          const char order_type,
                          const char time_in_force) const
       -> std::unique_ptr<std::string> = 0;
+
+  // 存在问题：这里存在的问题是，无法初始化结构体
+  virtual auto put_order(const NewOrderSingle &aNewOrderSingle) const -> std::unique_ptr<std::string> = 0;
+
   virtual auto cancel_order(const std::string &symbol, const std::string &order_id) const -> void = 0;
 
-  virtual auto put_order(const NewOrderSingle &aNewOrderSingle) const -> std::unique_ptr<std::string> = 0;
+  // 存在问题：这里 rust 无法初始化结构体
   virtual auto cancel_order(const OrderCancelRequest &aOrderCancelRequest) const -> void = 0;
+
   virtual auto cancel_open_orders(const std::string &symbol) const -> void = 0;
 
   virtual auto get_order(const std::string &symbol, const std::string &order_id) const -> void = 0;
@@ -51,7 +56,11 @@ public:
   virtual auto get_accounts() const -> void = 0;
   virtual auto get_account_postions() const -> void = 0;  
 
-  virtual auto subscribe(const std::string &symbol, const std::vector<std::string> eventNames, std::string correlationId = "") const -> void = 0;  
+  virtual auto subscribe(
+    const std::string &symbol, 
+    const std::vector<std::string> eventNames, 
+    std::string correlationId = ""
+  ) const -> void = 0;
   
 };
 

@@ -1,6 +1,6 @@
 #![allow(non_upper_case_globals, non_camel_case_types, non_snake_case)]
 
-// mod trade_client;
+mod trade_client;
 pub use trade_client::{OrderMessage, TradingClient, TradingClientContext};
 
 include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
@@ -13,6 +13,14 @@ pub mod ffi {
         Apifiny = 1,
         Wintmute,
         CCApi,
+    }
+
+    #[derive(Copy, Clone, Debug, Eq, PartialEq, Hash)]
+    pub enum OrderType {
+        Market = 1,
+        Limit,
+        Stop,
+        StopLimit,
     }
 
     #[derive(Copy, Clone, Debug, Eq, PartialEq, Hash)]
@@ -31,50 +39,51 @@ pub mod ffi {
         include!("quickfix-rs/cxx/ITradeclient.h");
 
         type ITradeClient;
-        type NewOrderSingle;
         type OrderCancelRequest;
         type ExecutionReport;
-
-        // #[allow(clippy::borrowed_box)]
-        // fn create_client(
-        //     client_type: TradingClientType,
-        //     file_path: &CxxString,
-        //     ctx: Box<TradingClientContext>,
-        //     inbound_callback: fn(message: QuickFixMessage, ctx: &Box<TradingClientContext>),
-        // ) -> UniquePtr<ITradeClient>;
 
         #[allow(clippy::borrowed_box)]
         fn create_client(
             client_type: TradingClientType,
             file_path: &CxxString,
-            inbound_callback: extern "C" fn(excution_report_list: &CxxVector<ExecutionReport>, session_id: CxxString),
+            ctx: Box<TradingClientContext>,
+            inbound_callback: fn(message: QuickFixMessage, ctx: &Box<TradingClientContext>),
         ) -> UniquePtr<ITradeClient>;
 
         fn start(self: &ITradeClient);
         fn stop(self: &ITradeClient);
 
-        // fn put_order(
-        //     self: &ITradeClient,
-        //     symbol: &CxxString,
-        //     side: c_char,
-        //     quantity: f64,
-        //     price: f64,
-        //     time_in_force: c_char,
-        // ) -> UniquePtr<CxxString>;
+        fn put_order(
+            self: &ITradeClient,
+            symbol: &CxxString,
+            side: c_char,
+            quantity: f64,
+            price: f64,
+            stop_price: f64,
+            order_type: c_char,
+            time_in_force: c_char,
+        ) -> UniquePtr<CxxString>;
 
-        fn put_order(self: &ITradeClient, new_order_single: &NewOrderSingle) -> UniquePtr<CxxString>;
+        fn cancel_order(self: &ITradeClient, symbol: &CxxString, order_id: &CxxString);
+        fn cancel_open_orders(self: &ITradeClient, symbol: &CxxString);
 
         fn get_account_postions(self: &ITradeClient);
 
+        fn get_order(self: &ITradeClient, symbol: &CxxString, order_id: &CxxString);
+        fn get_open_orders(self: &ITradeClient, symbol: &CxxString);
 
-        fn cancel_order(self: &ITradeClient, order_cancel_request: &OrderCancelRequest);
+        fn get_recent_trades(self: &ITradeClient, symbol: &CxxString);
+
+        fn get_account_balances(self: &ITradeClient);
+
+        fn get_accounts(self: &ITradeClient);
     }
 
-    // extern "Rust" {
-    //     type TradingClientContext;
+    extern "Rust" {
+        type TradingClientContext;
 
-    //     fn inbound(&self, message: QuickFixMessage);
-    // }
+        fn inbound(&self, message: QuickFixMessage);
+    }
 }
 
 unsafe impl Send for ffi::ITradeClient {}

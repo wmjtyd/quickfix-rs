@@ -30,6 +30,8 @@ async fn main() {
             side: FIX_Side_SELL,
             quantity: 0.00000001,
             price: 100000.0,
+            stop_price: 1000.0,
+            order_type: OrderType::Market,
             time_in_force: FIX_TimeInForce_AT_THE_OPENING,
         };
         if order_tx.send(new_order_message).is_err() {

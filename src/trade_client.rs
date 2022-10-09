@@ -13,14 +13,25 @@ use crate::ffi;
 pub enum OrderMessage {
     NewOrder {
         symbol: String,
-        side: c_char,
+        side: char,
         quantity: f64,
         price: f64,
-        time_in_force: c_char,
+        stop_price: f64,
+        order_type: char,
+        time_in_force: char,
     },
     CancelOrder {
+        symbol: String,
         order_id: String,
     },
+}
+
+struct OrderCancelRequest {
+    pub symbol: String,
+    pub ord_id: String,
+    pub orig_client_ord_id: String,
+    pub client_ord_id: String,
+    pub side: char,
 }
 
 pub struct TradingClientContext(mpsc::UnboundedSender<ffi::QuickFixMessage>);
@@ -70,20 +81,32 @@ impl TradingClient {
 
     #[instrument(skip(self))]
     pub fn new_order(
-        &self,
-        symbol: &cxx::CxxString,
-        side: c_char,
+        self: &TradingClient,
+        symbol: &str,
+        side: char,
         quantity: f64,
         price: f64,
-        time_in_force: c_char,
+        stop_price: f64,
+        order_type: char,
+        time_in_force: char,
     ) -> cxx::UniquePtr<cxx::CxxString> {
-        self.cxx_inner
-            .put_order(symbol, side, quantity, price, time_in_force)
+        let_cxx_string!(symbol = symbol);
+        self.cxx_inner.put_order(
+            &symbol,
+            side as c_char,
+            quantity,
+            price,
+            stop_price,
+            order_type as c_char,
+            time_in_force as c_char,
+        )
     }
 
     #[instrument(skip(self))]
-    pub fn cancel_order(&self, order_id: &cxx::CxxString) {
-        self.cxx_inner.cancel_order(order_id);
+    pub fn cancel_order(&self, symbol: &str, order_id: &str) {
+        let_cxx_string!(symbol = symbol);
+        let_cxx_string!(order_id = order_id);
+        self.cxx_inner.cancel_order(&symbol, &order_id);
     }
 
     #[instrument(skip(self))]
@@ -96,16 +119,22 @@ impl TradingClient {
                     side,
                     quantity,
                     price,
+                    stop_price,
+                    order_type,
                     time_in_force,
                 } => {
-                    let_cxx_string!(symbol = symbol);
-
-                    let _ = self.new_order(&symbol, side, quantity, price, time_in_force);
+                    let _ = self.new_order(
+                        &symbol,
+                        side,
+                        quantity,
+                        price,
+                        stop_price,
+                        order_type,
+                        time_in_force,
+                    );
                 }
-                OrderMessage::CancelOrder { order_id } => {
-                    let_cxx_string!(order_id = order_id);
-
-                    self.cancel_order(&order_id);
+                OrderMessage::CancelOrder { symbol, order_id } => {
+                    self.cancel_order(&symbol, &order_id);
                 }
             }
         }
