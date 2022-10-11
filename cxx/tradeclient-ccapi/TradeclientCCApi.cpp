@@ -250,16 +250,29 @@ bool TradeClientCCApi::eventHandler(void *obj, const ccapi::Event &event,
       
     pObj->executionReportCallback(excutionReportList, "0");
   }
-  
-#ifdef USE_TRADECLIENT_RUST_INTERFACE
-  // std::vector<RustExecutionReport> rustExcutionReportList;
-  // for (const auto &e : excutionReportList) {
-  //   RustExecutionReport aExecutionReport;
-  //   rustExcutionReportList.push_back(aExecutionReport);
-  // };
-  // }
 
-  // pObj->inbound_callback(std::move(rustExcutionReportList), pObj->ctx);
+#ifdef USE_TRADECLIENT_RUST_INTERFACE
+
+  // if (pObj->inbound_callback != nullptr) {
+    for (const auto& e : excutionReportList) {
+      RustExecutionReport aExecutionReport;
+      aExecutionReport.symbol = e.Symbol;
+      aExecutionReport.order_id = e.OrderID;
+      aExecutionReport.client_ord_id = e.ClOrdId;
+      aExecutionReport.exec_id = e.ExecID;
+      aExecutionReport.cum_qty = e.CumQty;
+      aExecutionReport.order_qty = e.OrderQty;
+
+      aExecutionReport.ord_status = e.OrdStatus;
+      aExecutionReport.side = e.Side;
+      aExecutionReport.asset_free = e.AssetFree;
+      aExecutionReport.asset_locked = e.AssetLocked;
+
+      aExecutionReport.error_message = e.ErrorMessage;
+
+      pObj->inbound_callback(std::move(aExecutionReport), pObj->ctx);
+    }
+  // }
 
 #endif
 
