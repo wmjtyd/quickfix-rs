@@ -17,7 +17,7 @@ public:
   TradeClientCCApi(const std::string exchangeName, 
                    const std::string &filepath,
                    rust::Box<TradingClientContext> ctx,
-                   std::vector<RustExecutionReport> rustExcutionReportList,
+                   rust::Fn<void(const RustExecutionReport,
                                  const rust::Box<TradingClientContext> &)>
                        inbound_callback);
 #else

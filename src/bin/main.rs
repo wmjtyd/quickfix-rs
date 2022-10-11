@@ -41,8 +41,6 @@ async fn main() {
 
         while let Some(order_report) = order_report_rx.recv().await {
             info!(?order_report);
-
-            // let cancel_order_message = OrderMessage::CancelOrder {};
         }
     });
 

@@ -252,15 +252,14 @@ bool TradeClientCCApi::eventHandler(void *obj, const ccapi::Event &event,
   }
   
 #ifdef USE_TRADECLIENT_RUST_INTERFACE
-  std::vector<RustExecutionReport> rustExcutionReportList;
-  for (const auto &e : excutionReportList) {
-    RustExecutionReport aExecutionReport;
-    rustExcutionReportList.push_back(aExecutionReport);
+  // std::vector<RustExecutionReport> rustExcutionReportList;
+  // for (const auto &e : excutionReportList) {
+  //   RustExecutionReport aExecutionReport;
+  //   rustExcutionReportList.push_back(aExecutionReport);
+  // };
+  // }
 
-  };
-  }
-
-  pObj->inbound_callback(std::move(rustExcutionReportList), pObj->ctx);
+  // pObj->inbound_callback(std::move(rustExcutionReportList), pObj->ctx);
 
 #endif
 
