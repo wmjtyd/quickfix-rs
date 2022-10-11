@@ -132,8 +132,9 @@ bool TradeClientCCApi::eventHandler(void *obj, const ccapi::Event &event,
     pObj->eventCallback(content, "0");
   }
 
+  std::vector<ExecutionReport> excutionReportList;
   if (pObj->executionReportCallback != nullptr) {
-      std::vector<ExecutionReport> excutionReportList;
+      
       std::vector<ccapi::Message> messagelist = event.getMessageList();
       ccapi::Event::Type eventType = event.getType();
 
@@ -251,12 +252,15 @@ bool TradeClientCCApi::eventHandler(void *obj, const ccapi::Event &event,
   }
   
 #ifdef USE_TRADECLIENT_RUST_INTERFACE
+  std::vector<RustExecutionReport> rustExcutionReportList;
+  for (const auto &e : excutionReportList) {
+    RustExecutionReport aExecutionReport;
+    rustExcutionReportList.push_back(aExecutionReport);
 
-  // RustExecutionReport quick_fix_message{
-  //   content : std::make_unique<std::string>(std::move(content)),
-  //   from : FixMessageType::App, // 1是借用quickfix里面的定义，代表from app
-  // };
-  // pObj->inbound_callback(std::move(quick_fix_message), pObj->ctx);
+  };
+  }
+
+  pObj->inbound_callback(std::move(rustExcutionReportList), pObj->ctx);
 
 #endif
 
