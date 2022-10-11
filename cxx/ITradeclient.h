@@ -21,9 +21,9 @@ enum TradeClientType {
   TradeClientType_Wintmut = 2,
   TradeClientType_CCApi = 3,
 };
-
-#ifndef CXXBRIDGE1_STRUCT_RustExecutionReport
-#define CXXBRIDGE1_STRUCT_RustExecutionReport
+#ifdef USE_TRADECLIENT_RUST_INTERFACE
+  #ifndef CXXBRIDGE1_STRUCT_RustExecutionReport
+  #define CXXBRIDGE1_STRUCT_RustExecutionReport
 struct RustExecutionReport final {
   char exec_type;
   ::rust::String symbol;
@@ -40,7 +40,8 @@ struct RustExecutionReport final {
 
   using IsRelocatable = ::std::true_type;
 };
-#endif // CXXBRIDGE1_STRUCT_RustExecutionReport
+  #endif // CXXBRIDGE1_STRUCT_RustExecutionReport
+#endif  
 
 class ITradeClient {
 public:
@@ -86,7 +87,7 @@ public:
 
 #ifdef USE_TRADECLIENT_RUST_INTERFACE
 auto create_client(
-    const TradingClientType type, const std::string &filepath,
+    const std::string &exchangeName, const TradingClientType type, const std::string &filepath,
     rust::Box<TradingClientContext> ctx,
     rust::Fn<void(const QuickFixMessage, const rust::Box<TradingClientContext> &)>
         inbound_callback) -> std::unique_ptr<ITradeClient>;

@@ -14,7 +14,8 @@ struct TradingClientContext;
 class TradeClientCCApi : public ITradeClient {
 public:
 #ifdef USE_TRADECLIENT_RUST_INTERFACE
-  TradeClientCCApi(const std::string &filepath,
+  TradeClientCCApi(const std::string exchangeName, 
+                   const std::string &filepath,
                    rust::Box<TradingClientContext> ctx,
                    rust::Fn<void(const QuickFixMessage,
                                  const rust::Box<TradingClientContext> &)>

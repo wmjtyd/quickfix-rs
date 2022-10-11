@@ -9,7 +9,7 @@
 
 #ifdef USE_TRADECLIENT_RUST_INTERFACE
 auto create_client(
-    const TradingClientType type, const std::string &filepath,
+    const std::string &exchangeName, const TradingClientType type, const std::string &filepath,
     rust::Box<TradingClientContext> ctx,
     rust::Fn<void(const QuickFixMessage, const rust::Box<TradingClientContext> &)>
         inbound_callback) -> std::unique_ptr<ITradeClient> {
@@ -23,7 +23,7 @@ auto create_client(
     break;
   case TradingClientType::CCApi:
     pitradeclient =
-        new TradeClientCCApi(filepath, std::move(ctx), inbound_callback);
+        new TradeClientCCApi(exchangeName, filepath, std::move(ctx), inbound_callback);
     break;
   }
 

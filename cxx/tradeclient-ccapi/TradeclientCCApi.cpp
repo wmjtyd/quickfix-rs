@@ -103,12 +103,12 @@ EXPIRED - The order was canceled according to the order type's rules
 
 #ifdef USE_TRADECLIENT_RUST_INTERFACE
 TradeClientCCApi::TradeClientCCApi(
-    const std::string &filepath, rust::Box<TradingClientContext> ctx,
+    const std::string exchangeName, const std::string &filepath, rust::Box<TradingClientContext> ctx,
     rust::Fn<void(const QuickFixMessage,
                   const rust::Box<TradingClientContext> &)>
         inbound_callback)
     : ctx(std::move(ctx)), inbound_callback(inbound_callback),
-      application(TradeClientCCApi::eventHandler, this) {}
+      application(exchangeName, TradeClientCCApi::eventHandler, this) {}
 #else
 TradeClientCCApi::TradeClientCCApi(const std::string exchangeName, const std::string &filepath, FromAppCallback cb)
     : eventCallback(cb), application(exchangeName, TradeClientCCApi::eventHandler, this) {}
