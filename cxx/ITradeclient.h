@@ -89,7 +89,7 @@ public:
 auto create_client(
     const std::string &exchangeName, const TradingClientType type, const std::string &filepath,
     rust::Box<TradingClientContext> ctx,
-    rust::Fn<void(const QuickFixMessage, const rust::Box<TradingClientContext> &)>
+    rust::Fn<void(const RustExecutionReport, const rust::Box<TradingClientContext> &)>
         inbound_callback) -> std::unique_ptr<ITradeClient>;
 #else
 auto create_client(

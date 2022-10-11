@@ -17,7 +17,7 @@ public:
   TradeClientCCApi(const std::string exchangeName, 
                    const std::string &filepath,
                    rust::Box<TradingClientContext> ctx,
-                   rust::Fn<void(const QuickFixMessage,
+                   rust::Fn<void(const RustExecutionReport,
                                  const rust::Box<TradingClientContext> &)>
                        inbound_callback);
 #else
@@ -64,7 +64,7 @@ private:
   FromAppCallbackExecutionReport executionReportCallback;
 #ifdef USE_TRADECLIENT_RUST_INTERFACE
   rust::Box<TradingClientContext> ctx;
-  rust::Fn<void(const QuickFixMessage, const rust::Box<TradingClientContext> &)>
+  rust::Fn<void(const RustExecutionReport, const rust::Box<TradingClientContext> &)>
       inbound_callback;
 #endif
 };

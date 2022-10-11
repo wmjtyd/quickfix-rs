@@ -26,14 +26,14 @@ pub enum OrderMessage {
     },
 }
 
-pub struct TradingClientContext(mpsc::UnboundedSender<ffi::QuickFixMessage>);
+pub struct TradingClientContext(mpsc::UnboundedSender<ffi::RustExecutionReport>);
 
 impl TradingClientContext {
-    pub fn new(order_report_tx: mpsc::UnboundedSender<ffi::QuickFixMessage>) -> Self {
+    pub fn new(order_report_tx: mpsc::UnboundedSender<ffi::RustExecutionReport>) -> Self {
         Self(order_report_tx)
     }
 
-    pub fn inbound(&self, message: ffi::QuickFixMessage) {
+    pub fn inbound(&self, message: ffi::RustExecutionReport) {
         self.0.send(message).unwrap();
     }
 }
@@ -45,15 +45,17 @@ pub struct TradingClient {
 
 impl TradingClient {
     pub fn new(
+        exchange_name: &str,
         client_type: ffi::TradingClientType,
         file_path: &Path,
         order_rx: mpsc::UnboundedReceiver<OrderMessage>,
-        order_report_tx: mpsc::UnboundedSender<ffi::QuickFixMessage>,
+        order_report_tx: mpsc::UnboundedSender<ffi::RustExecutionReport>,
     ) -> Self {
         let_cxx_string!(file_path = file_path.as_os_str().as_bytes());
+        let_cxx_string!(exchange_name = exchange_name);
         let ctx = TradingClientContext::new(order_report_tx);
         let cxx_inner =
-            ffi::create_client(client_type, &file_path, Box::new(ctx), |message, ctx| {
+            ffi::create_client(&exchange_name, client_type, &file_path, Box::new(ctx), |message, ctx| {
                 ctx.inbound(message)
             });
 

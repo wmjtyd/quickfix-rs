@@ -8,7 +8,7 @@ include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
 #[cxx::bridge]
 pub mod ffi {
 
-
+    #[derive(Debug)]
     struct RustExecutionReport {
         exec_type: c_char,
         symbol: String,
@@ -64,10 +64,11 @@ pub mod ffi {
 
         #[allow(clippy::borrowed_box)]
         fn create_client(
+            exchange_name: &CxxString,
             client_type: TradingClientType,
             file_path: &CxxString,
             ctx: Box<TradingClientContext>,
-            inbound_callback: fn(message: QuickFixMessage, ctx: &Box<TradingClientContext>),
+            inbound_callback: fn(message: RustExecutionReport, ctx: &Box<TradingClientContext>),
         ) -> UniquePtr<ITradeClient>;
 
         fn start(self: &ITradeClient);
@@ -102,7 +103,7 @@ pub mod ffi {
     extern "Rust" {
         type TradingClientContext;
 
-        fn inbound(&self, message: QuickFixMessage);
+        fn inbound(&self, message: RustExecutionReport);
     }
 }
 

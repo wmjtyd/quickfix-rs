@@ -104,7 +104,7 @@ EXPIRED - The order was canceled according to the order type's rules
 #ifdef USE_TRADECLIENT_RUST_INTERFACE
 TradeClientCCApi::TradeClientCCApi(
     const std::string exchangeName, const std::string &filepath, rust::Box<TradingClientContext> ctx,
-    rust::Fn<void(const QuickFixMessage,
+    rust::Fn<void(const RustExecutionReport,
                   const rust::Box<TradingClientContext> &)>
         inbound_callback)
     : ctx(std::move(ctx)), inbound_callback(inbound_callback),
@@ -252,11 +252,11 @@ bool TradeClientCCApi::eventHandler(void *obj, const ccapi::Event &event,
   
 #ifdef USE_TRADECLIENT_RUST_INTERFACE
 
-  QuickFixMessage quick_fix_message{
-    content : std::make_unique<std::string>(std::move(content)),
-    from : FixMessageType::App, // 1是借用quickfix里面的定义，代表from app
-  };
-  pObj->inbound_callback(std::move(quick_fix_message), pObj->ctx);
+  // RustExecutionReport quick_fix_message{
+  //   content : std::make_unique<std::string>(std::move(content)),
+  //   from : FixMessageType::App, // 1是借用quickfix里面的定义，代表from app
+  // };
+  // pObj->inbound_callback(std::move(quick_fix_message), pObj->ctx);
 
 #endif
 
