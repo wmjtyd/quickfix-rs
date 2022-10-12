@@ -247,8 +247,10 @@ bool TradeClientCCApi::eventHandler(void *obj, const ccapi::Event &event,
               excutionReportList.push_back(aExecutionReport);
           }
       }
-      
-    pObj->executionReportCallback(excutionReportList, "0");
+      if (pObj->executionReportCallback != nullptr) {
+        pObj->executionReportCallback(excutionReportList, "0");
+      }
+    
   }
 
 #ifdef USE_TRADECLIENT_RUST_INTERFACE
