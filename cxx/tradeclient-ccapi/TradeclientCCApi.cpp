@@ -133,7 +133,8 @@ bool TradeClientCCApi::eventHandler(void *obj, const ccapi::Event &event,
   }
 
   std::vector<ExecutionReport> excutionReportList;
-  if (pObj->executionReportCallback != nullptr) {
+  // if (pObj->executionReportCallback != nullptr) 
+  {
       
       std::vector<ccapi::Message> messagelist = event.getMessageList();
       ccapi::Event::Type eventType = event.getType();
@@ -247,6 +248,7 @@ bool TradeClientCCApi::eventHandler(void *obj, const ccapi::Event &event,
               excutionReportList.push_back(aExecutionReport);
           }
       }
+      
       if (pObj->executionReportCallback != nullptr) {
         pObj->executionReportCallback(excutionReportList, "0");
       }
